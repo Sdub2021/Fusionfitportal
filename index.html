@@ -9,6 +9,83 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
+    .fusion-portal {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.portal-ring {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    0 0 60px #00ccff,
+    0 0 120px #ff66cc,
+    inset 0 0 50px rgba(255,255,255,0.2);
+  animation: pulse 6s infinite alternate ease-in-out;
+}
+
+.portal-ring::before,
+.portal-ring::after {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00ddff 10%, #6600cc 55%, transparent 85%);
+  animation: swirl 14s linear infinite;
+}
+
+.portal-ring::after {
+  inset: 45px;
+  background: radial-gradient(circle, #ff88dd 10%, #ff0066 60%, transparent 90%);
+  animation: swirl 10s linear infinite reverse;
+  opacity: 0.9;
+}
+
+/* Blackhole planet in center */
+.blackhole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle at 40% 40%, #222 20%, #000 70%);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 30px #440088,
+    inset 0 0 25px #000;
+  z-index: 2;
+}
+
+/* Tai Chi character on the ring */
+.taichi-character {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 52px;
+  z-index: 3;
+  animation: taichi-move 8s infinite ease-in-out;
+  text-shadow: 0 0 15px #00ffcc;
+}
+
+@keyframes pulse {
+  from { transform: scale(0.93); }
+  to   { transform: scale(1.07); }
+}
+
+@keyframes swirl {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes taichi-move {
+  0%, 100% { transform: translateX(-50%) rotate(-8deg); }
+  50%      { transform: translateX(-50%) rotate(8deg); }
+}
     body { font-family: 'Open Sans', sans-serif; background: linear-gradient(to bottom, #f0f7ff 0%, #e0e7ff 100%); }
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
     .section-header { color: #1E3A8A; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
@@ -32,15 +109,22 @@
 <body>
   <!-- Hero: Artistic Yin-Yang Fusion -->
   <header class="hero-bg text-white py-28 text-center relative overflow-hidden fade-in">
-    <div class="relative z-10">
-      <h1 class="text-7xl md:text-8xl font-bold tracking-wide mb-6">FusionFitPortal ☯️</h1>
-      <p class="text-2xl md:text-3xl max-w-4xl mx-auto mb-10 font-light">Awaken the yin-yang dance within: Yang's warrior fire forges strength, Yin's lotus flow nurtures surrender. Ascend through 3-day cycles, embodying the eternal wheel—chaos spins to harmony, ego yields to wholeness.</p>
-      <div class="mb-10">
-        <!-- Video Placeholder: Swap with your embed -->
-        <div class="bg-black rounded-2xl mx-auto w-11/12 max-w-2xl h-80 flex items-center justify-center text-gray-300 shadow-2xl">
-          <p>🎥 Teaser: Warrior's Flow – Yin Surrender Meets Yang Conquest (Videos Live Soon)</p>
-        </div>
-      </div>
+    <!-- Portal Ring with Tai Chi Character on Blackhole Planet -->
+<div style="text-align: center; margin: 40px 0;">
+  <div class="fusion-portal">
+    <div class="portal-ring">
+      <!-- Blackhole planet in the center -->
+      <div class="blackhole"></div>
+      
+      <!-- Tai Chi character doing slow move on the ring -->
+      <div class="taichi-character">🧘‍♂️</div>
+    </div>
+  </div>
+  
+  <p style="margin-top: 15px; color: #888; font-size: 0.95em;">
+    Enter the Flow • Yin meets Yang ☯️
+  </p>
+</div>
       <a href="#signup" class="inline-block bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold py-5 px-12 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-400 text-xl">Embrace the Balance – Start Free</a>
     </div>
   </header>
