@@ -104,6 +104,23 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .level-badge { background: linear-gradient(45deg, #10B981, #059669); color: white; padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 1em; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .symbol-icon { font-size: 1.5em; margin-right: 0.5rem; }
+    /* EMAIL TEXT FIX - copy and paste this */
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    color: #000000 !important;           /* black text so you can SEE it */
+    background-color: #ffffff !important; /* white background */
+    border: 2px solid #333;              /* dark border so it stands out */
+    padding: 12px 15px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Extra Chrome/Safari fix */
+input[type="email"] {
+    -webkit-text-fill-color: #000000 !important;
+}
   </style>
 </head>
 <body>
@@ -130,12 +147,33 @@
   </header>
 
   <!-- Philosophy: Infused with Symbolism -->
-  <section class="py-16 px-6 text-center">
-    <p class="philosophy text-2xl max-w-5xl mx-auto">"Head Top, Calm Down, Let Go" – Yang's upward flame crowns the head, igniting warrior resolve; Yin's grounding waters calm the storm, like lotus roots in mud; Let go into the void, surrendering ego as in child's pose, birthing enlightened harmony. ☯️🧘</p>
-  </section>
+<!-- REPLACE YOUR OLD EMAIL SECTION WITH THIS ENTIRE BLOCK -->
+<section id="signup" style="padding: 60px 20px; text-align: center; background: #f8f8f8;">
+    <h2 style="margin-bottom: 20px;">Enter the Portal – Start Free</h2>
+    
+    <form action="https://formsubmit.co/your-email@gmail.com" method="POST" style="max-width: 420px; margin: 0 auto;">
+        
+        <input 
+            type="email" 
+            name="email" 
+            placeholder="sdubsphone@gmail.com" 
+            required 
+            style="margin-bottom: 15px;">
+        
+        <button 
+            type="submit"
+            style="background: #000; color: #fff; padding: 14px 30px; font-size: 18px; border: none; cursor: pointer;">
+            Join the Flow
+        </button>
 
-  <!-- Graduated Journey: Symbolic Levels -->
-  <section class="py-24 px-6">
+        <!-- Hidden fields (keeps it clean) -->
+        <input type="hidden" name="_subject" value="New FusionFitPortal Signup!">
+        <input type="hidden" name="_next" value="https://fusionfitportal.com/thanks.html">
+        <input type="hidden" name="_captcha" value="false">
+    </form>
+    
+    <p style="font-size: 14px; margin-top: 20px; color: #666;">We respect your inbox. Unsubscribe anytime.</p>
+</section>
     <div class="max-w-6xl mx-auto text-center">
       <h2 class="text-6xl font-bold section-header mb-10 fade-in">Ascend the Yin-Yang Path</h2>
       <p class="text-xl text-gray-700 mb-14 max-w-4xl mx-auto">5 Levels mirror the lotus journey: Yin seeds in darkness (gestation), Yang blooms in light (action). Vestibular spins symbolize samsara's wheel—dizzy duality to centered nirvana. Intermittent fasting echoes yogic prana control, balancing intake (yang) with release (yin).</p>
