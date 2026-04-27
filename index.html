@@ -124,7 +124,57 @@ input[type="email"] {
   </style>
 </head>
 <body>
-  <!-- Hero: Artistic Yin-Yang Fusion -->
+  <!-- HERO SECTION - Animated Video -->
+<section class="hero">
+  <video class="hero-video" autoplay loop muted playsinline>
+    <source src="hero-video.mp4" type="video/mp4">
+    Your browser doesn't support video.
+  </video>
+
+  <!-- Overlay text (optional) -->
+  <div class="hero-content">
+    <h1>FIT FUSION</h1>
+    <p>Train. Transform. Transcend.</p>
+  </div>
+</section>
+
+<style>
+.hero {
+  position: relative;
+  height: 100vh;           /* Full screen height */
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;       /* Keeps it looking good */
+  z-index: -1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  text-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  margin: 0;
+  letter-spacing: 4px;
+}
+
+.hero-content p {
+  font-size: 1.5rem;
+}
+</style><!-- Hero: Artistic Yin-Yang Fusion -->
   <header class="hero-bg text-white py-28 text-center relative overflow-hidden fade-in">
     <!-- Portal Ring with Tai Chi Character on Blackhole Planet -->
 <div style="text-align: center; margin: 40px 0;">
