@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
   
   <style>
+    :root { --yin: #67e8f9; --yang: #f97316; }
+    
     body {
       font-family: 'Inter', sans-serif;
       margin: 0; padding: 0;
@@ -31,16 +33,36 @@
     }
     #webgl-container { position: absolute; inset: 0; z-index: 1; }
 
-    .hero-text h1 {
-      font-size: clamp(4rem, 10vw, 7.8rem);
-      letter-spacing: 6px;
+    .yin-yang {
+      width: 460px; height: 460px;
+      position: relative; z-index: 10;
+      animation: breath 14s ease-in-out infinite, slow-rotate 55s linear infinite;
+      filter: drop-shadow(0 0 120px rgba(103, 232, 249, 0.9));
     }
+    @keyframes breath { 0%,100% { transform: scale(0.88); } 50% { transform: scale(1.12); } }
+    @keyframes slow-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-    .level-card {
-      transition: all 0.6s ease;
+    .cta-btn {
+      padding: 28px 82px;
+      font-size: 1.7rem;
+      background: linear-gradient(90deg, #f97316, #e11d48);
+      box-shadow: 0 0 70px rgba(249,115,22,0.9);
+      animation: pulse-glow 2.6s infinite;
+    }
+    .cta-btn:hover { transform: scale(1.22) translateY(-10px); }
+    @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 70px rgba(249,115,22,0.9); } 50% { box-shadow: 0 0 120px rgba(249,115,22,1); } }
+
+    .reveal, .level-card {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .reveal.visible, .level-card.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
     .level-card:hover {
-      transform: scale(1.08) translateY(-20px);
+      transform: scale(1.08) translateY(-25px);
     }
   </style>
 </head>
@@ -68,25 +90,37 @@
   <section class="main-portal pt-20">
     <div id="webgl-container"></div>
 
+    <div class="yin-yang">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="96" fill="none" stroke="#67e8f9" stroke-width="12" opacity="0.3"/>
+        <circle cx="100" cy="100" r="94" fill="#111827"/>
+        <path d="M100 6 A94 94 0 0 1 194 100 A50 50 0 0 1 100 150 A94 94 0 0 1 100 6 Z" fill="#f8fafc"/>
+        <path d="M100 6 A94 94 0 0 1 6 100 A50 50 0 0 1 100 50 A94 94 0 0 1 100 6 Z" fill="#111827"/>
+        <circle cx="100" cy="65" r="23" fill="#111827"/>
+        <circle cx="100" cy="135" r="23" fill="#f8fafc"/>
+        <circle cx="100" cy="65" r="13" fill="#67e8f9" opacity="0.8"/>
+        <circle cx="100" cy="135" r="13" fill="#f97316" opacity="0.8"/>
+      </svg>
+    </div>
+
     <div class="hero-text relative z-20 text-center px-6 max-w-4xl mx-auto">
       <div class="inline-flex items-center gap-4 bg-white/10 backdrop-blur-md px-10 py-4 rounded-3xl border border-white/30 mb-12 text-sm tracking-widest">
         <span class="text-orange-400">✦</span> 3-DAY COSMIC RESET <span class="text-orange-400">✦</span>
       </div>
       <h1 class="mb-6">FIT FUSION</h1>
       <p class="text-3xl md:text-5xl leading-tight max-w-3xl mx-auto mb-14 opacity-90">
-        Enter the swirling nebula.<br>
-        Find your balance. Ignite your power.
+        Ancient balance.<br>Modern power.
       </p>
       <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" 
-              class="cta-btn text-white font-bold rounded-full px-16 py-8 text-2xl">
+              class="cta-btn text-white font-bold rounded-full">
         BEGIN YOUR ASCENSION
       </button>
     </div>
   </section>
 
-  <!-- LEVELS (Clickable) -->
+  <!-- LEVELS -->
   <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-white text-zinc-900">
-    <div class="text-center mb-20">
+    <div class="text-center mb-20 reveal">
       <h2 class="text-6xl font-bold mb-4">The 5 Levels of Ascension</h2>
       <p class="text-2xl text-zinc-600">Click any level to see a sample workout</p>
     </div>
@@ -124,94 +158,130 @@
   <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]">
     <div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative">
       <button onclick="closeModal()" class="absolute top-6 right-6 text-4xl text-zinc-400 hover:text-white">×</button>
-      <div id="modal-content"></div>
+      <div id="modal-content" class="text-white"></div>
     </div>
   </div>
 
+  <!-- TESTIMONIALS -->
+  <section id="stories" class="py-28 bg-zinc-950">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-20 reveal">Real Ascenders. Real Results.</h2>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="reveal bg-zinc-900 p-10 rounded-3xl border border-white/10">
+          <p class="italic text-lg">"The portal design is mesmerizing. I felt the energy from day one."</p>
+          <div class="mt-8 flex items-center gap-4">
+            <div class="w-14 h-14 bg-pink-500 rounded-2xl flex items-center justify-center text-4xl">🌸</div>
+            <div><strong>Sarah Chen</strong><br><span class="text-zinc-400">New York</span></div>
+          </div>
+        </div>
+        <div class="reveal bg-zinc-900 p-10 rounded-3xl border border-white/10">
+          <p class="italic text-lg">"Best 10 minutes of my day. Finally found balance in my training."</p>
+          <div class="mt-8 flex items-center gap-4">
+            <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-4xl">🔥</div>
+            <div><strong>Marcus Rivera</strong><br><span class="text-zinc-400">Los Angeles</span></div>
+          </div>
+        </div>
+        <div class="reveal bg-zinc-900 p-10 rounded-3xl border border-white/10">
+          <p class="italic text-lg">"The nebula background and particles are insane. This is next level."</p>
+          <div class="mt-8 flex items-center gap-4">
+            <div class="w-14 h-14 bg-cyan-500 rounded-2xl flex items-center justify-center text-4xl">☯️</div>
+            <div><strong>Priya Patel</strong><br><span class="text-zinc-400">London</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section id="signup" class="py-32 bg-gradient-to-b from-black to-zinc-950 text-center reveal">
+    <div class="max-w-lg mx-auto px-6">
+      <h2 class="text-6xl font-bold mb-6">Ready to Ascend?</h2>
+      <p class="text-2xl text-zinc-400 mb-12">Start your free 3-day journey today</p>
+      <form action="https://formsubmit.co/fusionfitportal@gmail.com" method="POST" class="space-y-6">
+        <input type="text" name="name" placeholder="Your Name" required class="w-full p-7 rounded-3xl bg-zinc-900 border border-zinc-700 text-lg focus:border-orange-500">
+        <input type="email" name="email" placeholder="Your Email" required class="w-full p-7 rounded-3xl bg-zinc-900 border border-zinc-700 text-lg focus:border-orange-500">
+        <button type="submit" class="w-full py-8 text-2xl font-bold rounded-3xl bg-gradient-to-r from-orange-500 to-rose-600 hover:brightness-110">
+          ENTER THE PORTAL — FREE
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="bg-black py-16 text-center text-zinc-500">
+    <div class="text-4xl mb-4">☯️ FUSIONFIT</div>
+    <p>© 2026 • Woven with cosmic energy</p>
+  </footer>
+
   <script>
-    // ==================== NEBULA + STARS WEBGL ====================
+    // ==================== NEBULA + STARS + PORTAL ====================
     let scene, camera, renderer, stars, nebula;
 
     function initWebGL() {
       const container = document.getElementById('webgl-container');
-      
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
-      camera.position.z = 1200;
+      camera.position.z = 1100;
 
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      // Dense Stars
-      const starGeometry = new THREE.BufferGeometry();
-      const starCount = 12000;
-      const positions = new Float32Array(starCount * 3);
-      const colors = new Float32Array(starCount * 3);
+      // Stars
+      const starGeo = new THREE.BufferGeometry();
+      const starCount = 15000;
+      const pos = new Float32Array(starCount * 3);
+      const col = new Float32Array(starCount * 3);
 
       for (let i = 0; i < starCount * 3; i += 3) {
-        const radius = Math.random() * 2000 + 300;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        
-        positions[i]     = radius * Math.sin(phi) * Math.cos(theta);
-        positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-        positions[i + 2] = radius * Math.cos(phi) - 600;
+        const r = Math.random() * 2200 + 300;
+        const t = Math.random() * Math.PI * 2;
+        const p = Math.acos(2 * Math.random() - 1);
+        pos[i] = r * Math.sin(p) * Math.cos(t);
+        pos[i+1] = r * Math.sin(p) * Math.sin(t);
+        pos[i+2] = r * Math.cos(p) - 800;
 
-        const brightness = Math.random();
-        colors[i] = brightness;
-        colors[i+1] = brightness * 0.9;
-        colors[i+2] = 1;
+        const b = Math.random();
+        col[i] = b; col[i+1] = b * 0.95; col[i+2] = 1;
       }
 
-      starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      starGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
 
-      const starMaterial = new THREE.PointsMaterial({
-        size: 2.8,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.9,
-        blending: THREE.AdditiveBlending
-      });
-
-      stars = new THREE.Points(starGeometry, starMaterial);
+      const starMat = new THREE.PointsMaterial({ size: 2.8, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending });
+      stars = new THREE.Points(starGeo, starMat);
       scene.add(stars);
 
-      // Nebula Clouds (soft colored particles)
-      const nebulaGeometry = new THREE.BufferGeometry();
-      const nebulaCount = 1800;
-      const nPositions = new Float32Array(nebulaCount * 3);
-      const nColors = new Float32Array(nebulaCount * 3);
-      const nSizes = new Float32Array(nebulaCount);
+      // Nebula
+      const nebGeo = new THREE.BufferGeometry();
+      const nebCount = 2200;
+      const nPos = new Float32Array(nebCount * 3);
+      const nCol = new Float32Array(nebCount * 3);
 
-      for (let i = 0; i < nebulaCount * 3; i += 3) {
-        nPositions[i]     = (Math.random() - 0.5) * 1800;
-        nPositions[i + 1] = (Math.random() - 0.5) * 1200;
-        nPositions[i + 2] = (Math.random() - 0.5) * 800 - 400;
+      for (let i = 0; i < nebCount * 3; i += 3) {
+        nPos[i] = (Math.random() - 0.5) * 2000;
+        nPos[i+1] = (Math.random() - 0.5) * 1400;
+        nPos[i+2] = (Math.random() - 0.5) * 1000 - 600;
 
-        const hue = Math.random();
-        nColors[i]     = hue < 0.5 ? 0.4 : 0.9;        // teal / purple mix
-        nColors[i + 1] = 0.3 + hue * 0.6;
-        nColors[i + 2] = 0.8 + hue * 0.2;
-
-        nSizes[i/3] = Math.random() * 35 + 18;
+        const mix = Math.random();
+        nCol[i] = 0.4 + mix * 0.5;
+        nCol[i+1] = 0.3 + mix * 0.6;
+        nCol[i+2] = 0.8 + mix * 0.2;
       }
 
-      nebulaGeometry.setAttribute('position', new THREE.BufferAttribute(nPositions, 3));
-      nebulaGeometry.setAttribute('color', new THREE.BufferAttribute(nColors, 3));
+      nebGeo.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
+      nebGeo.setAttribute('color', new THREE.BufferAttribute(nCol, 3));
 
-      const nebulaMaterial = new THREE.PointsMaterial({
-        size: 45,
+      const nebMat = new THREE.PointsMaterial({
+        size: 48,
         vertexColors: true,
         transparent: true,
-        opacity: 0.25,
+        opacity: 0.28,
         blending: THREE.AdditiveBlending,
         depthTest: false
       });
 
-      nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+      nebula = new THREE.Points(nebGeo, nebMat);
       scene.add(nebula);
 
       window.addEventListener('resize', () => {
@@ -225,10 +295,8 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      
-      if (stars) stars.rotation.y += 0.0002;
+      if (stars) stars.rotation.y += 0.00015;
       if (nebula) nebula.rotation.y += 0.00008;
-
       renderer.render(scene, camera);
     }
 
@@ -237,11 +305,11 @@
       const modal = document.getElementById('workout-modal');
       const content = document.getElementById('modal-content');
       
-      let html = `<h2 class="text-4xl font-bold mb-6">Level ${level} Sample Workout</h2>`;
+      let html = `<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ${level} Sample</h2>`;
       
-      if (level === 1) html += `<p class="text-zinc-400 mb-8">Gentle Yin Awakening</p><ul class="space-y-4"><li>• 5 min slow Tai Chi flow</li><li>• 10 bodyweight squats</li><li>• 3 min deep breathing in child's pose</li></ul>`;
-      else if (level === 2) html += `<p class="text-zinc-400 mb-8">Yang Power Ignition</p><ul class="space-y-4"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
-      else html += `<p class="text-zinc-400">Full detailed workout available inside the portal after signup.</p>`;
+      if (level === 1) html += `<p class="mb-8 text-zinc-400">Gentle Yin Awakening</p><ul class="space-y-4 text-lg"><li>• 5 min Tai Chi flow</li><li>• 10 slow squats</li><li>• 3 min child's pose + breath</li></ul>`;
+      else if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers</li><li>• 12 Squats</li></ul>`;
+      else html += `<p class="text-zinc-400">Full detailed workout available inside the portal.</p>`;
 
       content.innerHTML = html;
       modal.classList.remove('hidden');
@@ -254,7 +322,21 @@
       modal.classList.remove('flex');
     }
 
-    window.onload = initWebGL;
+    // Scroll reveals
+    function initReveals() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.15 });
+      
+      document.querySelectorAll('.reveal, .level-card').forEach(el => observer.observe(el));
+    }
+
+    window.onload = () => {
+      initWebGL();
+      initReveals();
+    };
   </script>
 </body>
 </html>
