@@ -11,8 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
   
   <style>
-    :root { --yin: #67e8f9; --yang: #f97316; }
-    
     body {
       font-family: 'Inter', sans-serif;
       margin: 0; padding: 0;
@@ -27,40 +25,22 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      background: radial-gradient(circle at 50% 30%, #1a0f2e 0%, #000 75%);
+      background: #05050f;
       overflow: hidden;
       color: white;
     }
     #webgl-container { position: absolute; inset: 0; z-index: 1; }
 
-    /* Improved Yin-Yang */
-    .yin-yang {
-      width: 460px;
-      height: 460px;
-      position: relative;
-      z-index: 10;
-      animation: breath 14s ease-in-out infinite, slow-rotate 48s linear infinite;
-      filter: drop-shadow(0 0 100px rgba(103, 232, 249, 0.8));
+    .hero-text h1 {
+      font-size: clamp(4rem, 10vw, 7.8rem);
+      letter-spacing: 6px;
     }
-    @keyframes breath { 0%,100% { transform: scale(0.88); } 50% { transform: scale(1.12); } }
-    @keyframes slow-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-    .cta-btn {
-      padding: 28px 82px;
-      font-size: 1.7rem;
-      background: linear-gradient(90deg, #f97316, #e11d48);
-      box-shadow: 0 0 70px rgba(249,115,22,0.9);
-      animation: pulse-glow 2.6s infinite;
-    }
-    .cta-btn:hover { transform: scale(1.22) translateY(-10px); }
-    @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 70px rgba(249,115,22,0.9); } 50% { box-shadow: 0 0 120px rgba(249,115,22,1); } }
 
     .level-card {
-      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.6s ease;
     }
     .level-card:hover {
-      transform: scale(1.09) translateY(-30px);
-      box-shadow: 0 40px 90px -20px rgb(249 115 22 / 0.4);
+      transform: scale(1.08) translateY(-20px);
     }
   </style>
 </head>
@@ -74,7 +54,7 @@
       </div>
       <div class="hidden md:flex gap-10 text-sm font-medium">
         <a href="#levels" class="hover:text-orange-400">THE PATH</a>
-        <a href="#ritual" class="hover:text-orange-400">THE RITUAL</a>
+        <a href="#workouts" class="hover:text-orange-400">WORKOUTS</a>
         <a href="#stories" class="hover:text-orange-400">STORIES</a>
       </div>
       <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" 
@@ -84,163 +64,155 @@
     </div>
   </nav>
 
-  <!-- HERO -->
+  <!-- HERO - NEBULA PORTAL -->
   <section class="main-portal pt-20">
     <div id="webgl-container"></div>
-
-    <!-- Better Yin-Yang -->
-    <div class="yin-yang">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <!-- Outer glow ring -->
-        <circle cx="100" cy="100" r="96" fill="none" stroke="#67e8f9" stroke-width="8" opacity="0.25"/>
-        
-        <!-- Main Yin-Yang -->
-        <circle cx="100" cy="100" r="94" fill="#1e2937"/>
-        <path d="M100 6 
-                 A94 94 0 0 1 194 100 
-                 A94 94 0 0 1 100 194 
-                 A94 94 0 0 1 6 100 
-                 A94 94 0 0 1 100 6 Z" fill="#f1f5f9"/>
-        
-        <!-- Yin (dark) side curve -->
-        <path d="M100 6 
-                 A94 94 0 0 1 194 100 
-                 A50 50 0 0 1 100 150 
-                 A50 50 0 0 1 100 6 Z" fill="#1e2937"/>
-        
-        <!-- Yang dot -->
-        <circle cx="100" cy="65" r="22" fill="#f1f5f9"/>
-        <!-- Yin dot -->
-        <circle cx="100" cy="135" r="22" fill="#1e2937"/>
-        
-        <!-- Inner glow dots -->
-        <circle cx="100" cy="65" r="12" fill="#67e8f9" opacity="0.7"/>
-        <circle cx="100" cy="135" r="12" fill="#f97316" opacity="0.7"/>
-      </svg>
-    </div>
 
     <div class="hero-text relative z-20 text-center px-6 max-w-4xl mx-auto">
       <div class="inline-flex items-center gap-4 bg-white/10 backdrop-blur-md px-10 py-4 rounded-3xl border border-white/30 mb-12 text-sm tracking-widest">
         <span class="text-orange-400">✦</span> 3-DAY COSMIC RESET <span class="text-orange-400">✦</span>
       </div>
-      
-      <h1 class="mb-6 text-[5.5rem] md:text-[7rem] leading-none">FIT FUSION</h1>
+      <h1 class="mb-6">FIT FUSION</h1>
       <p class="text-3xl md:text-5xl leading-tight max-w-3xl mx-auto mb-14 opacity-90">
-        Ancient balance.<br>Modern power.
+        Enter the swirling nebula.<br>
+        Find your balance. Ignite your power.
       </p>
-      
       <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" 
-              class="cta-btn text-white font-bold rounded-full">
+              class="cta-btn text-white font-bold rounded-full px-16 py-8 text-2xl">
         BEGIN YOUR ASCENSION
       </button>
     </div>
   </section>
 
-  <!-- LEVELS, RITUAL, STORIES, SIGNUP, FOOTER (same as before but with .level-card styles) -->
+  <!-- LEVELS (Clickable) -->
   <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-white text-zinc-900">
     <div class="text-center mb-20">
       <h2 class="text-6xl font-bold mb-4">The 5 Levels of Ascension</h2>
-      <p class="text-2xl text-zinc-600">From seed in darkness to full lotus bloom</p>
+      <p class="text-2xl text-zinc-600">Click any level to see a sample workout</p>
     </div>
+    
     <div class="grid md:grid-cols-5 gap-8">
-      <!-- Cards here (same as your last version) -->
-      <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-emerald-100 text-center group">
-        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">☯️</div>
+      <div onclick="showWorkout(1)" class="level-card cursor-pointer bg-white p-10 rounded-3xl shadow-2xl border border-emerald-100 text-center">
+        <div class="text-8xl mb-6">☯️</div>
         <h3 class="text-3xl font-bold">Level 1</h3>
-        <p class="text-emerald-600 font-semibold mb-4">Yin Awakening</p>
-        <p class="text-zinc-600">Gentle grounding. The seed takes root.</p>
+        <p class="text-emerald-600 font-semibold">Yin Awakening</p>
       </div>
-      <!-- Repeat for Level 2-5 (copy from your previous code) -->
-      <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-orange-100 text-center group">
-        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🔥</div>
+      <div onclick="showWorkout(2)" class="level-card cursor-pointer bg-white p-10 rounded-3xl shadow-2xl border border-orange-100 text-center">
+        <div class="text-8xl mb-6">🔥</div>
         <h3 class="text-3xl font-bold">Level 2</h3>
-        <p class="text-orange-600 font-semibold mb-4">Yang Ignition</p>
-        <p class="text-zinc-600">Fire rises. Power awakens.</p>
+        <p class="text-orange-600 font-semibold">Yang Ignition</p>
       </div>
-      <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-cyan-100 text-center group">
-        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🌊</div>
+      <div onclick="showWorkout(3)" class="level-card cursor-pointer bg-white p-10 rounded-3xl shadow-2xl border border-cyan-100 text-center">
+        <div class="text-8xl mb-6">🌊</div>
         <h3 class="text-3xl font-bold">Level 3</h3>
-        <p class="text-cyan-600 font-semibold mb-4">Fusion Harmony</p>
-        <p class="text-zinc-600">Yin &amp; Yang dance as one.</p>
+        <p class="text-cyan-600 font-semibold">Fusion Harmony</p>
       </div>
-      <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-purple-100 text-center group">
-        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🕊️</div>
+      <div onclick="showWorkout(4)" class="level-card cursor-pointer bg-white p-10 rounded-3xl shadow-2xl border border-purple-100 text-center">
+        <div class="text-8xl mb-6">🕊️</div>
         <h3 class="text-3xl font-bold">Level 4</h3>
-        <p class="text-purple-600 font-semibold mb-4">Symbolic Elevation</p>
-        <p class="text-zinc-600">Humility meets ambition.</p>
+        <p class="text-purple-600 font-semibold">Symbolic Elevation</p>
       </div>
-      <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-pink-100 text-center group">
-        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🌸</div>
+      <div onclick="showWorkout(5)" class="level-card cursor-pointer bg-white p-10 rounded-3xl shadow-2xl border border-pink-100 text-center">
+        <div class="text-8xl mb-6">🌸</div>
         <h3 class="text-3xl font-bold">Level 5</h3>
-        <p class="text-pink-600 font-semibold mb-4">Lotus Mastery</p>
-        <p class="text-zinc-600">108 sacred cycles. Full bloom.</p>
+        <p class="text-pink-600 font-semibold">Lotus Mastery</p>
       </div>
     </div>
   </section>
 
-  <!-- Rest of sections (ritual, stories, signup, footer) are the same as your last code -->
+  <!-- WORKOUT MODAL -->
+  <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]">
+    <div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative">
+      <button onclick="closeModal()" class="absolute top-6 right-6 text-4xl text-zinc-400 hover:text-white">×</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
 
   <script>
-    // WebGL Particle System (kept dense + mouse reactive)
-    let scene, camera, renderer, particles;
-    const particleCount = 6500;
-
-    const vertexShader = `attribute float size; attribute vec3 color; varying vec3 vColor; varying float vAlpha;
-      void main() { vColor = color; vAlpha = size; vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (380.0 / -mvPosition.z); gl_Position = projectionMatrix * mvPosition; }`;
-
-    const fragmentShader = `varying vec3 vColor; varying float vAlpha;
-      void main() { float dist = length(gl_PointCoord - vec2(0.5)); if (dist > 0.5) discard;
-        float glow = pow(1.0 - dist * 1.8, 2.0); gl_FragColor = vec4(vColor, glow * vAlpha * 0.95); }`;
-
-    let mouseX = 0, mouseY = 0;
+    // ==================== NEBULA + STARS WEBGL ====================
+    let scene, camera, renderer, stars, nebula;
 
     function initWebGL() {
       const container = document.getElementById('webgl-container');
+      
       scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
-      camera.position.z = 700;
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+      camera.position.z = 1200;
 
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-      const colors = new Float32Array(particleCount * 3);
-      const sizes = new Float32Array(particleCount);
+      // Dense Stars
+      const starGeometry = new THREE.BufferGeometry();
+      const starCount = 12000;
+      const positions = new Float32Array(starCount * 3);
+      const colors = new Float32Array(starCount * 3);
 
-      for (let i = 0; i < particleCount * 3; i += 3) {
-        const r = Math.random() * 950 + 100;
+      for (let i = 0; i < starCount * 3; i += 3) {
+        const radius = Math.random() * 2000 + 300;
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        positions[i] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i+1] = r * Math.sin(phi) * Math.sin(theta) * 0.7;
-        positions[i+2] = r * Math.cos(phi);
+        
+        positions[i]     = radius * Math.sin(phi) * Math.cos(theta);
+        positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i + 2] = radius * Math.cos(phi) - 600;
 
-        const mix = Math.random();
-        colors[i] = 0.3 + mix * 0.7;
-        colors[i+1] = 0.6 + (1-mix)*0.4;
-        colors[i+2] = 0.95;
-        sizes[i/3] = Math.random() * 7 + 3;
+        const brightness = Math.random();
+        colors[i] = brightness;
+        colors[i+1] = brightness * 0.9;
+        colors[i+2] = 1;
       }
 
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      starGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-      const material = new THREE.ShaderMaterial({
-        vertexShader, fragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthTest: false
+      const starMaterial = new THREE.PointsMaterial({
+        size: 2.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending
       });
 
-      particles = new THREE.Points(geometry, material);
-      scene.add(particles);
+      stars = new THREE.Points(starGeometry, starMaterial);
+      scene.add(stars);
 
-      window.addEventListener('mousemove', e => {
-        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+      // Nebula Clouds (soft colored particles)
+      const nebulaGeometry = new THREE.BufferGeometry();
+      const nebulaCount = 1800;
+      const nPositions = new Float32Array(nebulaCount * 3);
+      const nColors = new Float32Array(nebulaCount * 3);
+      const nSizes = new Float32Array(nebulaCount);
+
+      for (let i = 0; i < nebulaCount * 3; i += 3) {
+        nPositions[i]     = (Math.random() - 0.5) * 1800;
+        nPositions[i + 1] = (Math.random() - 0.5) * 1200;
+        nPositions[i + 2] = (Math.random() - 0.5) * 800 - 400;
+
+        const hue = Math.random();
+        nColors[i]     = hue < 0.5 ? 0.4 : 0.9;        // teal / purple mix
+        nColors[i + 1] = 0.3 + hue * 0.6;
+        nColors[i + 2] = 0.8 + hue * 0.2;
+
+        nSizes[i/3] = Math.random() * 35 + 18;
+      }
+
+      nebulaGeometry.setAttribute('position', new THREE.BufferAttribute(nPositions, 3));
+      nebulaGeometry.setAttribute('color', new THREE.BufferAttribute(nColors, 3));
+
+      const nebulaMaterial = new THREE.PointsMaterial({
+        size: 45,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.25,
+        blending: THREE.AdditiveBlending,
+        depthTest: false
       });
+
+      nebula = new THREE.Points(nebulaGeometry, nebulaMaterial);
+      scene.add(nebula);
 
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -251,30 +223,35 @@
       animate();
     }
 
-    let time = 0;
     function animate() {
       requestAnimationFrame(animate);
-      time += 0.015;
-      const pos = particles.geometry.attributes.position.array;
       
-      for (let i = 0; i < particleCount * 3; i += 3) {
-        let x = pos[i], y = pos[i+1], z = pos[i+2];
-        const d = Math.sqrt(x*x + y*y + z*z) || 1;
+      if (stars) stars.rotation.y += 0.0002;
+      if (nebula) nebula.rotation.y += 0.00008;
 
-        pos[i] -= x / d * 0.0012 * 280;
-        pos[i+1] -= y / d * 0.0012 * 280;
-        pos[i+2] -= z / d * 0.0008 * 280;
-
-        pos[i] += (mouseX * 400 - x) * 0.00009 * 200;
-        pos[i+1] += (mouseY * 300 - y) * 0.00009 * 200;
-
-        pos[i] += -y * 0.0003;
-        pos[i+1] += x * 0.0003;
-      }
-
-      particles.geometry.attributes.position.needsUpdate = true;
-      particles.rotation.y = time * 0.025;
       renderer.render(scene, camera);
+    }
+
+    // Workout Modal
+    function showWorkout(level) {
+      const modal = document.getElementById('workout-modal');
+      const content = document.getElementById('modal-content');
+      
+      let html = `<h2 class="text-4xl font-bold mb-6">Level ${level} Sample Workout</h2>`;
+      
+      if (level === 1) html += `<p class="text-zinc-400 mb-8">Gentle Yin Awakening</p><ul class="space-y-4"><li>• 5 min slow Tai Chi flow</li><li>• 10 bodyweight squats</li><li>• 3 min deep breathing in child's pose</li></ul>`;
+      else if (level === 2) html += `<p class="text-zinc-400 mb-8">Yang Power Ignition</p><ul class="space-y-4"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
+      else html += `<p class="text-zinc-400">Full detailed workout available inside the portal after signup.</p>`;
+
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('workout-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
     }
 
     window.onload = initWebGL;
