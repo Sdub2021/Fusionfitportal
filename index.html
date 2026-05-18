@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="FusionFitPortal — The most beautiful 3-day holistic transformation on Earth. Yin + Yang strength, flow, and cosmic energy.">
+  <meta name="description" content="FusionFitPortal — 3-Day Yin & Yang Transformation. Strength, flow, balance, and cosmic energy.">
   <title>FusionFitPortal • Become Unstoppable</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,142 +11,106 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   
   <style>
-    :root {
-      --yin: #67e8f9;
-      --yang: #f97316;
-    }
+    :root { --yin: #67e8f9; --yang: #f97316; }
     
     body {
       font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       overflow-x: hidden;
       scroll-behavior: smooth;
     }
-    
     h1, h2, h3 { font-family: 'Playfair Display', serif; }
-    
-    /* Cosmic Background */
-    .cosmic-bg {
-      background: radial-gradient(circle at 50% 30%, #1e1233 0%, #000000 70%);
-    }
-    
-    /* HERO */
+
+    /* Cosmic Hero */
     .main-portal {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      background: radial-gradient(circle at 50% 30%, #1a0f2e 0%, #000 70%);
       overflow: hidden;
       color: white;
     }
-    
     #space-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-    
+
     .portal-ring {
-      width: 460px; height: 460px;
-      animation: breath 10s ease-in-out infinite, rotate-slow 60s linear infinite;
+      width: 480px; height: 480px;
+      animation: breath 11s ease-in-out infinite, slow-rotate 80s linear infinite;
     }
-    
     .portal-ring::before, .portal-ring::after, .ring3 {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
+      content: ''; position: absolute; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
     }
-    
-    .portal-ring::before { width: 400px; height: 400px; background: conic-gradient(transparent, var(--yin), transparent 70%); animation: swirl 7s linear infinite; }
-    .portal-ring::after { width: 310px; height: 310px; background: conic-gradient(transparent, #c084fc, transparent 70%); animation: swirl 13s linear infinite reverse; }
-    .ring3 { width: 230px; height: 230px; background: conic-gradient(transparent, var(--yang), transparent 70%); animation: swirl 20s linear infinite; }
-    
-    .blackhole { 
-      width: 148px; height: 148px; 
-      box-shadow: 0 0 90px #a855f7, inset 0 0 70px #000;
-    }
-    
-    .energy-pull {
-      width: 210px; height: 210px;
-      border-top-color: rgba(103,232,249,0.9);
-      animation: energy-spin 3s linear infinite;
-    }
-    
-    @keyframes breath { 0%,100% { transform: scale(0.9); } 50% { transform: scale(1.1); } }
+    .portal-ring::before { width: 410px; height: 410px; background: conic-gradient(transparent, var(--yin), transparent); animation: swirl 8s linear infinite; opacity: 0.75; }
+    .portal-ring::after { width: 320px; height: 320px; background: conic-gradient(transparent, #c084fc, transparent); animation: swirl 14s linear infinite reverse; opacity: 0.8; }
+    .ring3 { width: 240px; height: 240px; background: conic-gradient(transparent, var(--yang), transparent); animation: swirl 21s linear infinite; opacity: 0.9; }
+
+    .blackhole { width: 155px; height: 155px; background: radial-gradient(circle, #1f2937 20%, #000 80%); box-shadow: 0 0 100px #a855f7, inset 0 0 70px #000; }
+
+    @keyframes breath { 0%,100% { transform: scale(0.88); } 50% { transform: scale(1.12); } }
     @keyframes swirl { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-    @keyframes energy-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-    @keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
+    @keyframes slow-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
     .hero-text h1 {
-      font-size: clamp(3.8rem, 9vw, 7.2rem);
-      letter-spacing: 8px;
-      text-shadow: 0 0 60px var(--yin), 0 0 110px var(--yang), 0 0 160px #000;
+      font-size: clamp(4rem, 10vw, 7.5rem);
+      letter-spacing: 6px;
+      text-shadow: 0 0 70px var(--yin), 0 0 130px var(--yang);
     }
-    
+
     .cta-btn {
-      padding: 26px 72px;
-      font-size: 1.65rem;
-      background: linear-gradient(90deg, var(--yang), #e11d48);
-      box-shadow: 0 0 60px rgba(249,115,22,0.9);
-      animation: pulse-glow 2.8s infinite;
+      padding: 28px 80px;
+      font-size: 1.7rem;
+      background: linear-gradient(90deg, #f97316, #e11d48);
+      box-shadow: 0 0 70px rgba(249, 115, 22, 0.9);
+      animation: pulse-glow 2.5s infinite;
     }
-    
-    .cta-btn:hover {
-      transform: scale(1.18) translateY(-10px);
-      box-shadow: 0 0 100px rgba(249,115,22,1);
-    }
-    
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 60px rgba(249,115,22,0.9); }
-      50% { box-shadow: 0 0 100px rgba(249,115,22,1); }
-    }
-    
-    /* Floating Lotus Petals */
+    .cta-btn:hover { transform: scale(1.2) translateY(-8px); }
+
+    @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 70px rgba(249,115,22,0.9); } 50% { box-shadow: 0 0 110px rgba(249,115,22,1); } }
+
+    /* Floating Petals */
     .lotus-petal {
       position: absolute;
-      font-size: 2.5rem;
-      opacity: 0.15;
-      animation: float-petal linear infinite;
+      font-size: 2.8rem;
+      opacity: 0.18;
       z-index: 2;
       pointer-events: none;
+      animation: float-petal linear infinite;
     }
-    
     @keyframes float-petal {
-      0% { transform: translateY(100vh) rotate(0deg); }
-      100% { transform: translateY(-100vh) rotate(720deg); }
+      0% { transform: translateY(120vh) rotate(0deg); }
+      100% { transform: translateY(-120vh) rotate(900deg); }
     }
-    
-    /* Level Cards */
+
+    /* Cards */
     .level-card {
-      transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .level-card:hover {
-      transform: scale(1.08) translateY(-25px);
-      box-shadow: 0 40px 80px -20px rgb(249 115 22 / 0.3);
+      transform: scale(1.09) translateY(-30px);
+      box-shadow: 0 40px 90px -20px rgb(249 115 22 / 0.4);
     }
-    
-    /* Scroll Reveal */
-    .reveal { opacity: 0; transform: translateY(60px); transition: all 1s ease; }
+
+    .reveal { opacity: 0; transform: translateY(50px); transition: all 1.1s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
-<body class="bg-black text-white cosmic-bg">
+<body class="bg-black text-white">
 
   <!-- NAV -->
   <nav class="fixed top-0 left-0 right-0 bg-black/95 backdrop-blur-xl z-50 py-6 border-b border-white/10">
     <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <span class="text-4xl">☯️</span>
-        <div class="text-3xl font-bold tracking-[4px]">FUSION<span class="text-orange-500">FIT</span></div>
+      <div class="flex items-center gap-3 text-3xl font-bold tracking-widest">
+        ☯️ <span class="text-orange-500">FUSIONFIT</span>
       </div>
-      <div class="hidden md:flex items-center gap-10 text-sm font-medium">
-        <a href="#levels" class="hover:text-orange-400 transition-colors">THE PATH</a>
-        <a href="#ritual" class="hover:text-orange-400 transition-colors">THE RITUAL</a>
-        <a href="#stories" class="hover:text-orange-400 transition-colors">STORIES</a>
+      <div class="hidden md:flex gap-10 text-sm font-medium">
+        <a href="#levels" class="hover:text-orange-400">THE PATH</a>
+        <a href="#ritual" class="hover:text-orange-400">THE RITUAL</a>
+        <a href="#stories" class="hover:text-orange-400">STORIES</a>
       </div>
       <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" 
-              class="px-8 py-4 bg-white text-black font-semibold rounded-2xl hover:bg-orange-500 hover:text-white transition-all">
-        ENTER NOW
+              class="px-8 py-4 bg-white text-black rounded-2xl font-semibold hover:bg-orange-500 hover:text-white transition">
+        ENTER THE PORTAL
       </button>
     </div>
   </nav>
@@ -155,36 +118,37 @@
   <!-- HERO -->
   <section class="main-portal pt-20">
     <canvas id="space-canvas"></canvas>
-    
-    <!-- Floating Petals -->
-    <div id="petals"></div>
-    
+    <div id="petals-container"></div>
+
     <div class="portal-ring relative z-10">
       <div class="ring3"></div>
-      <div class="energy-pull"></div>
-      <div class="blackhole"></div>
+      <div class="energy-pull absolute top-1/2 left-1/2 w-[210px] h-[210px] border-4 border-transparent border-t-[#67e8f9] rounded-full" style="animation: energy-spin 3s linear infinite;"></div>
+      <div class="blackhole absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"></div>
     </div>
-    
-    <div class="hero-text relative z-20 text-center px-6 max-w-4xl mx-auto">
-      <div class="mb-8 inline-flex items-center gap-3 bg-white/10 backdrop-blur-md px-8 py-3 rounded-full border border-white/20 text-sm tracking-[3px]">
-        <span class="text-orange-400">✦</span> 3-DAY COSMIC RESET <span class="text-orange-400">✦</span>
+
+    <div class="hero-text relative z-20 text-center px-6 max-w-5xl mx-auto">
+      <div class="inline-flex items-center gap-4 bg-white/10 backdrop-blur-md px-10 py-4 rounded-full border border-white/20 mb-10">
+        <span class="text-orange-400 text-2xl">✦</span>
+        3-DAY COSMIC RESET
+        <span class="text-orange-400 text-2xl">✦</span>
       </div>
       
-      <h1 class="mb-8 leading-none">FIT<br>FUSION</h1>
-      
-      <p class="text-2xl md:text-4xl max-w-2xl mx-auto mb-12 opacity-90">
-        Ancient wisdom.<br>Modern power.<br><span class="text-orange-400 font-light">One portal to rule them all.</span>
+      <h1 class="mb-6">FIT FUSION</h1>
+      <p class="text-3xl md:text-5xl max-w-3xl mx-auto leading-tight opacity-90 mb-12">
+        Yin calms you.<br>
+        Yang ignites you.<br>
+        <span class="text-orange-400">Together — you become unstoppable.</span>
       </p>
       
       <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" 
-              class="cta-btn rounded-full font-bold">
+              class="cta-btn text-white font-bold rounded-full">
         BEGIN YOUR ASCENSION
       </button>
       
-      <div class="mt-16 flex justify-center gap-12 text-sm opacity-70">
-        <div>NO GYM</div>
-        <div>NO EQUIPMENT</div>
+      <div class="mt-16 flex flex-wrap justify-center gap-8 text-sm opacity-75">
         <div>10 MINUTES / DAY</div>
+        <div>NO EQUIPMENT</div>
+        <div>NO GYM NEEDED</div>
       </div>
     </div>
   </section>
@@ -192,88 +156,85 @@
   <!-- LEVELS -->
   <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-white text-zinc-900">
     <div class="text-center mb-20">
-      <h2 class="text-6xl font-bold mb-6">The 5 Levels of Ascension</h2>
-      <p class="text-2xl text-zinc-600 max-w-2xl mx-auto">From seed in darkness → full lotus bloom</p>
+      <h2 class="text-6xl font-bold mb-4">The 5 Levels of Ascension</h2>
+      <p class="text-2xl text-zinc-600">From seed in darkness to full lotus bloom</p>
     </div>
     
     <div class="grid md:grid-cols-5 gap-8">
       <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-emerald-100 text-center group">
-        <div class="text-8xl mb-8 transition-transform group-hover:scale-110">☯️</div>
-        <h3 class="text-3xl font-bold mb-2">Level 1</h3>
-        <p class="text-emerald-600 font-semibold mb-6">Yin Awakening</p>
-        <p class="text-zinc-600">Gentle. Grounded. The seed takes root.</p>
+        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">☯️</div>
+        <h3 class="text-3xl font-bold">Level 1</h3>
+        <p class="text-emerald-600 font-semibold mb-4">Yin Awakening</p>
+        <p class="text-zinc-600">Gentle grounding. The seed takes root.</p>
       </div>
       <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-orange-100 text-center group">
-        <div class="text-8xl mb-8 transition-transform group-hover:scale-110">🔥</div>
-        <h3 class="text-3xl font-bold mb-2">Level 2</h3>
-        <p class="text-orange-600 font-semibold mb-6">Yang Ignition</p>
+        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🔥</div>
+        <h3 class="text-3xl font-bold">Level 2</h3>
+        <p class="text-orange-600 font-semibold mb-4">Yang Ignition</p>
         <p class="text-zinc-600">Fire rises. Power awakens.</p>
       </div>
       <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-cyan-100 text-center group">
-        <div class="text-8xl mb-8 transition-transform group-hover:scale-110">🌊</div>
-        <h3 class="text-3xl font-bold mb-2">Level 3</h3>
-        <p class="text-cyan-600 font-semibold mb-6">Fusion Harmony</p>
+        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🌊</div>
+        <h3 class="text-3xl font-bold">Level 3</h3>
+        <p class="text-cyan-600 font-semibold mb-4">Fusion Harmony</p>
         <p class="text-zinc-600">Yin &amp; Yang dance as one.</p>
       </div>
       <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-purple-100 text-center group">
-        <div class="text-8xl mb-8 transition-transform group-hover:scale-110">🕊️</div>
-        <h3 class="text-3xl font-bold mb-2">Level 4</h3>
-        <p class="text-purple-600 font-semibold mb-6">Symbolic Elevation</p>
+        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🕊️</div>
+        <h3 class="text-3xl font-bold">Level 4</h3>
+        <p class="text-purple-600 font-semibold mb-4">Symbolic Elevation</p>
         <p class="text-zinc-600">Humility meets ambition.</p>
       </div>
       <div class="level-card bg-white p-10 rounded-3xl shadow-2xl border border-pink-100 text-center group">
-        <div class="text-8xl mb-8 transition-transform group-hover:scale-110">🌸</div>
-        <h3 class="text-3xl font-bold mb-2">Level 5</h3>
-        <p class="text-pink-600 font-semibold mb-6">Lotus Mastery</p>
-        <p class="text-zinc-600">108 cycles. Full bloom.</p>
+        <div class="text-8xl mb-8 group-hover:scale-110 transition-transform">🌸</div>
+        <h3 class="text-3xl font-bold">Level 5</h3>
+        <p class="text-pink-600 font-semibold mb-4">Lotus Mastery</p>
+        <p class="text-zinc-600">108 sacred cycles. Full bloom.</p>
       </div>
     </div>
   </section>
 
-  <!-- RITUAL TEASER -->
+  <!-- RITUAL -->
   <section id="ritual" class="py-28 bg-zinc-950">
-    <div class="max-w-5xl mx-auto px-6 text-center">
+    <div class="max-w-4xl mx-auto px-6 text-center">
       <h2 class="text-5xl font-bold mb-8">The Daily Fusion Ritual</h2>
-      <p class="text-xl text-zinc-400 mb-16">Just 10 minutes. Life-changing results.</p>
+      <p class="text-xl text-zinc-400 mb-12">Just 10 minutes that will change how you feel forever.</p>
       
-      <div class="bg-zinc-900 rounded-3xl p-12 max-w-2xl mx-auto border border-white/10">
-        <div class="text-6xl mb-8">☯️ 🔥 🌊</div>
+      <div class="bg-zinc-900 rounded-3xl p-16 border border-white/10">
+        <div class="flex justify-center gap-12 text-6xl mb-10">
+          <span>☯️</span><span>🔥</span><span>🌊</span>
+        </div>
         <p class="text-2xl leading-relaxed text-zinc-300">
-          Gentle Yin flow → Explosive Yang strength → Harmonizing breathwork
+          Gentle Yin flow → Explosive Yang strength → Harmonizing breath &amp; intention
         </p>
-        <button onclick="alert('In the full version we would show the actual workout here! Want me to build that next?')" 
-                class="mt-10 px-10 py-5 bg-orange-600 rounded-2xl font-semibold hover:bg-orange-500 transition">
-          Preview Day 1 Ritual →
-        </button>
       </div>
     </div>
   </section>
 
-  <!-- STORIES / TESTIMONIALS -->
+  <!-- STORIES -->
   <section id="stories" class="py-28 bg-white text-zinc-900">
     <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-5xl font-bold text-center mb-20">They Entered. They Ascended.</h2>
-      
+      <h2 class="text-5xl font-bold text-center mb-20">They Entered. They Transformed.</h2>
       <div class="grid md:grid-cols-3 gap-10">
         <div class="reveal bg-zinc-100 p-10 rounded-3xl">
-          <p class="text-xl italic mb-8">"I feel 10 years younger. The portal design actually made me excited to train every day."</p>
-          <div class="flex items-center gap-4">
+          <p class="italic text-xl">"The portal design alone got me hooked. Day 3 and I feel lighter, stronger, calmer."</p>
+          <div class="mt-8 flex items-center gap-4">
             <div class="w-14 h-14 bg-pink-500 rounded-2xl flex items-center justify-center text-4xl">🌸</div>
-            <div><strong>Sarah Chen</strong><br><span class="text-zinc-500">New York</span></div>
+            <div><strong>Sarah Chen</strong><br>New York</div>
           </div>
         </div>
         <div class="reveal bg-zinc-100 p-10 rounded-3xl">
-          <p class="text-xl italic mb-8">"Strength + peace at the same time. Never thought that was possible. This is magic."</p>
-          <div class="flex items-center gap-4">
+          <p class="italic text-xl">"Best 10 minutes of my day. Finally strength training that doesn't destroy me."</p>
+          <div class="mt-8 flex items-center gap-4">
             <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center text-4xl">🔥</div>
-            <div><strong>Marcus Rivera</strong><br><span class="text-zinc-500">Los Angeles</span></div>
+            <div><strong>Marcus Rivera</strong><br>Los Angeles</div>
           </div>
         </div>
         <div class="reveal bg-zinc-100 p-10 rounded-3xl">
-          <p class="text-xl italic mb-8">"The most beautiful fitness site I’ve ever seen. And it actually works."</p>
-          <div class="flex items-center gap-4">
+          <p class="italic text-xl">"Most beautiful fitness experience online. I actually look forward to it."</p>
+          <div class="mt-8 flex items-center gap-4">
             <div class="w-14 h-14 bg-cyan-500 rounded-2xl flex items-center justify-center text-4xl">☯️</div>
-            <div><strong>Priya Patel</strong><br><span class="text-zinc-500">London</span></div>
+            <div><strong>Priya Patel</strong><br>London</div>
           </div>
         </div>
       </div>
@@ -281,42 +242,35 @@
   </section>
 
   <!-- FINAL CTA -->
-  <section id="signup" class="py-32 bg-gradient-to-b from-black via-zinc-950 to-black text-center">
+  <section id="signup" class="py-32 bg-gradient-to-b from-black to-zinc-950 text-center">
     <div class="max-w-lg mx-auto px-6">
-      <h2 class="text-6xl font-bold mb-8">Your Transformation Starts in 60 Seconds</h2>
-      <p class="text-2xl text-zinc-400 mb-12">Join 1,000+ ascenders who already entered the portal.</p>
+      <h2 class="text-6xl font-bold mb-6">Your New Life Starts Here</h2>
+      <p class="text-2xl text-zinc-400 mb-12">Free 3-Day Portal Access. No card needed.</p>
       
       <form action="https://formsubmit.co/fusionfitportal@gmail.com" method="POST" class="space-y-6">
         <input type="text" name="name" placeholder="Your Name" required class="w-full p-7 rounded-3xl bg-zinc-900 border border-zinc-700 text-lg focus:border-orange-500">
         <input type="email" name="email" placeholder="Your Email" required class="w-full p-7 rounded-3xl bg-zinc-900 border border-zinc-700 text-lg focus:border-orange-500">
-        <button type="submit" class="w-full py-8 text-2xl font-bold bg-gradient-to-r from-orange-500 to-rose-600 rounded-3xl hover:brightness-110 transition-all">
-          ENTER THE PORTAL FREE
+        <button type="submit" class="w-full py-8 text-2xl font-bold rounded-3xl bg-gradient-to-r from-orange-500 to-rose-600 hover:brightness-110">
+          ENTER THE PORTAL — IT'S FREE
         </button>
       </form>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-black py-20 border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <div class="text-4xl mb-6">☯️ FUSIONFIT</div>
-      <p class="text-zinc-500">© 2026 • Handcrafted with cosmic energy in New York City</p>
-      <p class="text-xs text-zinc-600 mt-8">Not medical advice • Results vary • Listen to your body</p>
-    </div>
+  <footer class="bg-black py-16 text-center text-zinc-500">
+    <div class="text-4xl mb-4">☯️ FUSIONFIT</div>
+    <p>© 2026 • Woven with cosmic energy in New York City</p>
   </footer>
 
   <script>
-    // Canvas Starfield
+    // Starfield
     const canvas = document.getElementById('space-canvas');
     const ctx = canvas.getContext('2d');
-    
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+
     let particles = [];
     class Particle {
       constructor() { this.reset(); }
@@ -324,62 +278,56 @@
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.size = Math.random() * 2.8 + 0.6;
-        this.speed = Math.random() * 3 + 1;
+        this.speed = Math.random() * 3 + 1.1;
       }
       update() {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const dx = cx - this.x;
-        const dy = cy - this.y;
+        const cx = canvas.width/2, cy = canvas.height/2;
+        const dx = cx - this.x, dy = cy - this.y;
         const dist = Math.hypot(dx, dy);
-        if (dist < 80) { this.reset(); return; }
-        this.x += (dx / dist) * this.speed;
-        this.y += (dy / dist) * this.speed;
-        this.speed *= 1.008;
+        if (dist < 90) { this.reset(); return; }
+        this.x += (dx/dist) * this.speed;
+        this.y += (dy/dist) * this.speed;
+        this.speed *= 1.007;
       }
       draw() {
-        ctx.fillStyle = 'rgba(224, 242, 255, 0.95)';
+        ctx.fillStyle = 'rgba(224,242,255,0.95)';
         ctx.fillRect(this.x, this.y, this.size, this.size);
       }
     }
-    
+
     function initParticles() {
       particles = [];
-      for (let i = 0; i < 280; i++) particles.push(new Particle());
+      for (let i = 0; i < 300; i++) particles.push(new Particle());
     }
-    
     function animate() {
-      ctx.fillStyle = 'rgba(3,7,18,0.2)';
+      ctx.fillStyle = 'rgba(3,7,18,0.22)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
     }
     initParticles();
     animate();
-    
-    // Floating Lotus Petals
+
+    // Floating Petals
     function createPetal() {
       const petal = document.createElement('div');
       petal.className = 'lotus-petal';
-      petal.textContent = ['🌸','☯️','🪷'][Math.floor(Math.random()*3)];
+      petal.textContent = ['🌸','🪷','☯️'][Math.floor(Math.random()*3)];
       petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = (Math.random() * 18 + 22) + 's';
-      petal.style.animationDelay = '-' + Math.random() * 30 + 's';
-      document.getElementById('petals').appendChild(petal);
-      
-      setTimeout(() => petal.remove(), 50000);
+      petal.style.animationDuration = (Math.random() * 25 + 25) + 's';
+      document.getElementById('petals-container').appendChild(petal);
+      setTimeout(() => petal.remove(), 60000);
     }
-    setInterval(createPetal, 800);
-    for (let i = 0; i < 12; i++) createPetal();
-    
-    // Scroll Reveal
-    const reveals = document.querySelectorAll('.reveal');
+    setInterval(createPetal, 600);
+    for (let i = 0; i < 15; i++) createPetal();
+
+    // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    }, { threshold: 0.15 });
-    reveals.forEach(r => observer.observe(r));
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
