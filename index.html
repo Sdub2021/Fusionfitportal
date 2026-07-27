@@ -65,6 +65,7 @@
       cursor: pointer;
       transition: all 0.3s ease;
       color: white;
+      position: relative;
     }
     .sound-toggle:hover {
       background: rgba(249, 115, 22, 0.25);
@@ -73,6 +74,33 @@
     }
     .sound-toggle.muted {
       opacity: 0.55;
+    }
+    .sound-toggle.active {
+      background: rgba(249, 115, 22, 0.35);
+      border-color: #f97316;
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+    }
+
+    /* Feedback toast */
+    #sound-toast {
+      position: fixed;
+      top: 100px;
+      right: 24px;
+      background: rgba(15, 15, 30, 0.95);
+      border: 1px solid rgba(249, 115, 22, 0.5);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      z-index: 200;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.35s ease;
+      pointer-events: none;
+    }
+    #sound-toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -109,6 +137,9 @@
       </div>
     </div>
   </nav>
+
+  <!-- Sound feedback toast -->
+  <div id="sound-toast">Sound enabled</div>
 
   <!-- HERO -->
   <section class="main-portal pt-20">
@@ -194,56 +225,89 @@
     let masterGain = null;
     let isPlaying = false;
     let oscillators = [];
-    let ambientStarted = false;
+    let ambientNodes = []; // keep track of all nodes so we can disconnect cleanly
+
+    function showToast(msg) {
+      const toast = document.getElementById('sound-toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
 
     function initAudio() {
-      if (audioCtx) return;
+      if (audioCtx) return audioCtx;
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       masterGain = audioCtx.createGain();
-      masterGain.gain.value = 0.12; // gentle volume
+      masterGain.gain.value = 0.45; // much louder
       masterGain.connect(audioCtx.destination);
+      return audioCtx;
+    }
+
+    function playEnableChime() {
+      // Clear, audible confirmation that audio is working
+      const now = audioCtx.currentTime;
+
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);      // C5
+      osc.frequency.setValueAtTime(659.25, now + 0.12); // E5
+      osc.frequency.setValueAtTime(783.99, now + 0.24); // G5
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(now);
+      osc.stop(now + 0.75);
     }
 
     function createAmbientPad() {
       if (!audioCtx) initAudio();
 
-      // Low yin drone
+      // Clean up previous if any
+      stopAmbient(true);
+
+      const now = audioCtx.currentTime;
+
+      // === Low drone (clearly audible range) ===
       const drone = audioCtx.createOscillator();
       drone.type = 'sine';
-      drone.frequency.value = 55; // A1 – grounding
+      drone.frequency.value = 82.41; // E2 – still grounding but audible
 
       const droneGain = audioCtx.createGain();
-      droneGain.gain.value = 0.35;
+      droneGain.gain.value = 0.55;
 
-      // Soft filter for warmth
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.value = 280;
-      filter.Q.value = 0.7;
+      const droneFilter = audioCtx.createBiquadFilter();
+      droneFilter.type = 'lowpass';
+      droneFilter.frequency.value = 420;
 
-      drone.connect(filter);
-      filter.connect(droneGain);
+      drone.connect(droneFilter);
+      droneFilter.connect(droneGain);
       droneGain.connect(masterGain);
 
-      // Higher yang pad (slowly detuned for movement)
+      // === Main pad ===
       const pad = audioCtx.createOscillator();
       pad.type = 'sine';
-      pad.frequency.value = 220; // A3
+      pad.frequency.value = 164.81; // E3
 
       const padGain = audioCtx.createGain();
-      padGain.gain.value = 0.18;
+      padGain.gain.value = 0.32;
 
       const padFilter = audioCtx.createBiquadFilter();
       padFilter.type = 'lowpass';
-      padFilter.frequency.value = 900;
+      padFilter.frequency.value = 1100;
 
-      // Gentle LFO for breathing movement
+      // Slow breathing LFO
       const lfo = audioCtx.createOscillator();
       lfo.type = 'sine';
-      lfo.frequency.value = 0.08; // very slow breath rate
+      lfo.frequency.value = 0.09;
 
       const lfoGain = audioCtx.createGain();
-      lfoGain.gain.value = 12; // subtle pitch wobble
+      lfoGain.gain.value = 18;
 
       lfo.connect(lfoGain);
       lfoGain.connect(pad.frequency);
@@ -252,57 +316,71 @@
       padFilter.connect(padGain);
       padGain.connect(masterGain);
 
-      // Soft high shimmer
+      // === Higher shimmer / overtone ===
       const shimmer = audioCtx.createOscillator();
       shimmer.type = 'triangle';
-      shimmer.frequency.value = 880;
+      shimmer.frequency.value = 329.63; // E4
 
       const shimmerGain = audioCtx.createGain();
-      shimmerGain.gain.value = 0.04;
+      shimmerGain.gain.value = 0.12;
 
-      const shimmerFilter = audioCtx.createBiquadFilter();
-      shimmerFilter.type = 'highpass';
-      shimmerFilter.frequency.value = 600;
-
-      shimmer.connect(shimmerFilter);
-      shimmerFilter.connect(shimmerGain);
+      shimmer.connect(shimmerGain);
       shimmerGain.connect(masterGain);
 
-      // Start everything
-      const now = audioCtx.currentTime;
+      // Start all
       drone.start(now);
       pad.start(now);
       shimmer.start(now);
       lfo.start(now);
 
       oscillators = [drone, pad, shimmer, lfo];
+      ambientNodes = [drone, pad, shimmer, lfo, droneGain, padGain, shimmerGain, droneFilter, padFilter, lfoGain];
       isPlaying = true;
-      ambientStarted = true;
 
       updateSoundUI(true);
+      showToast('Ambient sound on');
     }
 
-    function stopAmbient() {
-      if (!isPlaying) return;
+    function stopAmbient(silent = false) {
+      if (!isPlaying && oscillators.length === 0) return;
+
       oscillators.forEach(osc => {
         try { osc.stop(); } catch(e) {}
       });
       oscillators = [];
+      ambientNodes = [];
       isPlaying = false;
-      updateSoundUI(false);
+
+      if (!silent) {
+        updateSoundUI(false);
+        showToast('Sound off');
+      }
     }
 
     function toggleSound() {
       initAudio();
 
+      // Always try to resume (critical for Chrome / Safari)
       if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
+        audioCtx.resume().then(() => {
+          actuallyToggle();
+        }).catch(err => {
+          console.error('Audio resume failed', err);
+          showToast('Click again to enable sound');
+        });
+      } else {
+        actuallyToggle();
       }
+    }
 
+    function actuallyToggle() {
       if (isPlaying) {
         stopAmbient();
       } else {
-        createAmbientPad();
+        playEnableChime();          // clear confirmation sound first
+        setTimeout(() => {
+          createAmbientPad();
+        }, 280);
       }
     }
 
@@ -312,29 +390,29 @@
 
       const now = audioCtx.currentTime;
 
-      // Rising whoosh / activation tone
+      // Strong rising portal tone
       const osc = audioCtx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(110, now);
-      osc.frequency.exponentialRampToValueAtTime(440, now + 1.4);
+      osc.frequency.setValueAtTime(146.83, now);     // D3
+      osc.frequency.exponentialRampToValueAtTime(587.33, now + 1.5); // D5
 
       const gain = audioCtx.createGain();
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.22, now + 0.15);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
+      gain.gain.linearRampToValueAtTime(0.4, now + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
 
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(200, now);
-      filter.frequency.exponentialRampToValueAtTime(1200, now + 1.2);
-      filter.Q.value = 2;
+      filter.frequency.setValueAtTime(300, now);
+      filter.frequency.exponentialRampToValueAtTime(1800, now + 1.3);
+      filter.Q.value = 1.8;
 
       osc.connect(filter);
       filter.connect(gain);
-      gain.connect(masterGain || audioCtx.destination);
+      gain.connect(masterGain);
 
       osc.start(now);
-      osc.stop(now + 1.7);
+      osc.stop(now + 1.9);
     }
 
     function updateSoundUI(playing) {
@@ -344,10 +422,12 @@
 
       if (playing) {
         btn.classList.remove('muted');
+        btn.classList.add('active');
         onIcon.classList.remove('hidden');
         offIcon.classList.add('hidden');
       } else {
         btn.classList.add('muted');
+        btn.classList.remove('active');
         onIcon.classList.add('hidden');
         offIcon.classList.remove('hidden');
       }
@@ -469,16 +549,15 @@
       // Sound toggle
       document.getElementById('sound-toggle').addEventListener('click', toggleSound);
 
-      // Ascension button → play portal tone + scroll
+      // Ascension button
       document.getElementById('ascend-btn').addEventListener('click', () => {
-        if (isPlaying || ambientStarted) {
-          playPortalTone();
-        } else {
-          // First interaction also starts ambient
+        if (!isPlaying) {
           toggleSound();
-          setTimeout(playPortalTone, 180);
+          setTimeout(playPortalTone, 400);
+        } else {
+          playPortalTone();
         }
-        // Scroll if signup exists later
+
         const signup = document.getElementById('signup');
         if (signup) signup.scrollIntoView({ behavior: 'smooth' });
       });
