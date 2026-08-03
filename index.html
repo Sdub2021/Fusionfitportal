@@ -8,6 +8,7 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
   <style>
@@ -111,7 +112,7 @@
       </div>
       <div class="hidden md:flex gap-10 text-sm font-medium">
         <a href="#levels" class="hover:text-orange-400">THE PATH</a>
-        <a href="#workouts" class="hover:text-orange-400">WORKOUTS</a>
+        <a href="#signup" class="hover:text-orange-400">CLAIM CMC37</a>
         <a href="#stories" class="hover:text-orange-400">STORIES</a>
       </div>
       <div class="flex items-center gap-4">
@@ -204,6 +205,37 @@
     </div>
   </section>
 
+  <!-- SIGNUP / CLAIM CMC37 -->
+  <section id="signup" class="py-28 bg-zinc-950">
+    <div class="max-w-xl mx-auto px-6 text-center">
+      <h2 class="text-5xl font-bold mb-4">Claim Your 1 CMC37</h2>
+      <p class="text-xl text-zinc-400 mb-12">Enter your email and Solana wallet to receive 1 CMC37</p>
+
+      <form id="signup-form" class="space-y-6 text-left">
+        <div>
+          <label class="block text-sm text-zinc-400 mb-2">Email</label>
+          <input type="email" id="email" required
+                 class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none"
+                 placeholder="you@email.com">
+        </div>
+
+        <div>
+          <label class="block text-sm text-zinc-400 mb-2">Solana Wallet Address</label>
+          <input type="text" id="wallet" required
+                 class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none"
+                 placeholder="Your Solana wallet address">
+        </div>
+
+        <button type="submit" id="submit-btn"
+                class="w-full py-6 text-xl font-bold rounded-2xl bg-gradient-to-r from-orange-500 to-rose-600 hover:brightness-110 transition-all">
+          CLAIM 1 CMC37
+        </button>
+
+        <p id="form-message" class="text-center text-sm mt-4 hidden"></p>
+      </form>
+    </div>
+  </section>
+
   <!-- WORKOUT MODAL -->
   <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]">
     <div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative">
@@ -213,15 +245,71 @@
   </div>
 
   <script>
-    // ==================== HEALING + TRIBAL AUDIO ====================
-    // 432 Hz + 528 Hz foundation
-    // Atmospheric static (filtered noise)
-    // Soft Native American inspired tribal heartbeat
+    // ==================== SUPABASE ====================
+    const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const wallet = document.getElementById('wallet').value.trim();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('form-message');
+
+      btn.disabled = true;
+      btn.textContent = 'Claiming...';
+      msg.classList.add('hidden');
+
+      try {
+        const { data, error } = await supabase
+          .from('signups')
+          .insert([
+            {
+              email: email,
+              wallet_address: wallet,
+              verified: false,
+              rewarded: true,
+              ip_address: null
+            }
+          ]);
+
+        if (error) {
+          if (error.code === '23505') {
+            msg.textContent = 'This email or wallet is already registered.';
+            msg.className = 'text-center text-sm mt-4 text-orange-400';
+          } else {
+            msg.textContent = 'Error: ' + error.message;
+            msg.className = 'text-center text-sm mt-4 text-red-400';
+          }
+          msg.classList.remove('hidden');
+          btn.disabled = false;
+          btn.textContent = 'CLAIM 1 CMC37';
+          return;
+        }
+
+        msg.textContent = 'Success! You are entitled to 1 CMC37. We will process the reward soon.';
+        msg.className = 'text-center text-sm mt-4 text-green-400';
+        msg.classList.remove('hidden');
+        btn.textContent = 'Claimed ✓';
+        document.getElementById('signup-form').reset();
+
+      } catch (err) {
+        msg.textContent = 'Something went wrong. Please try again.';
+        msg.className = 'text-center text-sm mt-4 text-red-400';
+        msg.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'CLAIM 1 CMC37';
+      }
+    });
+
+    // ==================== HEALING + TRIBAL AUDIO ====================
     let audioCtx = null;
     let masterGain = null;
     let isPlaying = false;
-    let activeNodes = [];      // everything that needs to be stopped
+    let activeNodes = [];
     let beatInterval = null;
 
     function showToast(msg) {
@@ -242,16 +330,13 @@
       return audioCtx;
     }
 
-    // Create a buffer of pink-ish noise
     function createNoiseBuffer(ctx, duration = 2) {
       const sampleRate = ctx.sampleRate;
       const length = sampleRate * duration;
       const buffer = ctx.createBuffer(1, length, sampleRate);
       const data = buffer.getChannelData(0);
-
       let last = 0;
       for (let i = 0; i < length; i++) {
-        // simple pink-ish noise approximation
         const white = Math.random() * 2 - 1;
         last = (last + 0.02 * white) / 1.02;
         data[i] = last * 3.5;
@@ -259,21 +344,17 @@
       return buffer;
     }
 
-    // Soft confirmation chord
     function playUnlockTone() {
       const ctx = getCtx();
       const now = ctx.currentTime;
-
       [432, 528, 648].forEach((freq, i) => {
         const osc = ctx.createOscillator();
         const g = ctx.createGain();
         osc.type = 'sine';
         osc.frequency.value = freq;
-
         g.gain.setValueAtTime(0, now);
         g.gain.linearRampToValueAtTime(0.22 - i * 0.04, now + 0.06);
         g.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
-
         osc.connect(g);
         g.connect(masterGain);
         osc.start(now + i * 0.05);
@@ -281,42 +362,31 @@
       });
     }
 
-    // Single soft tribal drum hit (frame-drum style)
     function playTribalHit() {
       if (!audioCtx || !isPlaying) return;
       const ctx = audioCtx;
       const now = ctx.currentTime;
-
-      // Low body
       const osc = ctx.createOscillator();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(85, now);
       osc.frequency.exponentialRampToValueAtTime(38, now + 0.18);
-
       const oscG = ctx.createGain();
       oscG.gain.setValueAtTime(0.55, now);
       oscG.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-      // Noise crack for attack
       const noise = ctx.createBufferSource();
       noise.buffer = createNoiseBuffer(ctx, 0.3);
-
       const noiseF = ctx.createBiquadFilter();
       noiseF.type = 'bandpass';
       noiseF.frequency.value = 180;
       noiseF.Q.value = 1.2;
-
       const noiseG = ctx.createGain();
       noiseG.gain.setValueAtTime(0.35, now);
       noiseG.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-
       osc.connect(oscG);
       oscG.connect(masterGain);
-
       noise.connect(noiseF);
       noiseF.connect(noiseG);
       noiseG.connect(masterGain);
-
       osc.start(now);
       osc.stop(now + 0.4);
       noise.start(now);
@@ -326,55 +396,42 @@
     function startHealingPad() {
       const ctx = getCtx();
       stopPad(true);
-
       const now = ctx.currentTime;
 
-      // ---------- 1. Atmospheric static (very filtered noise) ----------
       const noise = ctx.createBufferSource();
       noise.buffer = createNoiseBuffer(ctx, 4);
       noise.loop = true;
-
       const noiseFilter = ctx.createBiquadFilter();
       noiseFilter.type = 'lowpass';
       noiseFilter.frequency.value = 420;
       noiseFilter.Q.value = 0.6;
-
       const noiseGain = ctx.createGain();
-      noiseGain.gain.value = 0.07; // very subtle static
-
+      noiseGain.gain.value = 0.07;
       noise.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
       noiseGain.connect(masterGain);
       noise.start(now);
 
-      // ---------- 2. Deep grounding drone ----------
       const drone = ctx.createOscillator();
       drone.type = 'sine';
-      drone.frequency.value = 108; // close to OM / grounding
-
+      drone.frequency.value = 108;
       const droneG = ctx.createGain();
       droneG.gain.value = 0.28;
-
       const droneF = ctx.createBiquadFilter();
       droneF.type = 'lowpass';
       droneF.frequency.value = 280;
-
       drone.connect(droneF);
       droneF.connect(droneG);
       droneG.connect(masterGain);
 
-      // ---------- 3. Rich 432 Hz pad (slightly detuned pair) ----------
       const pad432a = ctx.createOscillator();
       const pad432b = ctx.createOscillator();
       pad432a.type = 'sine';
       pad432b.type = 'sine';
       pad432a.frequency.value = 432;
-      pad432b.frequency.value = 433.8; // slight detune for warmth
-
+      pad432b.frequency.value = 433.8;
       const g432 = ctx.createGain();
       g432.gain.value = 0.16;
-
-      // slow breathing LFO
       const lfo = ctx.createOscillator();
       lfo.frequency.value = 0.06;
       const lfoG = ctx.createGain();
@@ -382,42 +439,32 @@
       lfo.connect(lfoG);
       lfoG.connect(pad432a.frequency);
       lfoG.connect(pad432b.frequency);
-
       pad432a.connect(g432);
       pad432b.connect(g432);
       g432.connect(masterGain);
 
-      // ---------- 4. 528 Hz layer ----------
       const pad528 = ctx.createOscillator();
       pad528.type = 'sine';
       pad528.frequency.value = 528;
-
       const g528 = ctx.createGain();
       g528.gain.value = 0.11;
-
       pad528.connect(g528);
       g528.connect(masterGain);
 
-      // ---------- 5. Soft high shimmer ----------
       const shimmer = ctx.createOscillator();
       shimmer.type = 'triangle';
-      shimmer.frequency.value = 648; // 1.5 × 432
-
+      shimmer.frequency.value = 648;
       const gSh = ctx.createGain();
       gSh.gain.value = 0.045;
-
       shimmer.connect(gSh);
       gSh.connect(masterGain);
 
-      // Start continuous tones
       [drone, pad432a, pad432b, pad528, shimmer, lfo, noise].forEach(n => {
         if (n.start) n.start(now);
       });
 
       activeNodes = [drone, pad432a, pad432b, pad528, shimmer, lfo, noise, droneG, g432, g528, gSh, noiseGain];
 
-      // ---------- 6. Soft tribal heartbeat (≈ 62 BPM) ----------
-      // Heartbeat feel: soft hit every ~0.97 seconds
       playTribalHit();
       beatInterval = setInterval(() => {
         if (isPlaying) playTribalHit();
@@ -433,7 +480,6 @@
         clearInterval(beatInterval);
         beatInterval = null;
       }
-
       activeNodes.forEach(n => {
         try {
           if (n.stop) n.stop();
@@ -442,7 +488,6 @@
       });
       activeNodes = [];
       isPlaying = false;
-
       if (!silent) {
         updateUI(false);
         showToast('Sound off');
@@ -451,7 +496,6 @@
 
     function toggleSound() {
       const ctx = getCtx();
-
       const doToggle = () => {
         if (isPlaying) {
           stopPad();
@@ -460,7 +504,6 @@
           setTimeout(startHealingPad, 350);
         }
       };
-
       if (ctx.state === 'suspended') {
         ctx.resume().then(doToggle).catch(() => {
           showToast('Click the speaker again');
@@ -473,19 +516,15 @@
     function playPortalTone() {
       const ctx = getCtx();
       if (ctx.state === 'suspended') ctx.resume();
-
       const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
-
       osc.type = 'sine';
       osc.frequency.setValueAtTime(216, now);
       osc.frequency.exponentialRampToValueAtTime(528, now + 1.5);
-
       g.gain.setValueAtTime(0, now);
       g.gain.linearRampToValueAtTime(0.4, now + 0.1);
       g.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
-
       osc.connect(g);
       g.connect(masterGain);
       osc.start(now);
