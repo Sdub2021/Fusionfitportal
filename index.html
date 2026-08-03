@@ -8,12 +8,10 @@
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   
   <style>
-    :root { --yin: #67e8f9; --yang: #f97316; }
-    
     body {
       font-family: 'Inter', sans-serif;
       margin: 0; padding: 0;
@@ -148,7 +146,7 @@
         Ancient balance.<br>Modern power.
       </p>
       <button id="ascend-btn" 
-              class="cta-btn text-white font-bold rounded-full px-16 py-8 text-2xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-400 hover:to-amber-300 transition-all shadow-lg shadow-orange-500/30">
+              class="text-white font-bold rounded-full px-16 py-8 text-2xl bg-gradient-to-r from-orange-500 to-amber-400 hover:from-orange-400 hover:to-amber-300 transition-all shadow-lg shadow-orange-500/30">
         BEGIN YOUR ASCENSION
       </button>
     </div>
@@ -249,60 +247,68 @@
     const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Wait until the page and scripts are fully loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      const { createClient } = supabase;
+      const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    document.getElementById('signup-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+      const form = document.getElementById('signup-form');
+      if (!form) return;
 
-      const email = document.getElementById('email').value.trim();
-      const wallet = document.getElementById('wallet').value.trim();
-      const btn = document.getElementById('submit-btn');
-      const msg = document.getElementById('form-message');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      btn.disabled = true;
-      btn.textContent = 'Claiming...';
-      msg.classList.add('hidden');
+        const email = document.getElementById('email').value.trim();
+        const wallet = document.getElementById('wallet').value.trim();
+        const btn = document.getElementById('submit-btn');
+        const msg = document.getElementById('form-message');
 
-      try {
-        const { data, error } = await supabase
-          .from('signups')
-          .insert([
-            {
-              email: email,
-              wallet_address: wallet,
-              verified: false,
-              rewarded: true,
-              ip_address: null
+        btn.disabled = true;
+        btn.textContent = 'Claiming...';
+        msg.classList.add('hidden');
+
+        try {
+          const { data, error } = await supabaseClient
+            .from('signups')
+            .insert([
+              {
+                email: email,
+                wallet_address: wallet,
+                verified: false,
+                rewarded: true,
+                ip_address: null
+              }
+            ]);
+
+          if (error) {
+            if (error.code === '23505') {
+              msg.textContent = 'This email or wallet is already registered.';
+              msg.className = 'text-center text-sm mt-4 text-orange-400';
+            } else {
+              msg.textContent = 'Error: ' + error.message;
+              msg.className = 'text-center text-sm mt-4 text-red-400';
             }
-          ]);
-
-        if (error) {
-          if (error.code === '23505') {
-            msg.textContent = 'This email or wallet is already registered.';
-            msg.className = 'text-center text-sm mt-4 text-orange-400';
-          } else {
-            msg.textContent = 'Error: ' + error.message;
-            msg.className = 'text-center text-sm mt-4 text-red-400';
+            msg.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = 'CLAIM 1 CMC37';
+            return;
           }
+
+          msg.textContent = 'Success! You are entitled to 1 CMC37. We will process the reward soon.';
+          msg.className = 'text-center text-sm mt-4 text-green-400';
+          msg.classList.remove('hidden');
+          btn.textContent = 'Claimed ✓';
+          form.reset();
+
+        } catch (err) {
+          console.error(err);
+          msg.textContent = 'Something went wrong. Please try again.';
+          msg.className = 'text-center text-sm mt-4 text-red-400';
           msg.classList.remove('hidden');
           btn.disabled = false;
           btn.textContent = 'CLAIM 1 CMC37';
-          return;
         }
-
-        msg.textContent = 'Success! You are entitled to 1 CMC37. We will process the reward soon.';
-        msg.className = 'text-center text-sm mt-4 text-green-400';
-        msg.classList.remove('hidden');
-        btn.textContent = 'Claimed ✓';
-        document.getElementById('signup-form').reset();
-
-      } catch (err) {
-        msg.textContent = 'Something went wrong. Please try again.';
-        msg.className = 'text-center text-sm mt-4 text-red-400';
-        msg.classList.remove('hidden');
-        btn.disabled = false;
-        btn.textContent = 'CLAIM 1 CMC37';
-      }
+      });
     });
 
     // ==================== HEALING + TRIBAL AUDIO ====================
