@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - FusionFitPortal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen">
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="min-h-screen flex items-center justify-center px-4">
+    <div class="bg-zinc-900 p-10 rounded-3xl max-w-md w-full border border-zinc-700">
+      <h1 class="text-3xl font-bold mb-2 text-center">Admin Panel</h1>
+      <p class="text-zinc-400 text-center mb-8">Enter password to view CMC37 claims</p>
+      
+      <input type="password" id="password" 
+             class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 text-white mb-4 outline-none focus:border-orange-500"
+             placeholder="Password">
+      
+      <button onclick="checkPassword()" 
+              class="w-full py-4 bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold transition-all">
+        Unlock
+      </button>
+      
+      <p id="login-error" class="text-red-400 text-center mt-4 hidden">Wrong password</p>
+    </div>
+  </div>
+
+  <!-- ADMIN CONTENT (hidden until password is correct) -->
+  <div id="admin-content" class="hidden max-w-6xl mx-auto px-6 py-12">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-4xl font-bold">CMC37 Claims</h1>
+        <p class="text-zinc-400 mt-2">People who are entitled to 1 CMC37</p>
+      </div>
+      <button onclick="loadData()" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-xl">
+        Refresh
+      </button>
+    </div>
+
+    <div id="stats" class="grid grid-cols-3 gap-6 mb-10">
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700">
+        <p class="text-zinc-400 text-sm">Total Claims</p>
+        <p id="total-count" class="text-3xl font-bold mt-1">-</p>
+      </div>
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700">
+        <p class="text-zinc-400 text-sm">Still Need Coin</p>
+        <p id="pending-count" class="text-3xl font-bold mt-1 text-orange-400">-</p>
+      </div>
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700">
+        <p class="text-zinc-400 text-sm">Already Paid</p>
+        <p id="paid-count" class="text-3xl font-bold mt-1 text-green-400">-</p>
+      </div>
+    </div>
+
+    <div class="bg-zinc-900 rounded-2xl border border-zinc-700 overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-zinc-800 text-zinc-400 text-sm">
+          <tr>
+            <th class="p-4">Email</th>
+            <th class="p-4">Wallet</th>
+            <th class="p-4">Date</th>
+            <th class="p-4">Status</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <tr>
+            <td colspan="4" class="p-8 text-center text-zinc-500">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-zinc-500 text-sm mt-6 text-center">
+      Tip: Copy the wallet address and send 1 CMC37 manually from your wallet.
+    </p>
+  </div>
+
+  <script>
+    const CORRECT_PASSWORD = '21Jump13!@';
+    const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
+
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      if (input === CORRECT_PASSWORD) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-content').classList.remove('hidden');
+        loadData();
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+      }
+    }
+
+    // Allow Enter key to submit password
+    document.getElementById('password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    async function loadData() {
+      const { createClient } = supabase;
+      const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-zinc-500">Loading...</td></tr>';
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('signups')
+          .select('*')
+          .eq('rewarded', true)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-red-400">Error: ${error.message}</td></tr>`;
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-zinc-500">No claims yet</td></tr>';
+          document.getElementById('total-count').textContent = '0';
+          document.getElementById('pending-count').textContent = '0';
+          document.getElementById('paid-count').textContent = '0';
+          return;
+        }
+
+        // For now we treat all as "Still Need Coin"
+        // Later we can add a "paid" column
+        document.getElementById('total-count').textContent = data.length;
+        document.getElementById('pending-count').textContent = data.length;
+        document.getElementById('paid-count').textContent = '0';
+
+        tbody.innerHTML = data.map(row => {
+          const date = new Date(row.created_at).toLocaleDateString();
+          const shortWallet = row.wallet_address 
+            ? row.wallet_address.slice(0, 6) + '...' + row.wallet_address.slice(-4)
+            : '—';
+
+          return `
+            <tr class="border-t border-zinc-800 hover:bg-zinc-800/50">
+              <td class="p-4">${row.email || '—'}</td>
+              <td class="p-4 font-mono text-sm">
+                <span title="${row.wallet_address || ''}">${shortWallet}</span>
+                ${row.wallet_address ? `<button onclick="copyWallet('${row.wallet_address}')" class="ml-2 text-orange-400 text-xs hover:underline">Copy</button>` : ''}
+              </td>
+              <td class="p-4 text-zinc-400">${date}</td>
+              <td class="p-4">
+                <span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">Needs Coin</span>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-400">Something went wrong</td></tr>';
+      }
+    }
+
+    function copyWallet(address) {
+      navigator.clipboard.writeText(address).then(() => {
+        alert('Wallet address copied!');
+      });
+    }
+  </script>
+</body>
+</html>
