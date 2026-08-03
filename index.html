@@ -519,7 +519,7 @@
     }
 
     // ==================== THREE.JS ====================
-    let scene, camera, renderer, stars, nebula, planets = [];
+    let scene, camera, renderer, stars, nebula;
 
     function initWebGL() {
       const container = document.getElementById('webgl-container');
@@ -533,7 +533,7 @@
       container.appendChild(renderer.domElement);
 
       const starGeo = new THREE.BufferGeometry();
-      const starCount = 28000;
+      const starCount = 16000;
       const pos = new Float32Array(starCount * 3);
       const col = new Float32Array(starCount * 3);
 
@@ -550,7 +550,7 @@
 
       starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
       starGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-      stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 2.1, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, sizeAttenuation: true }));
+      stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 2.8, vertexColors: true, transparent: true, blending: THREE.AdditiveBlending }));
       scene.add(stars);
 
       const nebGeo = new THREE.BufferGeometry();
@@ -573,29 +573,6 @@
       nebula = new THREE.Points(nebGeo, new THREE.PointsMaterial({ size: 55, vertexColors: true, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthTest: false }));
       scene.add(nebula);
 
-      // Random planets / orbs
-      planets = [];
-      const planetColors = [0xff6b35, 0x4ecdc4, 0xa78bfa, 0xf472b6, 0x34d399, 0xfbbf24, 0x60a5fa];
-      for (let i = 0; i < 7; i++) {
-        const geo = new THREE.SphereGeometry(10 + Math.random() * 16, 20, 20);
-        const mat = new THREE.MeshBasicMaterial({
-          color: planetColors[i % planetColors.length],
-          transparent: true,
-          opacity: 0.5 + Math.random() * 0.35
-        });
-        const planet = new THREE.Mesh(geo, mat);
-        const dist = 450 + Math.random() * 850;
-        const angle = Math.random() * Math.PI * 2;
-        planet.position.set(
-          dist * Math.cos(angle),
-          (Math.random() - 0.5) * 400,
-          dist * Math.sin(angle) * 0.65 - 550
-        );
-        planet.userData = { speed: 0.00025 + Math.random() * 0.0007, radius: dist, angle: angle };
-        scene.add(planet);
-        planets.push(planet);
-      }
-
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -604,16 +581,8 @@
 
       (function animate() {
         requestAnimationFrame(animate);
-        if (stars) stars.rotation.y += 0.00028;
-        if (nebula) nebula.rotation.y += 0.00013;
-        if (planets && planets.length) {
-          planets.forEach(p => {
-            p.userData.angle += p.userData.speed;
-            const r = p.userData.radius;
-            p.position.x = r * Math.cos(p.userData.angle);
-            p.position.z = r * Math.sin(p.userData.angle) * 0.65 - 550;
-          });
-        }
+        if (stars) stars.rotation.y += 0.0002;
+        if (nebula) nebula.rotation.y += 0.0001;
         renderer.render(scene, camera);
       })();
     }
@@ -622,4 +591,43 @@
     function showWorkout(level) {
       const modal = document.getElementById('workout-modal');
       const content = document.getElementById('modal-content');
-      let html = `<h2 class=\
+      let html = `<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ${level} Sample</h2>`;
+      if (level === 1) html += `<p class="mb-8 text-zinc-400">Gentle Yin Awakening</p><ul class="space-y-4 text-lg"><li>• 5 min slow Tai Chi flow</li><li>• 10 controlled squats</li><li>• 3 min child's pose + breathwork</li></ul>`;
+      else if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
+      else html += `<p class="text-zinc-400">Full detailed workout coming inside the portal.</p>`;
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('workout-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // ==================== INIT ====================
+    window.onload = () => {
+      initWebGL();
+
+      document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+
+      document.getElementById('ascend-btn').addEventListener('click', () => {
+        if (!isPlaying) {
+          toggleSound();
+          setTimeout(playPortalTone, 450);
+        } else {
+          playPortalTone();
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('.reveal, .level-card').forEach(el => observer.observe(el));
+    };
+  </script>
+</body>
+</html>
