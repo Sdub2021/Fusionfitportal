@@ -98,6 +98,51 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Level 1 immersive experience */
+    #level1-experience {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0515 40%, #000 100%);
+      overflow: hidden;
+    }
+    #level1-experience.active {
+      display: flex;
+    }
+    .thunder-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 30% 40%, rgba(249, 115, 22, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.3) 0%, transparent 45%),
+        radial-gradient(circle at 50% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 40%),
+        linear-gradient(180deg, #0f051a 0%, #1a0a2e 50%, #05050f 100%);
+      animation: pulseGlow 8s ease-in-out infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { opacity: 0.85; filter: brightness(0.9); }
+      100% { opacity: 1; filter: brightness(1.15); }
+    }
+    .thunder-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255, 180, 50, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(180, 100, 255, 0.12) 0%, transparent 35%);
+      pointer-events: none;
+    }
+    .level1-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      max-width: 720px;
+      padding: 2rem;
+    }
   </style>
 </head>
 <body class="bg-black text-white">
@@ -156,7 +201,7 @@
   <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-white text-zinc-900">
     <div class="text-center mb-20 reveal">
       <h2 class="text-6xl font-bold mb-4">The 5 Levels of Ascension</h2>
-      <p class="text-2xl text-zinc-600">Click any level to see a sample workout</p>
+      <p class="text-2xl text-zinc-600">Click any level to enter the experience</p>
     </div>
     
     <div class="grid md:grid-cols-5 gap-8">
@@ -234,11 +279,33 @@
     </div>
   </section>
 
-  <!-- WORKOUT MODAL -->
+  <!-- WORKOUT MODAL (for levels 2-5) -->
   <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]">
     <div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative">
       <button onclick="closeModal()" class="absolute top-6 right-6 text-4xl text-zinc-400 hover:text-white">×</button>
       <div id="modal-content" class="text-white"></div>
+    </div>
+  </div>
+
+  <!-- LEVEL 1 IMMERSIVE EXPERIENCE -->
+  <div id="level1-experience">
+    <div class="thunder-bg"></div>
+    <div class="thunder-overlay"></div>
+    <button onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/60 hover:text-white z-20 transition">×</button>
+    
+    <div class="level1-content">
+      <p class="text-orange-400 tracking-[0.3em] text-sm mb-4 uppercase">Level 1 • Yin Awakening</p>
+      <h2 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">Thunder Resonance</h2>
+      <p class="text-xl md:text-2xl text-white/80 mb-10 leading-relaxed">
+        Tribal drums. Lightning frequencies.<br>
+        Binaural healing field now active.
+      </p>
+      <p class="text-white/50 mb-12 text-lg">Feel the pulse. Let it draw you in.</p>
+      
+      <button onclick="goToClaim()" 
+              class="px-12 py-6 text-xl font-bold rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black hover:from-orange-400 hover:to-amber-300 transition-all shadow-2xl shadow-orange-500/40">
+        Claim Your CMC37 →
+      </button>
     </div>
   </div>
 
@@ -315,6 +382,7 @@
     let masterGain = null;
     let isPlaying = false;
     let activeNodes = [];
+    let thunderInterval = null;
 
     function showToast(msg) {
       const t = document.getElementById('sound-toast');
@@ -328,7 +396,7 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.28;
+        masterGain.gain.value = 0.32;
         masterGain.connect(audioCtx.destination);
       }
       return audioCtx;
@@ -447,9 +515,105 @@
 
       isPlaying = true;
       updateUI(true);
-      showToast('Holy field active • 432 / 528 / 639 Hz');\n    }
+      showToast('Holy field active • 432 / 528 / 639 Hz');
+    }
+
+    // ===== LEVEL 1: Thunder Resonance (binaural + tribal drums) =====
+    function startThunderResonance() {
+      const ctx = getCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      stopPad(true);
+
+      const now = ctx.currentTime;
+
+      // Binaural beats: left 432 Hz, right 440 Hz → 8 Hz theta
+      const leftOsc = ctx.createOscillator();
+      const rightOsc = ctx.createOscillator();
+      leftOsc.type = 'sine';
+      rightOsc.type = 'sine';
+      leftOsc.frequency.value = 432;
+      rightOsc.frequency.value = 440;
+
+      const leftGain = ctx.createGain();
+      const rightGain = ctx.createGain();
+      leftGain.gain.value = 0.14;
+      rightGain.gain.value = 0.14;
+
+      const merger = ctx.createChannelMerger(2);
+      leftOsc.connect(leftGain);
+      rightOsc.connect(rightGain);
+      leftGain.connect(merger, 0, 0);
+      rightGain.connect(merger, 0, 1);
+      merger.connect(masterGain);
+
+      // Deep tribal drone
+      const drone = ctx.createOscillator();
+      drone.type = 'sine';
+      drone.frequency.value = 55;
+      const droneGain = ctx.createGain();
+      droneGain.gain.value = 0.18;
+      drone.connect(droneGain);
+      droneGain.connect(masterGain);
+
+      // Soft 528 healing layer
+      const heal = ctx.createOscillator();
+      heal.type = 'sine';
+      heal.frequency.value = 528;
+      const healGain = ctx.createGain();
+      healGain.gain.value = 0.06;
+      heal.connect(healGain);
+      healGain.connect(masterGain);
+
+      leftOsc.start(now);
+      rightOsc.start(now);
+      drone.start(now);
+      heal.start(now);
+
+      activeNodes = [leftOsc, rightOsc, drone, heal, leftGain, rightGain, droneGain, healGain, merger];
+
+      // Thunder / tribal drum hits every few seconds
+      function playThunderHit() {
+        const t = ctx.currentTime;
+        const noise = ctx.createBufferSource();
+        const buffer = ctx.createBuffer(1, ctx.sampleRate * 1.8, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.4));
+        }
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(180, t);
+        filter.frequency.exponentialRampToValueAtTime(40, t + 1.2);
+
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.45, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+
+        noise.connect(filter);
+        filter.connect(g);
+        g.connect(masterGain);
+        noise.start(t);
+        noise.stop(t + 1.6);
+      }
+
+      // First hit almost immediately, then every 3.2–4.5s
+      setTimeout(playThunderHit, 400);
+      thunderInterval = setInterval(() => {
+        playThunderHit();
+      }, 3600 + Math.random() * 1200);
+
+      isPlaying = true;
+      updateUI(true);
+      showToast('Thunder Resonance • Binaural 8 Hz + Tribal Drums');
+    }
 
     function stopPad(silent = false) {
+      if (thunderInterval) {
+        clearInterval(thunderInterval);
+        thunderInterval = null;
+      }
       activeNodes.forEach(n => {
         try {
           if (n.stop) n.stop();
@@ -587,13 +751,22 @@
       })();
     }
 
-    // ==================== WORKOUT MODAL ====================
+    // ==================== LEVEL EXPERIENCES ====================
     function showWorkout(level) {
+      if (level === 1) {
+        // Open immersive Thunder Resonance
+        const exp = document.getElementById('level1-experience');
+        exp.classList.add('active');
+        // Start the special soundscape
+        startThunderResonance();
+        return;
+      }
+
+      // Levels 2-5 keep the simple modal for now
       const modal = document.getElementById('workout-modal');
       const content = document.getElementById('modal-content');
       let html = `<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ${level} Sample</h2>`;
-      if (level === 1) html += `<p class="mb-8 text-zinc-400">Gentle Yin Awakening</p><ul class="space-y-4 text-lg"><li>• 5 min slow Tai Chi flow</li><li>• 10 controlled squats</li><li>• 3 min child's pose + breathwork</li></ul>`;
-      else if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
+      if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
       else html += `<p class="text-zinc-400">Full detailed workout coming inside the portal.</p>`;
       content.innerHTML = html;
       modal.classList.remove('hidden');
@@ -604,6 +777,20 @@
       const modal = document.getElementById('workout-modal');
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+    }
+
+    function closeLevel1() {
+      const exp = document.getElementById('level1-experience');
+      exp.classList.remove('active');
+      stopPad(true);
+      showToast('Returned to portal');
+    }
+
+    function goToClaim() {
+      closeLevel1();
+      setTimeout(() => {
+        document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
     }
 
     // ==================== INIT ====================
