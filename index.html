@@ -108,80 +108,28 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #05020f;
+      background: #000;
       overflow: hidden;
     }
     #level1-experience.active {
       display: flex;
     }
 
-    .thunder-bg {
+    #level1-video {
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse at 50% 30%, rgba(255, 140, 40, 0.35) 0%, transparent 45%),
-        radial-gradient(ellipse at 20% 70%, rgba(160, 60, 255, 0.4) 0%, transparent 40%),
-        radial-gradient(ellipse at 80% 60%, rgba(40, 100, 255, 0.3) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, #1a0a30 0%, #0a0418 50%, #000 100%);
-      animation: bgPulse 6s ease-in-out infinite alternate;
-    }
-    @keyframes bgPulse {
-      0% { filter: brightness(0.85) saturate(1.1); }
-      100% { filter: brightness(1.25) saturate(1.4); }
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
     }
 
-    /* Central glowing portal */
-    .portal-ring {
-      position: absolute;
-      width: 480px;
-      height: 480px;
-      border-radius: 50%;
-      border: 3px solid rgba(255, 160, 50, 0.5);
-      box-shadow:
-        0 0 40px rgba(255, 140, 40, 0.6),
-        0 0 100px rgba(180, 60, 255, 0.4),
-        inset 0 0 60px rgba(255, 140, 40, 0.2);
-      animation: portalSpin 18s linear infinite, portalPulse 3.5s ease-in-out infinite;
-    }
-    .portal-ring::before {
-      content: '';
-      position: absolute;
-      inset: 30px;
-      border-radius: 50%;
-      border: 2px solid rgba(180, 100, 255, 0.4);
-      box-shadow: 0 0 30px rgba(160, 80, 255, 0.5);
-    }
-    .portal-ring::after {
-      content: '';
-      position: absolute;
-      inset: 70px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 180, 60, 0.15) 0%, transparent 70%);
-    }
-    @keyframes portalSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    @keyframes portalPulse {
-      0%, 100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.06); opacity: 1; }
-    }
-
-    /* Lightning flashes */
-    .lightning {
+    .level1-overlay {
       position: absolute;
       inset: 0;
-      background: transparent;
-      opacity: 0;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
+      z-index: 2;
       pointer-events: none;
-      animation: lightningFlash 4.2s ease-in-out infinite;
-    }
-    @keyframes lightningFlash {
-      0%, 88%, 100% { opacity: 0; background: transparent; }
-      90% { opacity: 0.7; background: radial-gradient(ellipse at 30% 20%, rgba(255,220,150,0.5) 0%, transparent 50%); }
-      92% { opacity: 0.3; }
-      94% { opacity: 0.85; background: radial-gradient(ellipse at 70% 40%, rgba(200,150,255,0.4) 0%, transparent 45%); }
-      96% { opacity: 0.2; }
     }
 
     .level1-content {
@@ -192,7 +140,6 @@
       padding: 2rem;
     }
 
-    /* Visual beat indicator */
     .beat-ring {
       width: 90px;
       height: 90px;
@@ -352,11 +299,10 @@
 
   <!-- LEVEL 1 IMMERSIVE EXPERIENCE -->
   <div id="level1-experience">
-    <div class="thunder-bg"></div>
-    <div class="lightning"></div>
-    <div class="portal-ring"></div>
+    <video id="level1-video" src="generated_video.mp4" loop muted playsinline></video>
+    <div class="level1-overlay"></div>
 
-    <button onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/60 hover:text-white z-20 transition">×</button>
+    <button onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/70 hover:text-white z-20 transition">×</button>
     
     <div class="level1-content">
       <div class="beat-ring"></div>
@@ -462,7 +408,7 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.45; // louder overall
+        masterGain.gain.value = 0.45;
         masterGain.connect(audioCtx.destination);
       }
       return audioCtx;
@@ -588,12 +534,10 @@
     function startThunderResonance() {
       const ctx = getCtx();
 
-      // Critical: resume on the user gesture
       const start = () => {
         stopPad(true);
         const now = ctx.currentTime;
 
-        // Strong low tribal drone
         const drone = ctx.createOscillator();
         drone.type = 'sine';
         drone.frequency.value = 48;
@@ -602,7 +546,6 @@
         drone.connect(droneGain);
         droneGain.connect(masterGain);
 
-        // 432 Hz carrier
         const car432 = ctx.createOscillator();
         car432.type = 'sine';
         car432.frequency.value = 432;
@@ -611,7 +554,6 @@
         car432.connect(g432);
         g432.connect(masterGain);
 
-        // Slightly detuned for movement
         const car432b = ctx.createOscillator();
         car432b.type = 'sine';
         car432b.frequency.value = 436;
@@ -620,7 +562,6 @@
         car432b.connect(g432b);
         g432b.connect(masterGain);
 
-        // 528 healing
         const heal = ctx.createOscillator();
         heal.type = 'sine';
         heal.frequency.value = 528;
@@ -636,11 +577,9 @@
 
         activeNodes = [drone, car432, car432b, heal, droneGain, g432, g432b, healGain];
 
-        // Powerful thunder / drum hits
         function playThunderHit() {
           const t = ctx.currentTime;
 
-          // Noise burst
           const noise = ctx.createBufferSource();
           const buffer = ctx.createBuffer(1, ctx.sampleRate * 1.6, ctx.sampleRate);
           const data = buffer.getChannelData(0);
@@ -664,7 +603,6 @@
           noise.start(t);
           noise.stop(t + 1.5);
 
-          // Extra low sine thump
           const thump = ctx.createOscillator();
           thump.type = 'sine';
           thump.frequency.setValueAtTime(55, t);
@@ -678,7 +616,6 @@
           thump.stop(t + 0.75);
         }
 
-        // Immediate first hits so the user feels it right away
         setTimeout(playThunderHit, 180);
         setTimeout(playThunderHit, 900);
 
@@ -846,7 +783,16 @@
     function showWorkout(level) {
       if (level === 1) {
         const exp = document.getElementById('level1-experience');
+        const video = document.getElementById('level1-video');
         exp.classList.add('active');
+
+        // Play the portal video
+        video.currentTime = 0;
+        video.play().catch(() => {
+          // autoplay blocked – still show the experience
+        });
+
+        // Start the thunder + healing audio
         startThunderResonance();
         return;
       }
@@ -869,7 +815,9 @@
 
     function closeLevel1() {
       const exp = document.getElementById('level1-experience');
+      const video = document.getElementById('level1-video');
       exp.classList.remove('active');
+      video.pause();
       stopPad(true);
       showToast('Returned to portal');
     }
