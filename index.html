@@ -301,7 +301,7 @@
   <section id="signup" class="py-28 bg-zinc-950">
     <div class="max-w-xl mx-auto px-6 text-center">
       <h2 class="text-5xl font-bold mb-4">Claim Your 1 CMC37</h2>
-      <p class="text-xl text-zinc-400 mb-12">Enter your email and Solana wallet to receive 1 CMC37</p>
+      <p class="text-xl text-zinc-400 mb-12">Connect your Solana wallet + email to receive 1 CMC37</p>
 
       <form id="signup-form" class="space-y-6 text-left">
         <div>
@@ -312,10 +312,17 @@
         </div>
 
         <div>
-          <label class="block text-sm text-zinc-400 mb-2">Solana Wallet Address</label>
-          <input type="text" id="wallet" required
-                 class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none"
-                 placeholder="Your Solana wallet address">
+          <label class="block text-sm text-zinc-400 mb-2">Solana Wallet</label>
+          <div class="flex gap-3">
+            <input type="text" id="wallet" required
+                   class="flex-1 p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none font-mono text-sm"
+                   placeholder="Your Solana wallet address">
+            <button type="button" id="connect-wallet-btn"
+                    class="px-6 py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 font-semibold whitespace-nowrap transition-all">
+              Connect
+            </button>
+          </div>
+          <p id="wallet-status" class="text-xs text-zinc-500 mt-2 hidden"></p>
         </div>
 
         <button type="submit" id="submit-btn"
@@ -361,15 +368,90 @@
   </div>
 
   <script>
-    // ==================== SUPABASE ====================
+    // ==================== SUPABASE + WALLET ====================
     const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
+
+    let connectedWallet = null;
+
+    function isValidSolanaAddress(addr) {
+      if (!addr || typeof addr !== 'string') return false;
+      // Base58, roughly 32-44 chars, no 0/O/I/l
+      return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr.trim());
+    }
+
+    async function connectWallet() {
+      const btn = document.getElementById('connect-wallet-btn');
+      const status = document.getElementById('wallet-status');
+      const walletInput = document.getElementById('wallet');
+
+      try {
+        const provider = window.solana || window.phantom?.solana || window.solflare;
+
+        if (!provider) {
+          status.textContent = 'No Solana wallet detected. Install Phantom or Solflare, or paste your address.';
+          status.className = 'text-xs text-orange-400 mt-2';
+          status.classList.remove('hidden');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Connecting...';
+
+        const resp = await provider.connect();
+        const pubkey = resp.publicKey?.toString() || provider.publicKey?.toString();
+
+        if (!pubkey) throw new Error('No public key returned');
+
+        connectedWallet = pubkey;
+        walletInput.value = pubkey;
+        walletInput.readOnly = true;
+        walletInput.classList.add('opacity-80');
+
+        btn.textContent = 'Connected';
+        btn.classList.remove('from-purple-600', 'to-indigo-600');
+        btn.classList.add('from-green-600', 'to-emerald-600');
+
+        status.textContent = 'Wallet connected ✓';
+        status.className = 'text-xs text-green-400 mt-2';
+        status.classList.remove('hidden');
+
+        // Listen for disconnect
+        provider.on?.('disconnect', () => {
+          connectedWallet = null;
+          walletInput.value = '';
+          walletInput.readOnly = false;
+          walletInput.classList.remove('opacity-80');
+          btn.textContent = 'Connect';
+          btn.disabled = false;
+          btn.classList.remove('from-green-600', 'to-emerald-600');
+          btn.classList.add('from-purple-600', 'to-indigo-600');
+          status.classList.add('hidden');
+        });
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = err.message?.includes('User rejected') 
+          ? 'Connection cancelled' 
+          : 'Could not connect. You can still paste your address manually.';
+        status.className = 'text-xs text-orange-400 mt-2';
+        status.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Connect';
+      }
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const { createClient } = supabase;
       const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       const form = document.getElementById('signup-form');
+      const connectBtn = document.getElementById('connect-wallet-btn');
+
+      if (connectBtn) {
+        connectBtn.addEventListener('click', connectWallet);
+      }
+
       if (!form) return;
 
       form.addEventListener('submit', async (e) => {
@@ -379,6 +461,21 @@
         const wallet = document.getElementById('wallet').value.trim();
         const btn = document.getElementById('submit-btn');
         const msg = document.getElementById('form-message');
+
+        // Basic validation
+        if (!email || !email.includes('@')) {
+          msg.textContent = 'Please enter a valid email.';
+          msg.className = 'text-center text-sm mt-4 text-red-400';
+          msg.classList.remove('hidden');
+          return;
+        }
+
+        if (!isValidSolanaAddress(wallet)) {
+          msg.textContent = 'Please enter a valid Solana wallet address (or click Connect).';
+          msg.className = 'text-center text-sm mt-4 text-red-400';
+          msg.classList.remove('hidden');
+          return;
+        }
 
         btn.disabled = true;
         btn.textContent = 'Claiming...';
@@ -411,11 +508,15 @@
             return;
           }
 
-          msg.textContent = 'Success! You are entitled to 1 CMC37. We will process the reward soon.';
+          // Success → redirect to thank you page
+          msg.textContent = 'Success! Redirecting...';
           msg.className = 'text-center text-sm mt-4 text-green-400';
           msg.classList.remove('hidden');
           btn.textContent = 'Claimed ✓';
-          form.reset();
+
+          setTimeout(() => {
+            window.location.href = 'thank-you.html';
+          }, 900);
 
         } catch (err) {
           console.error(err);
@@ -492,7 +593,6 @@
       return buffer;
     }
 
-    // Beautiful soft musical healing pad for the landing page
     function startHealingPad() {
       if (!audioUnlocked) {
         showToast('Click UNLOCK SOUND first');
@@ -502,7 +602,6 @@
       stopPad(true);
       const now = ctx.currentTime;
 
-      // Very soft atmospheric noise bed
       const noise = ctx.createBufferSource();
       noise.buffer = createSoftNoise(ctx, 8);
       noise.loop = true;
@@ -516,7 +615,6 @@
       noiseGain.connect(masterGain);
       noise.start(now);
 
-      // Deep warm root (C# / ~136 Hz – Solfeggio related)
       const root = ctx.createOscillator();
       root.type = 'sine';
       root.frequency.value = 136.1;
@@ -529,7 +627,6 @@
       rootFilter.connect(rootGain);
       rootGain.connect(masterGain);
 
-      // Main 432 Hz pad – soft and centered
       const pad432 = ctx.createOscillator();
       pad432.type = 'sine';
       pad432.frequency.value = 432;
@@ -538,7 +635,6 @@
       pad432.connect(g432);
       g432.connect(masterGain);
 
-      // Gentle detuned companion for movement (very subtle)
       const pad432b = ctx.createOscillator();
       pad432b.type = 'sine';
       pad432b.frequency.value = 432.15;
@@ -547,7 +643,6 @@
       pad432b.connect(g432b);
       g432b.connect(masterGain);
 
-      // 528 Hz (love / healing frequency) – soft and higher
       const pad528 = ctx.createOscillator();
       pad528.type = 'sine';
       pad528.frequency.value = 528;
@@ -556,7 +651,6 @@
       pad528.connect(g528);
       g528.connect(masterGain);
 
-      // Quiet high shimmer (639 Hz)
       const shimmer = ctx.createOscillator();
       shimmer.type = 'sine';
       shimmer.frequency.value = 639;
@@ -565,16 +659,14 @@
       shimmer.connect(gShimmer);
       gShimmer.connect(masterGain);
 
-      // Slow breathing LFO so the whole pad gently rises and falls
       const lfo = ctx.createOscillator();
-      lfo.frequency.value = 0.08; // very slow breath
+      lfo.frequency.value = 0.08;
       const lfoGain = ctx.createGain();
       lfoGain.gain.value = 0.025;
       lfo.connect(lfoGain);
       lfoGain.connect(g432.gain);
       lfoGain.connect(g528.gain);
 
-      // Start everything
       [root, pad432, pad432b, pad528, shimmer, lfo, noise].forEach(n => {
         if (n.start) n.start(now);
       });
