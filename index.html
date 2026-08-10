@@ -362,8 +362,8 @@
 
   <script>
     // ==================== SUPABASE ====================
-    const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
+    const SUPABASE_URL = 'https://kytvzrkretucgkairzny.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
 
     window.addEventListener('DOMContentLoaded', () => {
       const { createClient } = supabase;
@@ -883,9 +883,9 @@
 
       const modal = document.getElementById('workout-modal');
       const content = document.getElementById('modal-content');
-      let html = `<h2 class=\"text-4xl font-bold mb-6 text-orange-400\">Level ${level} Sample</h2>`;
-      if (level === 2) html += `<p class=\"mb-8 text-zinc-400\">Yang Power Ignition</p><ul class=\"space-y-4 text-lg\"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
-      else html += `<p class=\"text-zinc-400\">Full detailed workout coming inside the portal.</p>`;
+      let html = `<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ${level} Sample</h2>`;
+      if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
+      else html += `<p class="text-zinc-400">Full detailed workout coming inside the portal.</p>`;
       content.innerHTML = html;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
