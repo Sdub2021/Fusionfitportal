@@ -448,7 +448,7 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.45;
+        masterGain.gain.value = 0.28;
         masterGain.connect(audioCtx.destination);
       }
       return audioCtx;
@@ -492,7 +492,7 @@
       return buffer;
     }
 
-    // Soft musical healing pad for landing page
+    // Soft, warm, pleasant healing pad for landing page
     function startHealingPad() {
       if (!audioUnlocked) {
         showToast('Click UNLOCK SOUND first');
@@ -502,67 +502,100 @@
       stopPad(true);
       const now = ctx.currentTime;
 
+      // Comfortable overall volume
+      masterGain.gain.setValueAtTime(0.28, now);
+
+      // Soft filtered noise bed
       const noise = ctx.createBufferSource();
-      noise.buffer = createSoftNoise(ctx, 8);
+      noise.buffer = createSoftNoise(ctx, 10);
       noise.loop = true;
       const noiseFilter = ctx.createBiquadFilter();
       noiseFilter.type = 'lowpass';
-      noiseFilter.frequency.value = 400;
+      noiseFilter.frequency.value = 280;
+      noiseFilter.Q.value = 0.7;
       const noiseGain = ctx.createGain();
-      noiseGain.gain.value = 0.018;
+      noiseGain.gain.setValueAtTime(0, now);
+      noiseGain.gain.linearRampToValueAtTime(0.012, now + 4);
       noise.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
       noiseGain.connect(masterGain);
       noise.start(now);
 
+      // Root / OM-ish foundation (very soft)
       const root = ctx.createOscillator();
       root.type = 'sine';
       root.frequency.value = 136.1;
       const rootFilter = ctx.createBiquadFilter();
       rootFilter.type = 'lowpass';
-      rootFilter.frequency.value = 280;
+      rootFilter.frequency.value = 220;
       const rootGain = ctx.createGain();
-      rootGain.gain.value = 0.09;
+      rootGain.gain.setValueAtTime(0, now);
+      rootGain.gain.linearRampToValueAtTime(0.06, now + 5);
       root.connect(rootFilter);
       rootFilter.connect(rootGain);
       rootGain.connect(masterGain);
 
+      // 432 Hz main pad (warm)
       const pad432 = ctx.createOscillator();
       pad432.type = 'sine';
       pad432.frequency.value = 432;
       const g432 = ctx.createGain();
-      g432.gain.value = 0.07;
-      pad432.connect(g432);
+      g432.gain.setValueAtTime(0, now);
+      g432.gain.linearRampToValueAtTime(0.045, now + 4.5);
+      const filter432 = ctx.createBiquadFilter();
+      filter432.type = 'lowpass';
+      filter432.frequency.value = 900;
+      pad432.connect(filter432);
+      filter432.connect(g432);
       g432.connect(masterGain);
 
+      // Slightly detuned 432 for width
       const pad432b = ctx.createOscillator();
       pad432b.type = 'sine';
-      pad432b.frequency.value = 432.15;
+      pad432b.frequency.value = 432.3;
       const g432b = ctx.createGain();
-      g432b.gain.value = 0.035;
-      pad432b.connect(g432b);
+      g432b.gain.setValueAtTime(0, now);
+      g432b.gain.linearRampToValueAtTime(0.025, now + 5);
+      const filter432b = ctx.createBiquadFilter();
+      filter432b.type = 'lowpass';
+      filter432b.frequency.value = 850;
+      pad432b.connect(filter432b);
+      filter432b.connect(g432b);
       g432b.connect(masterGain);
 
+      // Soft 528 (lower volume + filtered so it doesn’t pierce)
       const pad528 = ctx.createOscillator();
       pad528.type = 'sine';
       pad528.frequency.value = 528;
       const g528 = ctx.createGain();
-      g528.gain.value = 0.055;
-      pad528.connect(g528);
+      g528.gain.setValueAtTime(0, now);
+      g528.gain.linearRampToValueAtTime(0.028, now + 6);
+      const filter528 = ctx.createBiquadFilter();
+      filter528.type = 'lowpass';
+      filter528.frequency.value = 1100;
+      pad528.connect(filter528);
+      filter528.connect(g528);
       g528.connect(masterGain);
 
+      // Very quiet higher shimmer
       const shimmer = ctx.createOscillator();
       shimmer.type = 'sine';
       shimmer.frequency.value = 639;
       const gShimmer = ctx.createGain();
-      gShimmer.gain.value = 0.022;
-      shimmer.connect(gShimmer);
+      gShimmer.gain.setValueAtTime(0, now);
+      gShimmer.gain.linearRampToValueAtTime(0.012, now + 7);
+      const filterShimmer = ctx.createBiquadFilter();
+      filterShimmer.type = 'lowpass';
+      filterShimmer.frequency.value = 1400;
+      shimmer.connect(filterShimmer);
+      filterShimmer.connect(gShimmer);
       gShimmer.connect(masterGain);
 
+      // Very slow breathing LFO
       const lfo = ctx.createOscillator();
-      lfo.frequency.value = 0.08;
+      lfo.frequency.value = 0.06;
       const lfoGain = ctx.createGain();
-      lfoGain.gain.value = 0.025;
+      lfoGain.gain.value = 0.018;
       lfo.connect(lfoGain);
       lfoGain.connect(g432.gain);
       lfoGain.connect(g528.gain);
@@ -573,13 +606,13 @@
 
       activeNodes = [
         root, pad432, pad432b, pad528, shimmer, lfo, noise,
-        rootGain, g432, g432b, g528, gShimmer, noiseGain, lfoGain
+        rootGain, g432, g432b, g528, gShimmer, noiseGain, lfoGain,
+        rootFilter, filter432, filter432b, filter528, filterShimmer, noiseFilter
       ];
 
       isPlaying = true;
       updateUI(true);
-      showToast('Holy field • Soft 432 / 528 Hz healing pad');
-    }
+      showToast('Soft healing field • 432 / 528 Hz');\n    }
 
     function startThunderResonance() {
       if (!audioUnlocked) {
@@ -850,9 +883,9 @@
 
       const modal = document.getElementById('workout-modal');
       const content = document.getElementById('modal-content');
-      let html = `<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ${level} Sample</h2>`;
-      if (level === 2) html += `<p class="mb-8 text-zinc-400">Yang Power Ignition</p><ul class="space-y-4 text-lg"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
-      else html += `<p class="text-zinc-400">Full detailed workout coming inside the portal.</p>`;
+      let html = `<h2 class=\"text-4xl font-bold mb-6 text-orange-400\">Level ${level} Sample</h2>`;
+      if (level === 2) html += `<p class=\"mb-8 text-zinc-400\">Yang Power Ignition</p><ul class=\"space-y-4 text-lg\"><li>• 8 Push-ups</li><li>• 20 Mountain Climbers per side</li><li>• 12 Squats or Jump Squats</li></ul>`;
+      else html += `<p class=\"text-zinc-400\">Full detailed workout coming inside the portal.</p>`;
       content.innerHTML = html;
       modal.classList.remove('hidden');
       modal.classList.add('flex');
