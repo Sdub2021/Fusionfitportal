@@ -1,1 +1,49 @@
-SEE_LOCAL
+{
+  "name": "FIT",
+  "short_name": "FIT",
+  "description": "Ancient balance. Modern power. Yoga, Tai Chi, Vestibular Training & the 5 Levels of Ascension.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#05050f",
+  "theme_color": "#f97316",
+  "lang": "en",
+  "categories": ["health", "fitness", "lifestyle", "education"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Claim CMC37",
+      "short_name": "Claim",
+      "description": "Claim your 1 CMC37",
+      "url": "/#signup",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sacred Practices",
+      "short_name": "Services",
+      "description": "Yoga, Tai Chi & Vestibular Training",
+      "url": "/#services",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
