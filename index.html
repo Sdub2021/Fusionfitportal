@@ -318,12 +318,12 @@
       stopPad(true);
       const now = ctx.currentTime;
       const notes = [
-        { f: 162.0, g: 0.028, fade: 4.5 },
-        { f: 216.0, g: 0.038, fade: 3.5 },
-        { f: 324.0, g: 0.026, fade: 4.0 },
-        { f: 432.0, g: 0.045, fade: 2.8 },
-        { f: 540.0, g: 0.016, fade: 5.0 },
-        { f: 648.0, g: 0.010, fade: 6.0 }
+        { f: 162.0, g: 0.024, fade: 5.0 },
+        { f: 216.0, g: 0.034, fade: 4.0 },
+        { f: 324.0, g: 0.022, fade: 4.5 },
+        { f: 432.0, g: 0.040, fade: 3.0 },
+        { f: 540.0, g: 0.014, fade: 5.5 },
+        { f: 648.0, g: 0.008, fade: 6.5 }
       ];
       const oscs = [], gains = [];
       notes.forEach((n, i) => {
@@ -333,7 +333,7 @@
         o.detune.value = (i % 2 === 0 ? -3 : 3);
         const f = ctx.createBiquadFilter();
         f.type = 'lowpass';
-        f.frequency.value = 850;
+        f.frequency.value = 800;
         f.Q.value = 0.4;
         const g = ctx.createGain();
         g.gain.setValueAtTime(0, now);
@@ -345,36 +345,110 @@
       });
       const lfo = ctx.createOscillator();
       lfo.type = 'sine';
-      lfo.frequency.value = 0.05;
+      lfo.frequency.value = 0.045;
       const lg = ctx.createGain();
-      lg.gain.value = 0.006;
+      lg.gain.value = 0.005;
       lfo.connect(lg);
       gains.forEach(g => { try { lg.connect(g.gain); } catch (e) {} });
       lfo.start(now);
-      const o2 = ctx.createOscillator();
-      o2.type = 'sine';
-      o2.frequency.value = 433.2;
-      const g2 = ctx.createGain();
-      g2.gain.setValueAtTime(0, now);
-      g2.gain.linearRampToValueAtTime(0.012, now + 5);
-      const f2 = ctx.createBiquadFilter();
-      f2.type = 'lowpass';
-      f2.frequency.value = 650;
-      o2.connect(f2); f2.connect(g2);
-      connectToPad(g2);
-      o2.start(now);
-      activeNodes = [...oscs, ...gains, lfo, lg, o2, g2, f2];
+      const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate);
+      const nd = noiseBuf.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < nd.length; i++) {
+        const white = Math.random() * 2 - 1;
+        last = (last + 0.02 * white) / 1.02;
+        nd[i] = last;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuf;
+      noise.loop = true;
+      const nf = ctx.createBiquadFilter();
+      nf.type = 'bandpass';
+      nf.frequency.value = 380;
+      nf.Q.value = 0.6;
+      const ng = ctx.createGain();
+      ng.gain.setValueAtTime(0, now);
+      ng.gain.linearRampToValueAtTime(0.018, now + 6);
+      noise.connect(nf); nf.connect(ng);
+      connectToPad(ng);
+      noise.start(now);
+      const waterBuf = ctx.createBuffer(1, ctx.sampleRate * 3, ctx.sampleRate);
+      const wd = waterBuf.getChannelData(0);
+      last = 0;
+      for (let i = 0; i < wd.length; i++) {
+        const white = Math.random() * 2 - 1;
+        last = (last + 0.04 * white) / 1.04;
+        wd[i] = last * (0.5 + 0.5 * Math.sin(i / 900));
+      }
+      const water = ctx.createBufferSource();
+      water.buffer = waterBuf;
+      water.loop = true;
+      const wf = ctx.createBiquadFilter();
+      wf.type = 'highpass';
+      wf.frequency.value = 1200;
+      const wg = ctx.createGain();
+      wg.gain.setValueAtTime(0, now);
+      wg.gain.linearRampToValueAtTime(0.008, now + 8);
+      water.connect(wf); wf.connect(wg);
+      connectToPad(wg);
+      water.start(now);
+      activeNodes = [...oscs, ...gains, lfo, lg, noise, nf, ng, water, wf, wg];
       startSoftMelody(ctx);
+      startBirds(ctx);
       isPlaying = true;
       updateUI(true);
-      showToast('Healing field • Soft music + reverb');
+      showToast('Healing field • Nature + soft melody');
+    }
+    function startBirds(ctx) {
+      function chirp() {
+        if (!isPlaying) return;
+        const now = ctx.currentTime;
+        const base = 1400 + Math.random() * 900;
+        const o = ctx.createOscillator();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(base, now);
+        o.frequency.exponentialRampToValueAtTime(base * (0.85 + Math.random() * 0.25), now + 0.18);
+        const f = ctx.createBiquadFilter();
+        f.type = 'bandpass';
+        f.frequency.value = base;
+        f.Q.value = 4;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.012, now + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        o.connect(f); f.connect(g);
+        connectToPad(g);
+        o.start(now);
+        o.stop(now + 0.4);
+        activeNodes.push(o, f, g);
+      }
+      setTimeout(() => { if (isPlaying) chirp(); }, 5000);
+      const birdId = setInterval(() => {
+        if (!isPlaying) { clearInterval(birdId); return; }
+        if (Math.random() > 0.45) chirp();
+        if (Math.random() > 0.7) setTimeout(chirp, 200 + Math.random() * 300);
+      }, 7000 + Math.random() * 4000);
+      if (window._birdTimer) clearInterval(window._birdTimer);
+      window._birdTimer = birdId;
     }
     function startSoftMelody(ctx) {
-      const phrase = [432, 486, 540, 648, 540, 486, 432, 324, 432, 540, 486, 432];
+      const phrase = [
+        324, 432, 486, 540,
+        486, 432,
+        324, 432, 540, 648,
+        540, 432, 324, 288, 324
+      ];
+      const holds = [
+        2.6, 2.8, 2.4, 3.2,
+        2.6, 3.4,
+        2.4, 2.6, 2.8, 3.6,
+        2.6, 2.8, 2.6, 3.0, 4.0
+      ];
       let step = 0;
       function playNote() {
         if (!isPlaying) return;
         const freq = phrase[step % phrase.length];
+        const hold = holds[step % holds.length];
         step++;
         const now = ctx.currentTime;
         const o = ctx.createOscillator();
@@ -382,25 +456,43 @@
         o.frequency.value = freq;
         const f = ctx.createBiquadFilter();
         f.type = 'lowpass';
-        f.frequency.value = 1100;
+        f.frequency.value = 1400;
         const g = ctx.createGain();
+        const attack = 0.6;
         g.gain.setValueAtTime(0, now);
-        g.gain.linearRampToValueAtTime(0.032, now + 0.45);
-        g.gain.linearRampToValueAtTime(0.018, now + 1.8);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+        g.gain.linearRampToValueAtTime(0.038, now + attack);
+        g.gain.linearRampToValueAtTime(0.022, now + hold * 0.55);
+        g.gain.exponentialRampToValueAtTime(0.001, now + hold);
         o.connect(f); f.connect(g);
         connectToPad(g);
         o.start(now);
-        o.stop(now + 3.6);
+        o.stop(now + hold + 0.1);
+        if (step % 3 === 0) {
+          const oH = ctx.createOscillator();
+          oH.type = 'sine';
+          oH.frequency.value = freq / 2;
+          const gH = ctx.createGain();
+          gH.gain.setValueAtTime(0, now);
+          gH.gain.linearRampToValueAtTime(0.016, now + 0.8);
+          gH.gain.exponentialRampToValueAtTime(0.001, now + hold);
+          oH.connect(gH);
+          connectToPad(gH);
+          oH.start(now);
+          oH.stop(now + hold + 0.1);
+          activeNodes.push(oH, gH);
+        }
         activeNodes.push(o, g, f);
+        if (isPlaying) {
+          melodyTimer = setTimeout(playNote, hold * 1000 + 180);
+        }
       }
-      playNote();
-      melodyTimer = setInterval(playNote, 2800);
+      melodyTimer = setTimeout(playNote, 3500);
     }
     function startThunderResonance() { if (!audioUnlocked) return; const ctx = getCtx(); const start = () => { stopPad(true); startHealingPad(); showToast('Thunder Resonance'); }; if (ctx.state === 'suspended') ctx.resume().then(start); else start(); }
     function stopPad(silent) {
       if (thunderInterval) { clearInterval(thunderInterval); thunderInterval = null; }
-      if (melodyTimer) { clearInterval(melodyTimer); melodyTimer = null; }
+      if (melodyTimer) { clearTimeout(melodyTimer); clearInterval(melodyTimer); melodyTimer = null; }
+      if (window._birdTimer) { clearInterval(window._birdTimer); window._birdTimer = null; }
       activeNodes.forEach(n => { try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch (e) {} });
       activeNodes = [];
       isPlaying = false;
