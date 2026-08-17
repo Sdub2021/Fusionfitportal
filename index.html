@@ -64,14 +64,22 @@
       margin-left: -80%; margin-top: -80%;
       animation: swirl 55s linear infinite reverse; transform-origin: center center;
     }
+    #stars-drift-3 {
+      position: absolute; left: 50%; top: 50%; width: 140%; height: 140%;
+      margin-left: -70%; margin-top: -70%;
+      animation: swirl 110s linear infinite; transform-origin: center center;
+    }
     @keyframes swirl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     .level-card {
       transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-      background: linear-gradient(145deg, #fff 0%, #f8fafc 100%);
+      background: linear-gradient(160deg, rgba(30,30,45,0.95) 0%, rgba(12,12,20,0.98) 100%);
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      color: #fff;
     }
     .level-card:hover {
-      transform: scale(1.06) translateY(-12px);
-      box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.25);
+      transform: scale(1.05) translateY(-10px);
+      box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.3);
+      border-color: rgba(249, 115, 22, 0.35) !important;
     }
     .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.25, 0.1, 0.25, 1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -175,14 +183,14 @@
       <button id="ascend-btn" class="ascend-btn text-white font-bold rounded-full px-16 py-8 text-2xl">BEGIN YOUR ASCENSION</button>
     </div>
   </section>
-  <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-white text-zinc-900">
-    <div class="text-center mb-20 reveal"><h2 class="text-6xl font-bold mb-4">The 5 Levels of Ascension</h2><p class="text-2xl text-zinc-600">Click any level to enter the experience</p></div>
+  <section id="levels" class="max-w-7xl mx-auto px-6 py-28 bg-zinc-950 text-white">
+    <div class="text-center mb-20 reveal"><h2 class="text-6xl font-bold mb-4 text-white">The 5 Levels of Ascension</h2><p class="text-2xl text-zinc-400">Click any level to enter the experience</p></div>
     <div class="grid md:grid-cols-5 gap-8">
-      <div onclick="showWorkout(1)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl border border-emerald-100 text-center"><h3 class="text-3xl font-bold">Level 1</h3><p class="text-emerald-600 font-semibold">Yin Awakening</p></div>
-      <div onclick="showWorkout(2)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl border border-orange-100 text-center"><h3 class="text-3xl font-bold">Level 2</h3><p class="text-orange-600 font-semibold">Yang Ignition</p></div>
-      <div onclick="showWorkout(3)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl border border-cyan-100 text-center"><h3 class="text-3xl font-bold">Level 3</h3><p class="text-cyan-600 font-semibold">Fusion Harmony</p></div>
-      <div onclick="showWorkout(4)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl border border-purple-100 text-center"><h3 class="text-3xl font-bold">Level 4</h3><p class="text-purple-600 font-semibold">Symbolic Elevation</p></div>
-      <div onclick="showWorkout(5)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl border border-pink-100 text-center"><h3 class="text-3xl font-bold">Level 5</h3><p class="text-pink-600 font-semibold">Lotus Mastery</p></div>
+      <div onclick="showWorkout(1)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl text-center"><h3 class="text-3xl font-bold">Level 1</h3><p class="text-emerald-400 font-semibold">Yin Awakening</p></div>
+      <div onclick="showWorkout(2)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl text-center"><h3 class="text-3xl font-bold">Level 2</h3><p class="text-orange-400 font-semibold">Yang Ignition</p></div>
+      <div onclick="showWorkout(3)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl text-center"><h3 class="text-3xl font-bold">Level 3</h3><p class="text-cyan-400 font-semibold">Fusion Harmony</p></div>
+      <div onclick="showWorkout(4)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl text-center"><h3 class="text-3xl font-bold">Level 4</h3><p class="text-purple-400 font-semibold">Symbolic Elevation</p></div>
+      <div onclick="showWorkout(5)" class="level-card cursor-pointer p-10 rounded-3xl shadow-2xl text-center"><h3 class="text-3xl font-bold">Level 5</h3><p class="text-pink-400 font-semibold">Lotus Mastery</p></div>
     </div>
   </section>
   <section id="services" class="py-28 bg-zinc-950">
@@ -322,8 +330,9 @@
         }
         return layer;
       }
-      container.appendChild(makeLayer('stars-drift', 160, 0.8, 3.2));
-      container.appendChild(makeLayer('stars-drift-2', 90, 0.5, 2.2));
+      container.appendChild(makeLayer('stars-drift', 240, 0.7, 3.4));
+      container.appendChild(makeLayer('stars-drift-2', 160, 0.4, 2.4));
+      container.appendChild(makeLayer('stars-drift-3', 80, 0.3, 1.6));
     }
     function showWorkout(level) {
       if (level === 1) {
