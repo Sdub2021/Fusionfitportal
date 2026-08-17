@@ -397,7 +397,7 @@
       startBirds(ctx);
       isPlaying = true;
       updateUI(true);
-      showToast('Healing field • Nature + soft melody');
+      showToast('Healing field • Nature + soft piano');
     }
     function startBirds(ctx) {
       function chirp() {
@@ -444,6 +444,35 @@
         2.4, 2.6, 2.8, 3.6,
         2.6, 2.8, 2.6, 3.0, 4.0
       ];
+      function playPianoChord(root, hold, now) {
+        const partials = [
+          { mult: 1.0, g: 0.028, type: 'sine' },
+          { mult: 1.5, g: 0.016, type: 'sine' },
+          { mult: 1.25, g: 0.014, type: 'triangle' },
+          { mult: 2.0, g: 0.010, type: 'sine' },
+          { mult: 2.25, g: 0.006, type: 'sine' }
+        ];
+        partials.forEach((p, i) => {
+          const o = ctx.createOscillator();
+          o.type = p.type;
+          o.frequency.value = root * p.mult;
+          o.detune.value = (i % 2 === 0 ? -4 : 5);
+          const f = ctx.createBiquadFilter();
+          f.type = 'lowpass';
+          f.frequency.value = 1800 - i * 120;
+          f.Q.value = 0.7;
+          const g = ctx.createGain();
+          g.gain.setValueAtTime(0, now);
+          g.gain.linearRampToValueAtTime(p.g, now + 0.08 + i * 0.02);
+          g.gain.exponentialRampToValueAtTime(Math.max(0.001, p.g * 0.35), now + hold * 0.55);
+          g.gain.exponentialRampToValueAtTime(0.001, now + hold + 0.4);
+          o.connect(f); f.connect(g);
+          connectToPad(g);
+          o.start(now);
+          o.stop(now + hold + 0.5);
+          activeNodes.push(o, f, g);
+        });
+      }
       let step = 0;
       function playNote() {
         if (!isPlaying) return;
@@ -451,39 +480,25 @@
         const hold = holds[step % holds.length];
         step++;
         const now = ctx.currentTime;
+        playPianoChord(freq, hold, now);
         const o = ctx.createOscillator();
         o.type = 'sine';
-        o.frequency.value = freq;
+        o.frequency.value = freq * 2;
         const f = ctx.createBiquadFilter();
         f.type = 'lowpass';
-        f.frequency.value = 1400;
+        f.frequency.value = 1600;
         const g = ctx.createGain();
-        const attack = 0.6;
         g.gain.setValueAtTime(0, now);
-        g.gain.linearRampToValueAtTime(0.038, now + attack);
-        g.gain.linearRampToValueAtTime(0.022, now + hold * 0.55);
+        g.gain.linearRampToValueAtTime(0.022, now + 0.5);
+        g.gain.linearRampToValueAtTime(0.012, now + hold * 0.5);
         g.gain.exponentialRampToValueAtTime(0.001, now + hold);
         o.connect(f); f.connect(g);
         connectToPad(g);
         o.start(now);
         o.stop(now + hold + 0.1);
-        if (step % 3 === 0) {
-          const oH = ctx.createOscillator();
-          oH.type = 'sine';
-          oH.frequency.value = freq / 2;
-          const gH = ctx.createGain();
-          gH.gain.setValueAtTime(0, now);
-          gH.gain.linearRampToValueAtTime(0.016, now + 0.8);
-          gH.gain.exponentialRampToValueAtTime(0.001, now + hold);
-          oH.connect(gH);
-          connectToPad(gH);
-          oH.start(now);
-          oH.stop(now + hold + 0.1);
-          activeNodes.push(oH, gH);
-        }
         activeNodes.push(o, g, f);
         if (isPlaying) {
-          melodyTimer = setTimeout(playNote, hold * 1000 + 180);
+          melodyTimer = setTimeout(playNote, hold * 1000 + 200);
         }
       }
       melodyTimer = setTimeout(playNote, 3500);
