@@ -276,67 +276,154 @@
         } catch (err) { msg.textContent = 'Something went wrong.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'CLAIM 1 CMC37'; }
       });
     });
-    let audioCtx = null, masterGain = null, isPlaying = false, activeNodes = [], thunderInterval = null, audioUnlocked = true;
+    let audioCtx = null, masterGain = null, reverbNode = null, dryGain = null, wetGain = null, isPlaying = false, activeNodes = [], thunderInterval = null, melodyTimer = null, audioUnlocked = true;
     function showToast(msg) { const t = document.getElementById('sound-toast'); if (!t) return; t.textContent = msg; t.classList.add('show'); clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 4000); }
-    function getCtx() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); masterGain = audioCtx.createGain(); masterGain.gain.value = 0.22; masterGain.connect(audioCtx.destination); } return audioCtx; }
+    function makeReverbIR(ctx, seconds, decay) {
+      const rate = ctx.sampleRate;
+      const len = Math.floor(rate * seconds);
+      const buf = ctx.createBuffer(2, len, rate);
+      for (let c = 0; c < 2; c++) {
+        const data = buf.getChannelData(c);
+        for (let i = 0; i < len; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+        }
+      }
+      return buf;
+    }
+    function getCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.2;
+        dryGain = audioCtx.createGain();
+        dryGain.gain.value = 0.55;
+        wetGain = audioCtx.createGain();
+        wetGain.gain.value = 0.42;
+        reverbNode = audioCtx.createConvolver();
+        reverbNode.buffer = makeReverbIR(audioCtx, 3.2, 2.4);
+        dryGain.connect(masterGain);
+        wetGain.connect(reverbNode);
+        reverbNode.connect(masterGain);
+        masterGain.connect(audioCtx.destination);
+      }
+      return audioCtx;
+    }
+    function connectToPad(node) {
+      node.connect(dryGain);
+      node.connect(wetGain);
+    }
     function startHealingPad() {
       if (!audioUnlocked) return;
       const ctx = getCtx();
       stopPad(true);
       const now = ctx.currentTime;
       const notes = [
-        { f: 216.0, g: 0.045, fade: 3.5 },
-        { f: 324.0, g: 0.032, fade: 4.0 },
-        { f: 432.0, g: 0.055, fade: 2.5 },
-        { f: 540.0, g: 0.022, fade: 5.0 },
-        { f: 648.0, g: 0.014, fade: 6.0 },
-        { f: 162.0, g: 0.028, fade: 4.5 }
+        { f: 162.0, g: 0.028, fade: 4.5 },
+        { f: 216.0, g: 0.038, fade: 3.5 },
+        { f: 324.0, g: 0.026, fade: 4.0 },
+        { f: 432.0, g: 0.045, fade: 2.8 },
+        { f: 540.0, g: 0.016, fade: 5.0 },
+        { f: 648.0, g: 0.010, fade: 6.0 }
       ];
-      const oscs = [], gains = [], filters = [];
+      const oscs = [], gains = [];
       notes.forEach((n, i) => {
         const o = ctx.createOscillator();
         o.type = 'sine';
         o.frequency.value = n.f;
-        o.detune.value = (i % 2 === 0 ? -2 : 2);
+        o.detune.value = (i % 2 === 0 ? -3 : 3);
         const f = ctx.createBiquadFilter();
         f.type = 'lowpass';
-        f.frequency.value = 900;
-        f.Q.value = 0.5;
+        f.frequency.value = 850;
+        f.Q.value = 0.4;
         const g = ctx.createGain();
         g.gain.setValueAtTime(0, now);
         g.gain.linearRampToValueAtTime(n.g, now + n.fade);
-        o.connect(f); f.connect(g); g.connect(masterGain);
+        o.connect(f); f.connect(g);
+        connectToPad(g);
         o.start(now);
-        oscs.push(o); gains.push(g); filters.push(f);
+        oscs.push(o); gains.push(g);
       });
       const lfo = ctx.createOscillator();
       lfo.type = 'sine';
-      lfo.frequency.value = 0.06;
+      lfo.frequency.value = 0.05;
       const lg = ctx.createGain();
-      lg.gain.value = 0.008;
+      lg.gain.value = 0.006;
       lfo.connect(lg);
       gains.forEach(g => { try { lg.connect(g.gain); } catch (e) {} });
       lfo.start(now);
       const o2 = ctx.createOscillator();
       o2.type = 'sine';
-      o2.frequency.value = 433.5;
+      o2.frequency.value = 433.2;
       const g2 = ctx.createGain();
       g2.gain.setValueAtTime(0, now);
-      g2.gain.linearRampToValueAtTime(0.018, now + 5);
+      g2.gain.linearRampToValueAtTime(0.012, now + 5);
       const f2 = ctx.createBiquadFilter();
       f2.type = 'lowpass';
-      f2.frequency.value = 700;
-      o2.connect(f2); f2.connect(g2); g2.connect(masterGain);
+      f2.frequency.value = 650;
+      o2.connect(f2); f2.connect(g2);
+      connectToPad(g2);
       o2.start(now);
-      activeNodes = [...oscs, ...gains, ...filters, lfo, lg, o2, g2, f2];
+      activeNodes = [...oscs, ...gains, lfo, lg, o2, g2, f2];
+      startSoftMelody(ctx);
       isPlaying = true;
       updateUI(true);
-      showToast('Healing field • Soft 432 Hz pad');
+      showToast('Healing field • Soft music + reverb');
+    }
+    function startSoftMelody(ctx) {
+      const phrase = [432, 486, 540, 648, 540, 486, 432, 324, 432, 540, 486, 432];
+      let step = 0;
+      function playNote() {
+        if (!isPlaying) return;
+        const freq = phrase[step % phrase.length];
+        step++;
+        const now = ctx.currentTime;
+        const o = ctx.createOscillator();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        const f = ctx.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 1100;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.032, now + 0.45);
+        g.gain.linearRampToValueAtTime(0.018, now + 1.8);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+        o.connect(f); f.connect(g);
+        connectToPad(g);
+        o.start(now);
+        o.stop(now + 3.6);
+        activeNodes.push(o, g, f);
+      }
+      playNote();
+      melodyTimer = setInterval(playNote, 2800);
     }
     function startThunderResonance() { if (!audioUnlocked) return; const ctx = getCtx(); const start = () => { stopPad(true); startHealingPad(); showToast('Thunder Resonance'); }; if (ctx.state === 'suspended') ctx.resume().then(start); else start(); }
-    function stopPad(silent) { if (thunderInterval) { clearInterval(thunderInterval); thunderInterval = null; } activeNodes.forEach(n => { try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch (e) {} }); activeNodes = []; isPlaying = false; if (!silent) { updateUI(false); showToast('Sound off'); } }
+    function stopPad(silent) {
+      if (thunderInterval) { clearInterval(thunderInterval); thunderInterval = null; }
+      if (melodyTimer) { clearInterval(melodyTimer); melodyTimer = null; }
+      activeNodes.forEach(n => { try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch (e) {} });
+      activeNodes = [];
+      isPlaying = false;
+      if (!silent) { updateUI(false); showToast('Sound off'); }
+    }
     function toggleSound() { if (isPlaying) stopPad(); else startHealingPad(); }
-    function playPortalTone() { const ctx = getCtx(); if (ctx.state === 'suspended') ctx.resume(); const now = ctx.currentTime; const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(216, now); o.frequency.exponentialRampToValueAtTime(432, now + 1.6); g.gain.setValueAtTime(0, now); g.gain.linearRampToValueAtTime(0.10, now + 0.2); g.gain.exponentialRampToValueAtTime(0.001, now + 2.1); o.connect(g); g.connect(masterGain); o.start(now); o.stop(now + 2.2); }
+    function playPortalTone() {
+      const ctx = getCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(216, now);
+      o.frequency.exponentialRampToValueAtTime(432, now + 1.6);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(0.09, now + 0.25);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 2.4);
+      o.connect(g);
+      connectToPad(g);
+      o.start(now);
+      o.stop(now + 2.5);
+    }
     function updateUI(on) { const btn = document.getElementById('sound-toggle'); const onI = document.getElementById('icon-sound-on'); const offI = document.getElementById('icon-sound-off'); if (!btn) return; if (on) { btn.classList.remove('muted'); btn.classList.add('active'); if (onI) onI.classList.remove('hidden'); if (offI) offI.classList.add('hidden'); } else { btn.classList.add('muted'); btn.classList.remove('active'); if (onI) onI.classList.add('hidden'); if (offI) offI.classList.remove('hidden'); } }
     function initWebGL() {
       const container = document.getElementById('webgl-container');
