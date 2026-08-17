@@ -25,14 +25,15 @@
       background: radial-gradient(ellipse at center, #0a0a1a 0%, #05050f 55%, #000 100%);
       overflow: hidden; color: white;
     }
-    #webgl-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+    #webgl-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; will-change: transform; }
+    .portal-parallax { position: absolute; inset: 0; z-index: 2; pointer-events: none; will-change: transform; }
     .portal-ring {
       position: absolute; left: 50%; top: 48%;
       width: min(70vw, 520px); height: min(70vw, 520px);
       transform: translate(-50%, -50%); border-radius: 50%;
       border: 1px solid rgba(249, 115, 22, 0.25);
       box-shadow: 0 0 60px 10px rgba(249, 115, 22, 0.15), inset 0 0 80px rgba(249, 115, 22, 0.08);
-      animation: portalPulse 6s ease-in-out infinite; z-index: 2;
+      animation: portalPulse 6s ease-in-out infinite;
     }
     .portal-ring::before {
       content: ''; position: absolute; inset: 12%; border-radius: 50%;
@@ -139,6 +140,7 @@
       box-shadow: 0 10px 40px rgba(249, 115, 22, 0.35); transition: all 0.3s ease;
     }
     .ascend-btn:hover { transform: scale(1.05); box-shadow: 0 14px 50px rgba(249, 115, 22, 0.5); }
+    .hero-parallax { will-change: transform, opacity; }
   </style>
 </head>
 <body class="bg-black text-white">
@@ -165,8 +167,8 @@
   <div id="sound-toast">Healing field active</div>
   <section class="main-portal pt-20">
     <div id="webgl-container"></div>
-    <div class="portal-ring" aria-hidden="true"></div>
-    <div class="relative z-20 text-center px-6 max-w-4xl mx-auto">
+    <div class="portal-parallax" aria-hidden="true"><div class="portal-ring"></div></div>
+    <div class="relative z-20 text-center px-6 max-w-4xl mx-auto hero-parallax">
       <div class="hero-badge inline-flex items-center gap-4 px-10 py-4 rounded-3xl mb-12 text-sm tracking-widest"><span class="text-orange-400">✦</span> 3-DAY COSMIC RESET <span class="text-orange-400">✦</span></div>
       <h1 class="mb-6 text-[5.8rem] md:text-[7.5rem] leading-none tracking-wider">FIT</h1>
       <p class="text-3xl md:text-5xl leading-tight max-w-3xl mx-auto mb-14 opacity-90">Ancient balance.<br>Modern power.</p>
@@ -347,10 +349,33 @@
       stopPad(true);
     }
     function goToClaim() { closeLevel1(); setTimeout(() => document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' }), 300); }
+    function initParallax() {
+      const stars = document.getElementById('webgl-container');
+      const portalWrap = document.querySelector('.portal-parallax');
+      const hero = document.querySelector('.hero-parallax');
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY || 0;
+          if (stars) stars.style.transform = 'translate3d(0, ' + (y * 0.18) + 'px, 0)';
+          if (portalWrap) portalWrap.style.transform = 'translate3d(0, ' + (y * 0.38) + 'px, 0) scale(' + (1 + Math.min(y, 700) * 0.00018) + ')';
+          if (hero) {
+            hero.style.transform = 'translate3d(0, ' + (y * 0.52) + 'px, 0)';
+            hero.style.opacity = String(Math.max(0, 1 - y / 620));
+          }
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
     function safeInit() {
       const st = document.getElementById('sound-toggle'); if (st) st.addEventListener('click', toggleSound);
       const ab = document.getElementById('ascend-btn'); if (ab) ab.addEventListener('click', () => { if (!isPlaying) { toggleSound(); setTimeout(playPortalTone, 400); } else playPortalTone(); });
       try { initWebGL(); } catch (e) {}
+      try { initParallax(); } catch (e) {}
       try { const obs = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.15 }); document.querySelectorAll('.reveal, .level-card').forEach(el => obs.observe(el)); } catch (e) {}
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', safeInit); else safeInit();
