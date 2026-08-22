@@ -29,24 +29,18 @@ h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500}
 @media(min-width:768px){.nav-links{display:flex}}
 .hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem 4rem;overflow:hidden}
 #stars{position:absolute;inset:0;z-index:0}
-.hero-glow{position:absolute;width:min(92vw,560px);height:min(92vw,560px);left:50%;top:44%;transform:translate(-50%,-50%);background:radial-gradient(circle at 32% 45%,rgba(251,191,36,.22) 0%,transparent 42%),radial-gradient(circle at 68% 55%,rgba(148,163,184,.14) 0%,transparent 40%),radial-gradient(circle,rgba(232,165,75,.06) 0%,transparent 60%);pointer-events:none;z-index:1;animation:breathe 8s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.9}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1}}
-.portal{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(42vw,280px);height:min(42vw,280px);z-index:1;pointer-events:none}
-.emblem{width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 0 60px rgba(232,165,75,.25),0 0 120px rgba(148,163,184,.12),inset 0 0 40px rgba(0,0,0,.25);animation:emblemFloat 10s ease-in-out infinite}
-@keyframes emblemFloat{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.03) rotate(2deg)}}
-.emblem-sun{position:absolute;left:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 70% 40%,#fff7d6 0%,#fbbf24 28%,#f59e0b 55%,#d97706 100%)}
-.emblem-sun::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 62% 32%,rgba(255,255,255,.55) 0%,transparent 35%),radial-gradient(circle at 45% 70%,rgba(255,200,80,.25) 0%,transparent 40%)}
-.emblem-moon{position:absolute;right:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 35% 45%,#f1f5f9 0%,#cbd5e1 35%,#94a3b8 70%,#64748b 100%)}
-.emblem-moon::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.35) 0%,transparent 28%),radial-gradient(circle at 55% 62%,rgba(100,116,139,.35) 0 8%,transparent 9%),radial-gradient(circle at 32% 58%,rgba(100,116,139,.28) 0 5%,transparent 6%),radial-gradient(circle at 48% 42%,rgba(100,116,139,.22) 0 4%,transparent 5%)}
-.emblem-split{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-50%);z-index:2}
-.sun-rays{position:absolute;left:0;top:0;width:50%;height:100%;overflow:hidden}
-.sun-rays span{position:absolute;left:100%;top:50%;width:42%;height:2px;background:linear-gradient(90deg,rgba(251,191,36,.55),transparent);transform-origin:left center}
-.sun-rays span:nth-child(1){transform:translateY(-50%) rotate(-52deg)}
-.sun-rays span:nth-child(2){transform:translateY(-50%) rotate(-26deg);width:48%}
-.sun-rays span:nth-child(3){transform:translateY(-50%) rotate(0);width:52%}
-.sun-rays span:nth-child(4){transform:translateY(-50%) rotate(26deg);width:48%}
-.sun-rays span:nth-child(5){transform:translateY(-50%) rotate(52deg)}
-.hero-content{position:relative;z-index:2;max-width:720px}
+.hero-glow{position:absolute;width:min(100vw,640px);height:min(100vw,640px);left:50%;top:38%;transform:translate(-50%,-50%);background:radial-gradient(circle at 30% 42%,rgba(251,191,36,.28) 0%,transparent 38%),radial-gradient(circle at 70% 58%,rgba(148,163,184,.18) 0%,transparent 36%),radial-gradient(circle,rgba(232,165,75,.07) 0%,transparent 55%);pointer-events:none;z-index:1;animation:breathe 9s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.85}50%{transform:translate(-50%,-50%) scale(1.08);opacity:1}}
+.portal{position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);width:min(48vw,300px);height:min(48vw,300px);z-index:1;pointer-events:none}
+.emblem{width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 40px rgba(251,191,36,.35),0 0 90px rgba(148,163,184,.18),0 0 160px rgba(232,165,75,.1),inset 0 0 50px rgba(0,0,0,.35);animation:emblemFloat 12s ease-in-out infinite}
+@keyframes emblemFloat{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.04) rotate(1.5deg)}}
+.emblem-sun{position:absolute;left:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 78% 38%,#fffbeb 0%,#fde68a 18%,#fbbf24 42%,#f59e0b 68%,#b45309 100%)}
+.emblem-sun::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 65% 28%,rgba(255,255,255,.7) 0%,transparent 32%),radial-gradient(circle at 40% 75%,rgba(251,146,60,.35) 0%,transparent 45%)}
+.emblem-moon{position:absolute;right:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 28% 42%,#f8fafc 0%,#e2e8f0 22%,#94a3b8 55%,#475569 100%)}
+.emblem-moon::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 38% 28%,rgba(255,255,255,.45) 0%,transparent 26%),radial-gradient(circle at 58% 58%,rgba(71,85,105,.55) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(71,85,105,.4) 0 4.5%,transparent 5.5%),radial-gradient(circle at 52% 38%,rgba(71,85,105,.35) 0 3.5%,transparent 4.5%),radial-gradient(circle at 68% 48%,rgba(71,85,105,.3) 0 2.8%,transparent 3.8%),radial-gradient(circle at 42% 48%,rgba(71,85,105,.25) 0 2%,transparent 3%)}
+.emblem-split{position:absolute;left:50%;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,transparent 0%,rgba(255,255,255,.15) 15%,rgba(255,250,230,.75) 50%,rgba(255,255,255,.15) 85%,transparent 100%);transform:translateX(-50%);z-index:3;box-shadow:0 0 14px rgba(255,240,200,.45)}
+.emblem::after{content:'';position:absolute;left:48%;top:0;bottom:0;width:4%;background:linear-gradient(90deg,rgba(251,191,36,.18),rgba(255,255,255,.1),rgba(148,163,184,.15));z-index:2;pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:720px;padding-top:min(22vw,160px)}
 .eyebrow{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem}
 .hero h1{font-size:clamp(4.5rem,14vw,8.5rem);line-height:.9;margin:0 0 1.25rem;letter-spacing:.08em}
 .hero-sub{font-size:clamp(1.35rem,3.5vw,2rem);line-height:1.35;color:rgba(255,255,255,.72);margin:0 0 2.5rem}
@@ -98,8 +92,9 @@ footer{text-align:center;padding:3rem 1.5rem 4rem;color:var(--muted);font-size:.
 <canvas id="stars"></canvas>
 <div class="hero-glow"></div>
 <div class="portal" aria-hidden="true"><div class="emblem">
-<div class="emblem-sun"><div class="sun-rays"><span></span><span></span><span></span><span></span><span></span></div></div>
-<div class="emblem-moon"></div><div class="emblem-split"></div>
+<div class="emblem-sun"></div>
+<div class="emblem-moon"></div>
+<div class="emblem-split"></div>
 </div></div>
 <div class="hero-content">
 <p class="eyebrow">✦ 3-Day Cosmic Reset ✦</p>
@@ -131,38 +126,24 @@ footer{text-align:center;padding:3rem 1.5rem 4rem;color:var(--muted);font-size:.
 <p class="section-label reveal">Entry</p>
 <h2 class="section-title reveal">Claim your CMC37</h2>
 <p class="section-desc reveal">Connect a Solana wallet and leave your email. One claim per field.</p>
-<div class="claim-wrap reveal"><form id="claim-form">
-<div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
-<div class="field"><label for="wallet">Solana wallet</label><div class="wallet-row"><input id="wallet" type="text" required spellcheck="false" autocomplete="off" placeholder="Wallet address"><button type="button" class="btn-connect" id="connect-btn">Connect</button></div>
-<p id="wallet-status" class="text-xs mt-2 hidden" style="color:var(--muted);font-size:.75rem"></p></div>
+<div class="claim-wrap reveal">
+<form id="claim-form">
+<div class="field"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="you@email.com" required autocomplete="email"></div>
+<div class="field"><label for="wallet">Solana Wallet</label><div class="wallet-row"><input type="text" id="wallet" name="wallet" placeholder="Paste or connect Phantom" required autocomplete="off"><button type="button" class="btn-connect" id="connect-btn">Connect</button></div><p id="wallet-status" class="form-msg hidden" style="margin-top:.4rem;text-align:left"></p></div>
 <button type="submit" class="btn-claim" id="submit-btn">Claim 1 CMC37</button>
 <p id="form-msg" class="form-msg"></p>
-</form></div></section>
-<footer>FIT · yin + yang · fusionfitportal.com</footer>
-<div id="level1" role="dialog" aria-label="Level 1"><video id="level1-video" src="/generated_video.mp4" loop playsinline></video><div class="shade"></div>
-<button type="button" class="close" id="level1-close" aria-label="Close">×</button>
-<div class="panel"><p class="eyebrow">Level 1 · Yin Awakening</p><h2 class="serif" style="font-size:clamp(2.5rem,8vw,4rem);margin:0 0 1.5rem">Thunder Resonance</h2>
-<button type="button" class="btn-primary" id="level1-claim">Claim your CMC37 →</button></div></div>
-<div id="modal" style="display:none;position:fixed;inset:0;z-index:90;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1.5rem">
-<div style="position:relative;max-width:28rem;width:100%;border-radius:1.25rem;padding:2rem;background:#12121a;border:1px solid var(--line)">
-<button type="button" id="modal-close" style="position:absolute;top:1rem;right:1.25rem;background:none;border:0;color:rgba(255,255,255,.5);font-size:1.5rem;cursor:pointer">×</button>
-<div id="modal-body"></div></div></div>
+</form>
+</div></section>
+<footer>FIT · Ancient balance. Modern power.</footer>
+<div id="level1"><button class="close" aria-label="Close">×</button><video src="/generated_video.mp4" playsinline loop muted></video><div class="shade"></div><div class="panel"><h2 class="serif" style="font-size:2.5rem;margin:0 0 1rem">Yin Awakening</h2><p style="color:rgba(255,255,255,.7);margin:0">Level 1 — Enter the quiet.</p></div></div>
 <script>
-(function(){const c=document.getElementById('stars'),x=c.getContext('2d');let w,h,s=[],r;function resize(){w=c.width=innerWidth;h=c.height=innerHeight;s=Array.from({length:Math.min(160,Math.floor(w*h/9000))},()=>({x:Math.random()*w,y:Math.random()*h,z:Math.random()*2+.3,r:Math.random()*1.3+.2}))}function draw(){x.clearRect(0,0,w,h);const cx=w/2,cy=h*.46;for(const t of s){t.x+=(t.x-cx)*0.00055*t.z;t.y+=(t.y-cy)*0.00055*t.z;if(t.x<-20||t.x>w+20||t.y<-20||t.y>h+20){t.x=cx+(Math.random()-.5)*60;t.y=cy+(Math.random()-.5)*60;t.z=Math.random()*2+.3}x.beginPath();x.fillStyle='rgba(255,255,255,'+(0.2+t.z*.28)+')';x.arc(t.x,t.y,t.r,0,Math.PI*2);x.fill()}r=requestAnimationFrame(draw)}addEventListener('resize',resize);resize();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)draw()})();
-const nav=document.getElementById('nav');addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-const level1=document.getElementById('level1'),v=document.getElementById('level1-video');
-function openLevel1(){level1.classList.add('open');v.muted=false;v.volume=.7;v.currentTime=0;v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})})}
-function closeLevel1(){level1.classList.remove('open');v.pause();v.muted=true}
-document.getElementById('level1-close').onclick=closeLevel1;
-document.getElementById('level1-claim').onclick=()=>{closeLevel1();setTimeout(()=>document.getElementById('claim').scrollIntoView({behavior:'smooth'}),200)};
-const modal=document.getElementById('modal'),mb=document.getElementById('modal-body');
-const names={2:{title:'Yang Ignition',copy:'Heat, direction, and clean force. Full sequence arriving inside the portal.'},3:{title:'Fusion Harmony',copy:'Yin and yang in one continuous field. Full sequence arriving soon.'},4:{title:'Symbolic Elevation',copy:'Pattern, myth, and meaning as practice. Full sequence arriving soon.'},5:{title:'Lotus Mastery',copy:'Stillness that holds power. Full sequence arriving soon.'}};
-function openModal(n){const d=names[n];if(!d)return;mb.innerHTML='<p class="eyebrow" style="margin-bottom:.75rem">Level 0'+n+'</p><h2 class="serif" style="font-size:2rem;margin:0 0 .75rem">'+d.title+'</h2><p style="color:var(--muted);line-height:1.6;margin:0">'+d.copy+'</p>';modal.style.display='flex'}
-document.getElementById('modal-close').onclick=()=>modal.style.display='none';modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
-document.querySelectorAll('.level').forEach(btn=>btn.onclick=()=>{const n=+btn.dataset.level;n===1?openLevel1():openModal(n)});
-const SUPABASE_URL='https://kytvzrkretucgkairzny.supabase.co',SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
-function isValidSolana(a){return a&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a.trim())}
+const SUPABASE_URL='https://kytvzrkretucgkairzny.supabase.co',SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0NTg0NzAsImV4cCI6MjA2NTAzNDQ3MH0.placeholder';
+function isValidSolana(a){return/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a)}
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');let stars=[];function resize(){canvas.width=innerWidth;canvas.height=innerHeight;stars=Array.from({length:Math.min(180,Math.floor(innerWidth*innerHeight/9000))},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.4+.2,a:Math.random()*.7+.2,s:Math.random()*.3+.05}))}resize();addEventListener('resize',resize);(function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);stars.forEach(s=>{s.a+= (Math.random()-.5)*.02;s.a=Math.max(.15,Math.min(.9,s.a));ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill();s.y+=s.s;if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width}});requestAnimationFrame(draw)})();
+const nav=document.getElementById('nav');addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40));
+document.querySelectorAll('.reveal').forEach(el=>{const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('in');io.unobserve(el)}},{threshold:.15});io.observe(el)});
+document.querySelectorAll('.level').forEach(btn=>btn.onclick=()=>{const lv=btn.dataset.level;if(lv==='1'){const o=document.getElementById('level1');o.classList.add('open');const v=o.querySelector('video');v.currentTime=0;v.play().catch(()=>{})}});
+document.querySelector('#level1 .close').onclick=()=>{const o=document.getElementById('level1');o.classList.remove('open');o.querySelector('video').pause()};
 document.getElementById('connect-btn').onclick=async()=>{const btn=document.getElementById('connect-btn'),st=document.getElementById('wallet-status'),inp=document.getElementById('wallet');try{const p=window.solana||(window.phantom&&window.phantom.solana)||window.solflare;if(!p){st.textContent='No wallet detected — paste address instead.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');return}btn.disabled=true;btn.textContent='…';const resp=await p.connect();const key=(resp.publicKey&&resp.publicKey.toString())||(p.publicKey&&p.publicKey.toString());if(!key)throw new Error('No key');inp.value=key;inp.readOnly=true;btn.textContent='Linked';st.textContent='Wallet connected';st.style.color='#86efac';st.classList.remove('hidden')}catch(e){st.textContent='Could not connect — paste address manually.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');btn.disabled=false;btn.textContent='Connect'}};
 document.getElementById('claim-form').onsubmit=async e=>{e.preventDefault();const email=document.getElementById('email').value.trim(),wallet=document.getElementById('wallet').value.trim(),btn=document.getElementById('submit-btn'),msg=document.getElementById('form-msg');msg.textContent='';msg.className='form-msg';if(!email.includes('@')){msg.textContent='Enter a valid email.';msg.classList.add('err');return}if(!isValidSolana(wallet)){msg.textContent='Enter a valid Solana address.';msg.classList.add('err');return}let client=null;try{if(typeof supabase!=='undefined')client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(_){}if(!client){msg.textContent='Not ready. Refresh and try again.';msg.classList.add('err');return}btn.disabled=true;btn.textContent='Claiming…';try{const result=await client.from('signups').insert([{email,wallet_address:wallet,verified:false,rewarded:true}]);if(result.error){msg.textContent=result.error.code==='23505'?'Already registered.':(result.error.message||'Could not save.');msg.classList.add(result.error.code==='23505'?'warn':'err');btn.disabled=false;btn.textContent='Claim 1 CMC37';return}msg.textContent='Success — you are entitled to 1 CMC37.';msg.classList.add('ok');btn.textContent='Claimed ✓';document.getElementById('claim-form').reset();document.getElementById('wallet').readOnly=false}catch(err){msg.textContent='Something went wrong. Try again.';msg.classList.add('err');btn.disabled=false;btn.textContent='Claim 1 CMC37'}};
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
