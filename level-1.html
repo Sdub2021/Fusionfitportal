@@ -7,6 +7,7 @@
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#05050a">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
   <style>
     :root { --amber:#e8a54b; --void:#05050a; }
     * { box-sizing: border-box; }
@@ -39,18 +40,12 @@
 <body>
   <video class="bg" src="/generated_video.mp4" autoplay muted loop playsinline></video>
   <div class="shade"></div>
-  <div class="bar">
-    <a href="/">← Portal</a>
-    <span>Level 1 · Yin Awakening</span>
-  </div>
+  <div class="bar"><a href="/">← Portal</a><span>Level 1 · Yin Awakening</span></div>
   <main class="stage">
     <p class="eyebrow">4 · 7 · 8</p>
     <h1>Breathe deeply</h1>
     <p class="cue">Inhale 4 · Hold 7 · Exhale 8</p>
-    <div class="orb-wrap">
-      <div class="orb" id="orb"></div>
-      <div class="count" id="count">4</div>
-    </div>
+    <div class="orb-wrap"><div class="orb" id="orb"></div><div class="count" id="count">4</div></div>
     <div class="phase" id="phase">Ready</div>
     <div class="meta" id="meta">Four cycles · tap begin</div>
     <div class="controls">
@@ -61,11 +56,7 @@
     <p class="hint">Nose in for 4. Hold for 7. Mouth out for 8. Stay soft in the body.</p>
   </main>
   <script>
-    const PHASES = [
-      { name:'Inhale', secs:4, cls:'inhale' },
-      { name:'Hold', secs:7, cls:'hold' },
-      { name:'Exhale', secs:8, cls:'exhale' }
-    ];
+    const PHASES = [{ name:'Inhale', secs:4, cls:'inhale' },{ name:'Hold', secs:7, cls:'hold' },{ name:'Exhale', secs:8, cls:'exhale' }];
     const TOTAL_CYCLES = 4;
     const orb = document.getElementById('orb');
     const countEl = document.getElementById('count');
@@ -75,7 +66,7 @@
     const audioBtn = document.getElementById('audio');
     const resetBtn = document.getElementById('reset');
     let running = false, timer = null, cycle = 1, pIndex = 0, left = 4;
-    let audioCtx = null, master = null, nodes = [];
+    let musicReady = false, musicOn = false, healGainNode = null;
     function setUI() {
       const p = PHASES[pIndex];
       phaseEl.textContent = running ? p.name : 'Ready';
@@ -89,95 +80,88 @@
       if (left <= 0) {
         pIndex += 1;
         if (pIndex >= PHASES.length) {
-          pIndex = 0;
-          cycle += 1;
+          pIndex = 0; cycle += 1;
           if (cycle > TOTAL_CYCLES) {
-            running = false;
-            clearInterval(timer);
-            phaseEl.textContent = 'Complete';
-            countEl.textContent = '✦';
-            metaEl.textContent = 'Rest. Notice the quiet.';
-            orb.className = 'orb';
-            startBtn.textContent = 'Begin again';
-            cycle = 1; pIndex = 0; left = PHASES[0].secs;
-            return;
+            running = false; clearInterval(timer);
+            phaseEl.textContent = 'Complete'; countEl.textContent = '✦';
+            metaEl.textContent = 'Rest. Notice the quiet.'; orb.className = 'orb';
+            startBtn.textContent = 'Begin again'; cycle = 1; pIndex = 0; left = PHASES[0].secs; return;
           }
         }
-        left = PHASES[pIndex].secs;
-        orb.className = 'orb';
-        void orb.offsetWidth;
+        left = PHASES[pIndex].secs; orb.className = 'orb'; void orb.offsetWidth;
         orb.className = 'orb ' + PHASES[pIndex].cls;
       }
       setUI();
     }
     function start() {
-      if (running) {
-        running = false;
-        clearInterval(timer);
-        startBtn.textContent = 'Resume';
-        return;
-      }
-      if (phaseEl.textContent === 'Complete' || startBtn.textContent === 'Begin again') {
-        cycle = 1; pIndex = 0; left = PHASES[0].secs;
-      }
-      running = true;
-      orb.className = 'orb ' + PHASES[pIndex].cls;
-      setUI();
+      if (running) { running = false; clearInterval(timer); startBtn.textContent = 'Resume'; return; }
+      if (phaseEl.textContent === 'Complete' || startBtn.textContent === 'Begin again') { cycle = 1; pIndex = 0; left = PHASES[0].secs; }
+      running = true; orb.className = 'orb ' + PHASES[pIndex].cls; setUI();
       timer = setInterval(tick, 1000);
-      if (!audioCtx) startPad();
+      if (!musicOn) startMusic();
     }
     function reset() {
-      running = false;
-      clearInterval(timer);
-      cycle = 1; pIndex = 0; left = PHASES[0].secs;
-      setUI();
-      orb.className = 'orb';
+      running = false; clearInterval(timer); cycle = 1; pIndex = 0; left = PHASES[0].secs; setUI(); orb.className = 'orb';
     }
-    function startPad() {
+    function buildMusic() {
+      const verb = new Tone.Reverb({ decay: 6.5, wet: 0.42 }).toDestination();
+      const healGain = new Tone.Gain(0.045).connect(verb); healGainNode = healGain;
+      const pianoGain = new Tone.Gain(0.22).connect(verb);
+      const drumGain = new Tone.Gain(0.16).toDestination();
+      const heal = new Tone.Oscillator({ frequency: 528, type: 'sine' }).connect(healGain);
+      const healLow = new Tone.Oscillator({ frequency: 264, type: 'sine' }).connect(healGain);
+      heal.start(); healLow.start();
+      const piano = new Tone.PolySynth(Tone.Synth, {
+        maxPolyphony: 4,
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.012, decay: 1.6, sustain: 0.12, release: 2.8 }
+      }).connect(pianoGain);
+      piano.set({ volume: -6 });
+      const kick = new Tone.MembraneSynth({
+        pitchDecay: 0.05, octaves: 4, oscillator: { type: 'sine' },
+        envelope: { attack: 0.001, decay: 0.38, sustain: 0, release: 0.18 }
+      }).connect(drumGain);
+      const hat = new Tone.NoiseSynth({
+        noise: { type: 'pink' }, envelope: { attack: 0.001, decay: 0.07, sustain: 0, release: 0.04 }
+      }).connect(new Tone.Filter(7000, 'highpass').connect(drumGain));
+      const melody = ['C4','E4','G4','C5','A4','G4','E4','C4','G4','E4','A4','G4'];
+      let i = 0;
+      const pianoLoop = new Tone.Loop((time) => {
+        const n = melody[i % melody.length];
+        piano.triggerAttackRelease(n, '2n', time);
+        if (i % 3 === 0) piano.triggerAttackRelease('C5', '4n', time + 0.02, 0.35);
+        i += 1;
+      }, '2n');
+      const drumLoop = new Tone.Loop((time) => {
+        kick.triggerAttackRelease('C1', '8n', time, 0.55);
+        hat.triggerAttackRelease('16n', time + Tone.Time('8n'), 0.12);
+        hat.triggerAttackRelease('16n', time + Tone.Time('4n') + Tone.Time('8n'), 0.08);
+      }, '1m');
+      Tone.Transport.bpm.value = 56;
+      pianoLoop.start(0); drumLoop.start(0); musicReady = true;
+    }
+    async function startMusic() {
       try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        master = audioCtx.createGain();
-        master.gain.value = 0.07;
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 640;
-        master.connect(filter); filter.connect(audioCtx.destination);
-        const freqs = [110, 164.81, 220, 329.63];
-        nodes = freqs.map((f, i) => {
-          const o = audioCtx.createOscillator();
-          const g = audioCtx.createGain();
-          o.type = i % 2 ? 'sine' : 'triangle';
-          o.frequency.value = f;
-          g.gain.value = i === 0 ? 0.45 : 0.16;
-          const lfo = audioCtx.createOscillator();
-          const lg = audioCtx.createGain();
-          lfo.frequency.value = 0.04 + i * 0.015;
-          lg.gain.value = 3 + i;
-          lfo.connect(lg); lg.connect(o.frequency);
-          o.connect(g); g.connect(master);
-          o.start(); lfo.start();
-          return o;
-        });
-        audioBtn.textContent = 'Music on';
-        audioBtn.classList.add('on');
+        if (typeof Tone === 'undefined') return;
+        await Tone.start();
+        if (!musicReady) buildMusic();
+        Tone.Transport.start(); musicOn = true;
+        audioBtn.textContent = 'Music on'; audioBtn.classList.add('on');
       } catch (e) {}
     }
-    function togglePad() {
-      if (!audioCtx) { startPad(); return; }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-        audioBtn.textContent = 'Music on';
-        audioBtn.classList.add('on');
+    async function togglePad() {
+      if (!musicOn) { await startMusic(); return; }
+      if (Tone.Transport.state === 'started') {
+        Tone.Transport.pause();
+        if (healGainNode) healGainNode.gain.rampTo(0, 0.4);
+        audioBtn.textContent = 'Music off'; audioBtn.classList.remove('on');
       } else {
-        audioCtx.suspend();
-        audioBtn.textContent = 'Music off';
-        audioBtn.classList.remove('on');
+        Tone.Transport.start();
+        if (healGainNode) healGainNode.gain.rampTo(0.045, 0.6);
+        audioBtn.textContent = 'Music on'; audioBtn.classList.add('on');
       }
     }
-    startBtn.onclick = start;
-    resetBtn.onclick = reset;
-    audioBtn.onclick = togglePad;
-    setUI();
+    startBtn.onclick = start; resetBtn.onclick = reset; audioBtn.onclick = togglePad; setUI();
   </script>
 </body>
 </html>
