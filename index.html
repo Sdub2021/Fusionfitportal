@@ -3,179 +3,597 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>FIT</title>
+  <title>FIT — Ancient balance. Modern power.</title>
+  <meta name="description" content="FIT is a 3-day cosmic reset blending Yoga, Tai Chi, and Vestibular Training. Enter the portal.">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#f97316">
+  <meta name="theme-color" content="#0a0a0f">
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="apple-touch-icon" href="/icons/pX1Em.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; background: #05050f; color: #fff; overflow-x: hidden; scroll-behavior: smooth; }
-    h1,h2,h3 { font-family: 'Playfair Display', serif; }
-    .main-portal { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; background: radial-gradient(ellipse at center, #0a0a1a 0%, #05050f 55%, #000 100%); overflow: hidden; }
-    #webgl-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
-    .portal-ring { position: absolute; left: 50%; top: 48%; width: min(70vw,520px); height: min(70vw,520px); transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid rgba(249,115,22,.25); box-shadow: 0 0 60px 10px rgba(249,115,22,.15), inset 0 0 80px rgba(249,115,22,.08); animation: portalPulse 6s ease-in-out infinite; }
-    @keyframes portalPulse { 0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)} }
-    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle linear infinite; }
-    @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:1} }
-    #stars-drift { position: absolute; left: 50%; top: 50%; width: 200%; height: 200%; margin-left: -100%; margin-top: -100%; animation: swirl 80s linear infinite; transform-origin: center; }
-    #stars-drift-2 { position: absolute; left: 50%; top: 50%; width: 160%; height: 160%; margin-left: -80%; margin-top: -80%; animation: swirl 55s linear infinite reverse; transform-origin: center; }
-    @keyframes swirl { to { transform: rotate(360deg); } }
-    .level-card { transition: .5s; background: linear-gradient(160deg, rgba(30,30,45,.95), rgba(12,12,20,.98)); border: 1px solid rgba(255,255,255,.08); color: #fff; }
-    .level-card:hover { transform: scale(1.05) translateY(-10px); border-color: rgba(249,115,22,.35); }
-    .nav-glass { background: rgba(0,0,0,.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,.08); }
-    .ascend-btn { background: linear-gradient(135deg,#f97316,#fbbf24); box-shadow: 0 10px 40px rgba(249,115,22,.35); }
-    #level1-experience { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; background: #000; }
-    #level1-experience.active { display: flex; }
-    #level1-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .level1-content { position: relative; z-index: 10; text-align: center; padding: 2rem; }
-    .sound-toggle { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.25); color: #fff; }
+    :root {
+      --void: #07070c;
+      --amber: #e8a54b;
+      --amber-soft: #f0c27a;
+      --violet: #8b7cf6;
+      --line: rgba(255,255,255,0.08);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.45);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .serif { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; letter-spacing: 0.01em; }
+    ::selection { background: rgba(232,165,75,0.35); color: #fff; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      padding: 1.25rem 1.5rem;
+      background: linear-gradient(to bottom, rgba(7,7,12,0.92), rgba(7,7,12,0));
+      transition: background .3s, backdrop-filter .3s, border-color .3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(7,7,12,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom-color: var(--line);
+    }
+    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; color: #fff; }
+    .logo img { width: 36px; height: 36px; border-radius: 50%; }
+    .logo span { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; letter-spacing: 0.2em; font-weight: 500; }
+    .nav-links { display: none; gap: 2rem; font-size: 0.75rem; letter-spacing: 0.18em; text-transform: uppercase; }
+    .nav-links a { color: var(--muted); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--amber-soft); }
+    .nav-cta {
+      font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 0.7rem 1.25rem; border-radius: 999px;
+      border: 1px solid rgba(232,165,75,0.45); color: var(--amber-soft);
+      background: transparent; cursor: pointer; transition: all .25s;
+      text-decoration: none;
+    }
+    .nav-cta:hover { background: rgba(232,165,75,0.12); border-color: var(--amber); color: #fff; }
+    @media (min-width: 768px) { .nav-links { display: flex; } }
+
+    .hero {
+      position: relative; min-height: 100vh; min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 6rem 1.5rem 4rem;
+      overflow: hidden;
+    }
+    #stars { position: absolute; inset: 0; z-index: 0; }
+    .hero-glow {
+      position: absolute; width: min(90vw, 640px); height: min(90vw, 640px);
+      left: 50%; top: 46%; transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(232,165,75,0.12) 0%, rgba(139,124,246,0.06) 40%, transparent 68%);
+      pointer-events: none; z-index: 1;
+      animation: breathe 7s ease-in-out infinite;
+    }
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+      50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    }
+    .portal {
+      position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+      width: min(58vw, 380px); height: min(58vw, 380px); z-index: 1; pointer-events: none;
+    }
+    .ring {
+      position: absolute; inset: 0; margin: auto; border-radius: 50%;
+      border: 1px solid rgba(232,165,75,0.18);
+    }
+    .ring-1 { width: 32%; height: 32%; border-color: rgba(255,255,255,0.2); animation: spin 18s linear infinite; }
+    .ring-2 { width: 52%; height: 52%; animation: spin 28s linear infinite reverse; }
+    .ring-3 { width: 72%; height: 72%; border-color: rgba(139,124,246,0.22); animation: spin 40s linear infinite; }
+    .ring-4 { width: 100%; height: 100%; opacity: 0.5; animation: spin 55s linear infinite reverse; }
+    .core {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: 14%; height: 14%; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff 0%, var(--amber-soft) 30%, var(--amber) 55%, var(--violet) 100%);
+      box-shadow: 0 0 40px rgba(232,165,75,0.55), 0 0 90px rgba(139,124,246,0.35);
+      animation: corePulse 3.2s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes corePulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+      50% { transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.25); }
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 720px; }
+    .eyebrow {
+      font-size: 0.7rem; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 1.5rem; font-weight: 400;
+    }
+    .hero h1 {
+      font-size: clamp(4.5rem, 14vw, 8.5rem); line-height: 0.9;
+      margin: 0 0 1.25rem; font-weight: 500; letter-spacing: 0.08em;
+    }
+    .hero-sub {
+      font-size: clamp(1.35rem, 3.5vw, 2rem); line-height: 1.35;
+      color: rgba(255,255,255,0.72); margin: 0 0 2.5rem;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 1rem 2rem; border-radius: 999px; border: 0; cursor: pointer;
+      background: linear-gradient(135deg, #e8a54b 0%, #d4893a 100%);
+      color: #0a0a0f; font-family: 'Outfit', sans-serif; font-weight: 500;
+      font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+      box-shadow: 0 12px 40px rgba(232,165,75,0.28);
+      transition: transform .25s, box-shadow .25s;
+      text-decoration: none;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 48px rgba(232,165,75,0.4); }
+
+    section { position: relative; z-index: 2; }
+    .section { max-width: 1120px; margin: 0 auto; padding: 6rem 1.5rem; }
+    .section-label {
+      font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 0.75rem; text-align: center;
+    }
+    .section-title {
+      font-size: clamp(2.2rem, 5vw, 3.4rem); text-align: center;
+      margin: 0 0 0.75rem; font-weight: 500;
+    }
+    .section-desc {
+      text-align: center; color: var(--muted); max-width: 32rem;
+      margin: 0 auto 3.5rem; font-size: 1.05rem; line-height: 1.6;
+    }
+
+    .levels-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.85rem;
+    }
+    @media (min-width: 768px) { .levels-grid { grid-template-columns: repeat(5, 1fr); gap: 1rem; } }
+    .level {
+      position: relative; padding: 1.75rem 1rem; border-radius: 1.25rem;
+      background: linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+      text-align: center; cursor: pointer; transition: all .3s cubic-bezier(0.22, 1, 0.36, 1);
+      color: inherit; font: inherit; width: 100%;
+    }
+    .level:hover {
+      border-color: rgba(232,165,75,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35), 0 0 30px rgba(232,165,75,0.08);
+      background: linear-gradient(165deg, rgba(232,165,75,0.08), rgba(255,255,255,0.02));
+    }
+    .level-num { font-size: 0.65rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.5rem; }
+    .level-icon { font-size: 1.75rem; margin-bottom: 0.6rem; line-height: 1; }
+    .level-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin: 0; }
+
+    .practices { display: grid; gap: 1rem; }
+    @media (min-width: 768px) { .practices { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+    .practice {
+      padding: 2rem 1.75rem; border-radius: 1.5rem;
+      background: rgba(255,255,255,0.025); border: 1px solid var(--line);
+      transition: border-color .3s, transform .3s;
+    }
+    .practice:hover { border-color: rgba(255,255,255,0.16); transform: translateY(-4px); }
+    .practice-icon { font-size: 2rem; margin-bottom: 1.25rem; }
+    .practice h3 { font-size: 1.75rem; margin: 0 0 0.75rem; }
+    .practice p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 0.95rem; }
+
+    .claim-wrap {
+      max-width: 440px; margin: 0 auto;
+      padding: 2.5rem 2rem; border-radius: 1.75rem;
+      background: linear-gradient(165deg, rgba(232,165,75,0.07), rgba(139,124,246,0.04));
+      border: 1px solid rgba(232,165,75,0.22);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+    .claim-wrap label {
+      display: block; font-size: 0.7rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .claim-wrap input {
+      width: 100%; padding: 0.95rem 1.1rem; border-radius: 0.85rem;
+      background: rgba(0,0,0,0.45); border: 1px solid var(--line);
+      color: #fff; font-family: inherit; font-size: 0.95rem;
+      outline: none; transition: border-color .2s;
+    }
+    .claim-wrap input:focus { border-color: rgba(232,165,75,0.55); }
+    .claim-wrap input::placeholder { color: rgba(255,255,255,0.28); }
+    .wallet-row { display: flex; gap: 0.5rem; }
+    .wallet-row input { flex: 1; font-family: ui-monospace, monospace; font-size: 0.8rem; }
+    .btn-connect {
+      padding: 0 1.1rem; border-radius: 0.85rem; border: 1px solid rgba(139,124,246,0.45);
+      background: rgba(139,124,246,0.15); color: #c4b5fd; font-size: 0.75rem;
+      letter-spacing: 0.06em; cursor: pointer; white-space: nowrap; transition: all .2s;
+      font-family: inherit; font-weight: 500;
+    }
+    .btn-connect:hover { background: rgba(139,124,246,0.28); }
+    .btn-claim {
+      width: 100%; margin-top: 0.25rem; padding: 1.05rem;
+      border-radius: 0.95rem; border: 0; cursor: pointer;
+      background: linear-gradient(135deg, #e8a54b, #d4893a);
+      color: #0a0a0f; font-family: inherit; font-weight: 600;
+      font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: transform .2s, opacity .2s;
+    }
+    .btn-claim:hover { transform: translateY(-1px); }
+    .btn-claim:disabled { opacity: 0.6; cursor: wait; }
+    .form-msg { text-align: center; font-size: 0.85rem; margin-top: 0.75rem; min-height: 1.25rem; }
+    .form-msg.ok { color: #86efac; }
+    .form-msg.err { color: #fca5a5; }
+    .form-msg.warn { color: var(--amber-soft); }
+    .field { margin-bottom: 1rem; }
+
+    footer {
+      text-align: center; padding: 3rem 1.5rem 4rem;
+      color: var(--muted); font-size: 0.8rem; letter-spacing: 0.12em;
+      border-top: 1px solid var(--line);
+    }
+
+    #level1 {
+      position: fixed; inset: 0; z-index: 100; display: none;
+      align-items: center; justify-content: center; background: #000;
+    }
+    #level1.open { display: flex; }
+    #level1 video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #level1 .shade {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.65) 100%);
+      pointer-events: none;
+    }
+    #level1 .panel { position: relative; z-index: 2; text-align: center; padding: 2rem; max-width: 36rem; }
+    #level1 .close {
+      position: absolute; top: 1.25rem; right: 1.5rem; z-index: 3;
+      background: none; border: 0; color: rgba(255,255,255,0.6); font-size: 2rem;
+      cursor: pointer; line-height: 1;
+    }
+    #level1 .close:hover { color: #fff; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-glow, .ring, .core { animation: none !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
   </style>
 </head>
 <body>
-  <nav class="fixed top-0 left-0 right-0 nav-glass z-50 py-6">
-    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-      <a href="/" class="flex items-center gap-3 text-3xl font-bold tracking-widest"><img src="/icons/icon.svg" alt="FIT" class="w-10 h-10 rounded-full"><span class="text-orange-500">FIT</span></a>
-      <div class="hidden md:flex gap-10 text-sm font-medium">
-        <a href="#levels" class="hover:text-orange-400">THE PATH</a>
-        <a href="#services" class="hover:text-orange-400">SERVICES</a>
-        <a href="#signup" class="hover:text-orange-400">CLAIM CMC37</a>
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="logo" href="/">
+        <img src="/icons/icon.svg" alt="FIT" width="36" height="36">
+        <span>FIT</span>
+      </a>
+      <div class="nav-links">
+        <a href="#path">The Path</a>
+        <a href="#practices">Practices</a>
+        <a href="#claim">Claim</a>
       </div>
-      <div class="flex items-center gap-4">
-        <button id="sound-toggle" class="sound-toggle" title="Sound">♪</button>
-        <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 bg-white text-black rounded-2xl font-semibold">ENTER THE PORTAL</button>
-      </div>
+      <a class="nav-cta" href="#claim">Claim CMC37</a>
     </div>
   </nav>
-  <section class="main-portal pt-20">
-    <div id="webgl-container"></div>
-    <div class="portal-ring"></div>
-    <div class="relative z-20 text-center px-6">
-      <p class="tracking-widest text-sm mb-8 text-orange-400">✦ 3-DAY COSMIC RESET ✦</p>
-      <h1 class="mb-6 text-7xl md:text-8xl">FIT</h1>
-      <p class="text-3xl md:text-5xl mb-14 opacity-90">Ancient balance.<br>Modern power.</p>
-      <button id="ascend-btn" class="ascend-btn text-white font-bold rounded-full px-16 py-8 text-2xl">BEGIN YOUR ASCENSION</button>
+
+  <header class="hero">
+    <canvas id="stars"></canvas>
+    <div class="hero-glow"></div>
+    <div class="portal" aria-hidden="true">
+      <span class="ring ring-4"></span>
+      <span class="ring ring-3"></span>
+      <span class="ring ring-2"></span>
+      <span class="ring ring-1"></span>
+      <span class="core"></span>
+    </div>
+    <div class="hero-content">
+      <p class="eyebrow">✦ 3-Day Cosmic Reset ✦</p>
+      <h1>FIT</h1>
+      <p class="hero-sub serif">Ancient balance.<br>Modern power.</p>
+      <a class="btn-primary" href="#path">Begin your ascension</a>
+    </div>
+  </header>
+
+  <section id="path" class="section">
+    <p class="section-label reveal">The Path</p>
+    <h2 class="section-title reveal">Five levels of ascension</h2>
+    <p class="section-desc reveal">A quiet sequence from still to sovereign. Tap a level to enter.</p>
+    <div class="levels-grid">
+      <button type="button" class="level reveal" data-level="1">
+        <div class="level-num">01</div>
+        <div class="level-icon">🌑</div>
+        <h3 class="level-name">Yin Awakening</h3>
+      </button>
+      <button type="button" class="level reveal" data-level="2">
+        <div class="level-num">02</div>
+        <div class="level-icon">🔥</div>
+        <h3 class="level-name">Yang Ignition</h3>
+      </button>
+      <button type="button" class="level reveal" data-level="3">
+        <div class="level-num">03</div>
+        <div class="level-icon">☯️</div>
+        <h3 class="level-name">Fusion Harmony</h3>
+      </button>
+      <button type="button" class="level reveal" data-level="4">
+        <div class="level-num">04</div>
+        <div class="level-icon">✦</div>
+        <h3 class="level-name">Symbolic Elevation</h3>
+      </button>
+      <button type="button" class="level reveal" data-level="5">
+        <div class="level-num">05</div>
+        <div class="level-icon">🪷</div>
+        <h3 class="level-name">Lotus Mastery</h3>
+      </button>
     </div>
   </section>
-  <section id="levels" class="max-w-7xl mx-auto px-6 py-28">
-    <h2 class="text-5xl font-bold text-center mb-4">The 5 Levels of Ascension</h2>
-    <p class="text-center text-zinc-400 mb-16 text-xl">Click any level to enter the experience</p>
-    <div class="grid md:grid-cols-5 gap-8">
-      <div onclick="showWorkout(1)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 1</h3><p class="text-emerald-400 font-semibold">Yin Awakening</p></div>
-      <div onclick="showWorkout(2)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 2</h3><p class="text-orange-400 font-semibold">Yang Ignition</p></div>
-      <div onclick="showWorkout(3)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 3</h3><p class="text-cyan-400 font-semibold">Fusion Harmony</p></div>
-      <div onclick="showWorkout(4)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 4</h3><p class="text-purple-400 font-semibold">Symbolic Elevation</p></div>
-      <div onclick="showWorkout(5)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 5</h3><p class="text-pink-400 font-semibold">Lotus Mastery</p></div>
+
+  <section id="practices" class="section" style="padding-top: 2rem;">
+    <p class="section-label reveal">Sacred Practices</p>
+    <h2 class="section-title reveal">Three pillars</h2>
+    <p class="section-desc reveal">Body, breath, and balance — woven into one field.</p>
+    <div class="practices">
+      <article class="practice reveal">
+        <div class="practice-icon">🧘</div>
+        <h3>Yoga</h3>
+        <p>Deep Yin flows and breath-led practice that open the body and settle the nervous system.</p>
+      </article>
+      <article class="practice reveal">
+        <div class="practice-icon">☯️</div>
+        <h3>Tai Chi</h3>
+        <p>Moving meditation for balance, coordination, and the quiet circulation of Qi.</p>
+      </article>
+      <article class="practice reveal">
+        <div class="practice-icon">⚖️</div>
+        <h3>Vestibular</h3>
+        <p>Science-backed balance training for stability, clarity, and grounded presence.</p>
+      </article>
     </div>
   </section>
-  <section id="services" class="py-28">
-    <div class="max-w-7xl mx-auto px-6">
-      <h2 class="text-5xl font-bold text-center mb-16">Sacred Practices</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">🧘</div><h3 class="text-3xl font-bold mb-3">Yoga</h3><p class="text-zinc-400">Deep Yin flows and breath-led practice that open the body and calm the nervous system.</p></div>
-        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">☯️</div><h3 class="text-3xl font-bold mb-3">Tai Chi</h3><p class="text-zinc-400">Moving meditation for balance, coordination, and the flow of Qi.</p></div>
-        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">⚖️</div><h3 class="text-3xl font-bold mb-3">Vestibular Training</h3><p class="text-zinc-400">Science-backed balance retraining for dizziness, vertigo, and stability.</p></div>
-      </div>
-    </div>
-  </section>
-  <section id="signup" class="py-28 bg-black">
-    <div class="max-w-xl mx-auto px-6 text-center">
-      <h2 class="text-5xl font-bold mb-4">Claim Your 1 CMC37</h2>
-      <p class="text-xl text-zinc-400 mb-12">Connect your Solana wallet + email</p>
-      <form id="signup-form" class="space-y-6 text-left">
-        <div><label class="block text-sm text-zinc-400 mb-2">Email</label><input type="email" id="email" required class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white outline-none focus:border-orange-500" placeholder="you@email.com"></div>
-        <div><label class="block text-sm text-zinc-400 mb-2">Solana Wallet</label><div class="flex gap-3"><input type="text" id="wallet" required class="flex-1 p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white outline-none focus:border-orange-500 font-mono text-sm" placeholder="Wallet address"><button type="button" id="connect-wallet-btn" class="px-6 py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold">Connect</button></div><p id="wallet-status" class="text-xs text-zinc-500 mt-2 hidden"></p></div>
-        <button type="submit" id="submit-btn" class="w-full py-6 text-xl font-bold rounded-2xl bg-gradient-to-r from-orange-500 to-rose-600">CLAIM 1 CMC37</button>
-        <p id="form-message" class="text-center text-sm mt-4 hidden"></p>
+
+  <section id="claim" class="section">
+    <p class="section-label reveal">Entry</p>
+    <h2 class="section-title reveal">Claim your CMC37</h2>
+    <p class="section-desc reveal">Connect a Solana wallet and leave your email. One claim per field.</p>
+    <div class="claim-wrap reveal">
+      <form id="claim-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" required autocomplete="email" placeholder="you@email.com">
+        </div>
+        <div class="field">
+          <label for="wallet">Solana wallet</label>
+          <div class="wallet-row">
+            <input id="wallet" type="text" required spellcheck="false" autocomplete="off" placeholder="Wallet address">
+            <button type="button" class="btn-connect" id="connect-btn">Connect</button>
+          </div>
+          <p id="wallet-status" class="text-xs mt-2 hidden" style="color: var(--muted); font-size: 0.75rem;"></p>
+        </div>
+        <button type="submit" class="btn-claim" id="submit-btn">Claim 1 CMC37</button>
+        <p id="form-msg" class="form-msg"></p>
       </form>
     </div>
   </section>
-  <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]"><div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative"><button onclick="closeModal()" class="absolute top-6 right-6 text-4xl text-zinc-400">×</button><div id="modal-content"></div></div></div>
-  <div id="level1-experience"><video id="level1-video" src="generated_video.mp4" loop playsinline></video><button onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/70 z-20">×</button><div class="level1-content"><p class="text-orange-400 tracking-[0.3em] text-sm mb-4 uppercase">Level 1 • Yin Awakening</p><h2 class="text-5xl md:text-7xl font-bold mb-6">Thunder Resonance</h2><button onclick="goToClaim()" class="px-12 py-6 text-xl font-bold rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black">Claim Your CMC37 →</button></div></div>
+
+  <footer>
+    FIT · yin + yang · fusionfitportal.com
+  </footer>
+
+  <div id="level1" role="dialog" aria-label="Level 1 Yin Awakening">
+    <video id="level1-video" src="/generated_video.mp4" loop playsinline></video>
+    <div class="shade"></div>
+    <button type="button" class="close" id="level1-close" aria-label="Close">×</button>
+    <div class="panel">
+      <p class="eyebrow">Level 1 · Yin Awakening</p>
+      <h2 class="serif" style="font-size: clamp(2.5rem, 8vw, 4rem); margin: 0 0 1.5rem;">Thunder Resonance</h2>
+      <button type="button" class="btn-primary" id="level1-claim">Claim your CMC37 →</button>
+    </div>
+  </div>
+
+  <div id="modal" style="display:none; position:fixed; inset:0; z-index:90; align-items:center; justify-content:center; background:rgba(0,0,0,0.8); padding:1.5rem;">
+    <div style="position:relative; max-width:28rem; width:100%; border-radius:1.25rem; padding:2rem; background:#12121a; border:1px solid var(--line);">
+      <button type="button" id="modal-close" style="position:absolute; top:1rem; right:1.25rem; background:none; border:0; color:rgba(255,255,255,0.5); font-size:1.5rem; cursor:pointer;">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
   <script>
-    const SUPABASE_URL = 'https://kytvzrkretucgkairzny.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
-    function isValidSolanaAddress(addr) { return addr && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr.trim()); }
-    async function connectWallet() {
-      const btn = document.getElementById('connect-wallet-btn');
-      const status = document.getElementById('wallet-status');
-      const walletInput = document.getElementById('wallet');
-      try {
-        const provider = window.solana || window.phantom?.solana || window.solflare;
-        if (!provider) { status.textContent = 'No wallet found. Paste address instead.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden'); return; }
-        btn.disabled = true; btn.textContent = 'Connecting...';
-        const resp = await provider.connect();
-        const pubkey = resp.publicKey?.toString() || provider.publicKey?.toString();
-        walletInput.value = pubkey; walletInput.readOnly = true;
-        btn.textContent = 'Connected'; status.textContent = 'Wallet connected ✓'; status.className = 'text-xs text-green-400 mt-2'; status.classList.remove('hidden');
-      } catch (err) {
-        status.textContent = 'Could not connect. Paste address manually.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden');
-        btn.disabled = false; btn.textContent = 'Connect';
+    (function () {
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+      let w, h, stars = [], raf;
+      function resize() {
+        w = canvas.width = innerWidth;
+        h = canvas.height = innerHeight;
+        stars = Array.from({ length: Math.min(160, Math.floor(w * h / 9000)) }, () => ({
+          x: Math.random() * w, y: Math.random() * h,
+          z: Math.random() * 2 + 0.3, r: Math.random() * 1.3 + 0.2
+        }));
       }
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        const cx = w / 2, cy = h * 0.46;
+        for (const s of stars) {
+          s.x += (s.x - cx) * 0.00055 * s.z;
+          s.y += (s.y - cy) * 0.00055 * s.z;
+          if (s.x < -20 || s.x > w + 20 || s.y < -20 || s.y > h + 20) {
+            s.x = cx + (Math.random() - 0.5) * 60;
+            s.y = cy + (Math.random() - 0.5) * 60;
+            s.z = Math.random() * 2 + 0.3;
+          }
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(255,255,255,' + (0.2 + s.z * 0.28) + ')';
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        raf = requestAnimationFrame(draw);
+      }
+      addEventListener('resize', resize);
+      resize();
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) draw();
+    })();
+
+    const nav = document.getElementById('nav');
+    addEventListener('scroll', function () {
+      nav.classList.toggle('scrolled', scrollY > 40);
+    }, { passive: true });
+
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    const level1 = document.getElementById('level1');
+    const level1Video = document.getElementById('level1-video');
+    function openLevel1() {
+      level1.classList.add('open');
+      level1Video.muted = false;
+      level1Video.volume = 0.7;
+      level1Video.currentTime = 0;
+      level1Video.play().catch(function () {
+        level1Video.muted = true;
+        level1Video.play().catch(function () {});
+      });
     }
-    window.addEventListener('DOMContentLoaded', () => {
-      let supabaseClient = null;
-      try { if (typeof supabase !== 'undefined') supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
-      document.getElementById('connect-wallet-btn').addEventListener('click', connectWallet);
-      document.getElementById('signup-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const wallet = document.getElementById('wallet').value.trim();
-        const btn = document.getElementById('submit-btn');
-        const msg = document.getElementById('form-message');
-        if (!email.includes('@')) { msg.textContent = 'Valid email required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
-        if (!isValidSolanaAddress(wallet)) { msg.textContent = 'Valid Solana address required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
-        if (!supabaseClient) { msg.textContent = 'Not ready. Refresh and try again.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
-        btn.disabled = true; btn.textContent = 'Claiming...';
-        try {
-          const { error } = await supabaseClient.from('signups').insert([{ email, wallet_address: wallet, verified: false, rewarded: true }]);
-          if (error) { msg.textContent = error.code === '23505' ? 'Already registered.' : error.message; msg.className = 'text-center text-sm mt-4 text-orange-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'CLAIM 1 CMC37'; return; }
-          msg.textContent = 'Success! You are entitled to 1 CMC37.'; msg.className = 'text-center text-sm mt-4 text-green-400'; msg.classList.remove('hidden'); btn.textContent = 'Claimed ✓';
-        } catch (err) { msg.textContent = 'Something went wrong.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'CLAIM 1 CMC37'; }
+    function closeLevel1() {
+      level1.classList.remove('open');
+      level1Video.pause();
+      level1Video.muted = true;
+    }
+    document.getElementById('level1-close').addEventListener('click', closeLevel1);
+    document.getElementById('level1-claim').addEventListener('click', function () {
+      closeLevel1();
+      setTimeout(function () { document.getElementById('claim').scrollIntoView({ behavior: 'smooth' }); }, 200);
+    });
+
+    const modal = document.getElementById('modal');
+    const modalBody = document.getElementById('modal-body');
+    const levelNames = {
+      2: { title: 'Yang Ignition', copy: 'Heat, direction, and clean force. Full sequence arriving inside the portal.' },
+      3: { title: 'Fusion Harmony', copy: 'Yin and yang in one continuous field. Full sequence arriving soon.' },
+      4: { title: 'Symbolic Elevation', copy: 'Pattern, myth, and meaning as practice. Full sequence arriving soon.' },
+      5: { title: 'Lotus Mastery', copy: 'Stillness that holds power. Full sequence arriving soon.' }
+    };
+    function openModal(level) {
+      const d = levelNames[level];
+      if (!d) return;
+      modalBody.innerHTML = '<p class="eyebrow" style="margin-bottom:0.75rem">Level 0' + level + '</p><h2 class="serif" style="font-size:2rem;margin:0 0 0.75rem">' + d.title + '</h2><p style="color:var(--muted);line-height:1.6;margin:0">' + d.copy + '</p>';
+      modal.style.display = 'flex';
+    }
+    document.getElementById('modal-close').addEventListener('click', function () { modal.style.display = 'none'; });
+    modal.addEventListener('click', function (e) { if (e.target === modal) modal.style.display = 'none'; });
+
+    document.querySelectorAll('.level').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const n = Number(btn.dataset.level);
+        if (n === 1) openLevel1();
+        else openModal(n);
       });
     });
-    function initStars() {
-      const container = document.getElementById('webgl-container');
-      if (!container) return;
-      function layer(id, count) {
-        const el = document.createElement('div'); el.id = id;
-        for (let i = 0; i < count; i++) {
-          const s = document.createElement('div'); s.className = 'star';
-          const size = Math.random() * 2.5 + 0.4;
-          s.style.width = size + 'px'; s.style.height = size + 'px';
-          const a = Math.random() * Math.PI * 2, r = 15 + Math.random() * 42;
-          s.style.left = (50 + Math.cos(a) * r) + '%';
-          s.style.top = (50 + Math.sin(a) * r) + '%';
-          s.style.animationDuration = (Math.random() * 3 + 1.2) + 's';
-          el.appendChild(s);
-        }
-        return el;
-      }
-      container.appendChild(layer('stars-drift', 280));
-      container.appendChild(layer('stars-drift-2', 160));
+
+    const SUPABASE_URL = 'https://kytvzrkretucgkairzny.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
+
+    function isValidSolana(addr) {
+      return addr && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr.trim());
     }
-    function showWorkout(level) {
-      if (level === 1) {
-        document.getElementById('level1-experience').classList.add('active');
-        const v = document.getElementById('level1-video');
-        v.muted = false; v.volume = 0.75; v.currentTime = 0;
-        v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+
+    document.getElementById('connect-btn').addEventListener('click', async function () {
+      const btn = document.getElementById('connect-btn');
+      const status = document.getElementById('wallet-status');
+      const input = document.getElementById('wallet');
+      try {
+        const provider = window.solana || (window.phantom && window.phantom.solana) || window.solflare;
+        if (!provider) {
+          status.textContent = 'No wallet detected — paste address instead.';
+          status.style.color = 'var(--amber-soft)';
+          status.classList.remove('hidden');
+          return;
+        }
+        btn.disabled = true;
+        btn.textContent = '…';
+        const resp = await provider.connect();
+        const key = (resp.publicKey && resp.publicKey.toString()) || (provider.publicKey && provider.publicKey.toString());
+        if (!key) throw new Error('No key');
+        input.value = key;
+        input.readOnly = true;
+        btn.textContent = 'Linked';
+        status.textContent = 'Wallet connected';
+        status.style.color = '#86efac';
+        status.classList.remove('hidden');
+      } catch (err) {
+        status.textContent = 'Could not connect — paste address manually.';
+        status.style.color = 'var(--amber-soft)';
+        status.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Connect';
+      }
+    });
+
+    document.getElementById('claim-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const wallet = document.getElementById('wallet').value.trim();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('form-msg');
+      msg.textContent = '';
+      msg.className = 'form-msg';
+
+      if (!email.includes('@')) {
+        msg.textContent = 'Enter a valid email.';
+        msg.classList.add('err');
         return;
       }
-      const modal = document.getElementById('workout-modal');
-      document.getElementById('modal-content').innerHTML = '<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ' + level + '</h2><p class="text-zinc-400">Full workout coming inside the portal.</p>';
-      modal.classList.remove('hidden');
+      if (!isValidSolana(wallet)) {
+        msg.textContent = 'Enter a valid Solana address.';
+        msg.classList.add('err');
+        return;
+      }
+
+      var client = null;
+      try {
+        if (typeof supabase !== 'undefined') client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } catch (_) {}
+
+      if (!client) {
+        msg.textContent = 'Not ready. Refresh and try again.';
+        msg.classList.add('err');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Claiming…';
+
+      try {
+        const result = await client.from('signups').insert([{
+          email: email,
+          wallet_address: wallet,
+          verified: false,
+          rewarded: true
+        }]);
+        if (result.error) {
+          msg.textContent = result.error.code === '23505' ? 'Already registered.' : (result.error.message || 'Could not save.');
+          msg.classList.add(result.error.code === '23505' ? 'warn' : 'err');
+          btn.disabled = false;
+          btn.textContent = 'Claim 1 CMC37';
+          return;
+        }
+        msg.textContent = 'Success — you are entitled to 1 CMC37.';
+        msg.classList.add('ok');
+        btn.textContent = 'Claimed ✓';
+        document.getElementById('claim-form').reset();
+        document.getElementById('wallet').readOnly = false;
+      } catch (err) {
+        msg.textContent = 'Something went wrong. Try again.';
+        msg.classList.add('err');
+        btn.disabled = false;
+        btn.textContent = 'Claim 1 CMC37';
+      }
+    });
+
+    if ('serviceWorker' in navigator) {
+      addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').catch(function () {});
+      });
     }
-    function closeModal() { document.getElementById('workout-modal').classList.add('hidden'); }
-    function closeLevel1() {
-      document.getElementById('level1-experience').classList.remove('active');
-      const v = document.getElementById('level1-video'); v.pause(); v.muted = true;
-    }
-    function goToClaim() { closeLevel1(); setTimeout(() => document.getElementById('signup').scrollIntoView({behavior:'smooth'}), 300); }
-    document.getElementById('ascend-btn').addEventListener('click', () => document.getElementById('levels').scrollIntoView({behavior:'smooth'}));
-    initStars();
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
   </script>
 </body>
 </html>
