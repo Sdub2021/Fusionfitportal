@@ -1,1 +1,181 @@
-PLACEHOLDER_USE_FILE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>FIT</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; background: #05050f; color: #fff; overflow-x: hidden; scroll-behavior: smooth; }
+    h1,h2,h3 { font-family: 'Playfair Display', serif; }
+    .main-portal { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; background: radial-gradient(ellipse at center, #0a0a1a 0%, #05050f 55%, #000 100%); overflow: hidden; }
+    #webgl-container { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+    .portal-ring { position: absolute; left: 50%; top: 48%; width: min(70vw,520px); height: min(70vw,520px); transform: translate(-50%,-50%); border-radius: 50%; border: 1px solid rgba(249,115,22,.25); box-shadow: 0 0 60px 10px rgba(249,115,22,.15), inset 0 0 80px rgba(249,115,22,.08); animation: portalPulse 6s ease-in-out infinite; }
+    @keyframes portalPulse { 0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.04)} }
+    .star { position: absolute; background: #fff; border-radius: 50%; animation: twinkle linear infinite; }
+    @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:1} }
+    #stars-drift { position: absolute; left: 50%; top: 50%; width: 200%; height: 200%; margin-left: -100%; margin-top: -100%; animation: swirl 80s linear infinite; transform-origin: center; }
+    #stars-drift-2 { position: absolute; left: 50%; top: 50%; width: 160%; height: 160%; margin-left: -80%; margin-top: -80%; animation: swirl 55s linear infinite reverse; transform-origin: center; }
+    @keyframes swirl { to { transform: rotate(360deg); } }
+    .level-card { transition: .5s; background: linear-gradient(160deg, rgba(30,30,45,.95), rgba(12,12,20,.98)); border: 1px solid rgba(255,255,255,.08); color: #fff; }
+    .level-card:hover { transform: scale(1.05) translateY(-10px); border-color: rgba(249,115,22,.35); }
+    .nav-glass { background: rgba(0,0,0,.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,.08); }
+    .ascend-btn { background: linear-gradient(135deg,#f97316,#fbbf24); box-shadow: 0 10px 40px rgba(249,115,22,.35); }
+    #level1-experience { position: fixed; inset: 0; z-index: 200; display: none; align-items: center; justify-content: center; background: #000; }
+    #level1-experience.active { display: flex; }
+    #level1-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .level1-content { position: relative; z-index: 10; text-align: center; padding: 2rem; }
+    .sound-toggle { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.25); color: #fff; }
+  </style>
+</head>
+<body>
+  <nav class="fixed top-0 left-0 right-0 nav-glass z-50 py-6">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 text-3xl font-bold tracking-widest"><img src="/icons/icon.svg" alt="FIT" class="w-10 h-10 rounded-full"><span class="text-orange-500">FIT</span></a>
+      <div class="hidden md:flex gap-10 text-sm font-medium">
+        <a href="#levels" class="hover:text-orange-400">THE PATH</a>
+        <a href="#services" class="hover:text-orange-400">SERVICES</a>
+        <a href="#signup" class="hover:text-orange-400">CLAIM CMC37</a>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="sound-toggle" class="sound-toggle" title="Sound">♪</button>
+        <button onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})" class="px-8 py-4 bg-white text-black rounded-2xl font-semibold">ENTER THE PORTAL</button>
+      </div>
+    </div>
+  </nav>
+  <section class="main-portal pt-20">
+    <div id="webgl-container"></div>
+    <div class="portal-ring"></div>
+    <div class="relative z-20 text-center px-6">
+      <p class="tracking-widest text-sm mb-8 text-orange-400">✦ 3-DAY COSMIC RESET ✦</p>
+      <h1 class="mb-6 text-7xl md:text-8xl">FIT</h1>
+      <p class="text-3xl md:text-5xl mb-14 opacity-90">Ancient balance.<br>Modern power.</p>
+      <button id="ascend-btn" class="ascend-btn text-white font-bold rounded-full px-16 py-8 text-2xl">BEGIN YOUR ASCENSION</button>
+    </div>
+  </section>
+  <section id="levels" class="max-w-7xl mx-auto px-6 py-28">
+    <h2 class="text-5xl font-bold text-center mb-4">The 5 Levels of Ascension</h2>
+    <p class="text-center text-zinc-400 mb-16 text-xl">Click any level to enter the experience</p>
+    <div class="grid md:grid-cols-5 gap-8">
+      <div onclick="showWorkout(1)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 1</h3><p class="text-emerald-400 font-semibold">Yin Awakening</p></div>
+      <div onclick="showWorkout(2)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 2</h3><p class="text-orange-400 font-semibold">Yang Ignition</p></div>
+      <div onclick="showWorkout(3)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 3</h3><p class="text-cyan-400 font-semibold">Fusion Harmony</p></div>
+      <div onclick="showWorkout(4)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 4</h3><p class="text-purple-400 font-semibold">Symbolic Elevation</p></div>
+      <div onclick="showWorkout(5)" class="level-card cursor-pointer p-10 rounded-3xl text-center"><h3 class="text-3xl font-bold">Level 5</h3><p class="text-pink-400 font-semibold">Lotus Mastery</p></div>
+    </div>
+  </section>
+  <section id="services" class="py-28">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-16">Sacred Practices</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">🧘</div><h3 class="text-3xl font-bold mb-3">Yoga</h3><p class="text-zinc-400">Deep Yin flows and breath-led practice that open the body and calm the nervous system.</p></div>
+        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">☯️</div><h3 class="text-3xl font-bold mb-3">Tai Chi</h3><p class="text-zinc-400">Moving meditation for balance, coordination, and the flow of Qi.</p></div>
+        <div class="level-card p-10 rounded-3xl"><div class="text-4xl mb-4">⚖️</div><h3 class="text-3xl font-bold mb-3">Vestibular Training</h3><p class="text-zinc-400">Science-backed balance retraining for dizziness, vertigo, and stability.</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="signup" class="py-28 bg-black">
+    <div class="max-w-xl mx-auto px-6 text-center">
+      <h2 class="text-5xl font-bold mb-4">Claim Your 1 CMC37</h2>
+      <p class="text-xl text-zinc-400 mb-12">Connect your Solana wallet + email</p>
+      <form id="signup-form" class="space-y-6 text-left">
+        <div><label class="block text-sm text-zinc-400 mb-2">Email</label><input type="email" id="email" required class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white outline-none focus:border-orange-500" placeholder="you@email.com"></div>
+        <div><label class="block text-sm text-zinc-400 mb-2">Solana Wallet</label><div class="flex gap-3"><input type="text" id="wallet" required class="flex-1 p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white outline-none focus:border-orange-500 font-mono text-sm" placeholder="Wallet address"><button type="button" id="connect-wallet-btn" class="px-6 py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold">Connect</button></div><p id="wallet-status" class="text-xs text-zinc-500 mt-2 hidden"></p></div>
+        <button type="submit" id="submit-btn" class="w-full py-6 text-xl font-bold rounded-2xl bg-gradient-to-r from-orange-500 to-rose-600">CLAIM 1 CMC37</button>
+        <p id="form-message" class="text-center text-sm mt-4 hidden"></p>
+      </form>
+    </div>
+  </section>
+  <div id="workout-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100]"><div class="bg-zinc-900 rounded-3xl max-w-lg w-full mx-4 p-10 relative"><button onclick="closeModal()" class="absolute top-6 right-6 text-4xl text-zinc-400">×</button><div id="modal-content"></div></div></div>
+  <div id="level1-experience"><video id="level1-video" src="generated_video.mp4" loop playsinline></video><button onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/70 z-20">×</button><div class="level1-content"><p class="text-orange-400 tracking-[0.3em] text-sm mb-4 uppercase">Level 1 • Yin Awakening</p><h2 class="text-5xl md:text-7xl font-bold mb-6">Thunder Resonance</h2><button onclick="goToClaim()" class="px-12 py-6 text-xl font-bold rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black">Claim Your CMC37 →</button></div></div>
+  <script>
+    const SUPABASE_URL = 'https://kytvzrkretucgkairzny.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
+    function isValidSolanaAddress(addr) { return addr && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr.trim()); }
+    async function connectWallet() {
+      const btn = document.getElementById('connect-wallet-btn');
+      const status = document.getElementById('wallet-status');
+      const walletInput = document.getElementById('wallet');
+      try {
+        const provider = window.solana || window.phantom?.solana || window.solflare;
+        if (!provider) { status.textContent = 'No wallet found. Paste address instead.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden'); return; }
+        btn.disabled = true; btn.textContent = 'Connecting...';
+        const resp = await provider.connect();
+        const pubkey = resp.publicKey?.toString() || provider.publicKey?.toString();
+        walletInput.value = pubkey; walletInput.readOnly = true;
+        btn.textContent = 'Connected'; status.textContent = 'Wallet connected ✓'; status.className = 'text-xs text-green-400 mt-2'; status.classList.remove('hidden');
+      } catch (err) {
+        status.textContent = 'Could not connect. Paste address manually.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Connect';
+      }
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+      let supabaseClient = null;
+      try { if (typeof supabase !== 'undefined') supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
+      document.getElementById('connect-wallet-btn').addEventListener('click', connectWallet);
+      document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const wallet = document.getElementById('wallet').value.trim();
+        const btn = document.getElementById('submit-btn');
+        const msg = document.getElementById('form-message');
+        if (!email.includes('@')) { msg.textContent = 'Valid email required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
+        if (!isValidSolanaAddress(wallet)) { msg.textContent = 'Valid Solana address required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
+        if (!supabaseClient) { msg.textContent = 'Not ready. Refresh and try again.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
+        btn.disabled = true; btn.textContent = 'Claiming...';
+        try {
+          const { error } = await supabaseClient.from('signups').insert([{ email, wallet_address: wallet, verified: false, rewarded: true }]);
+          if (error) { msg.textContent = error.code === '23505' ? 'Already registered.' : error.message; msg.className = 'text-center text-sm mt-4 text-orange-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'CLAIM 1 CMC37'; return; }
+          msg.textContent = 'Success! You are entitled to 1 CMC37.'; msg.className = 'text-center text-sm mt-4 text-green-400'; msg.classList.remove('hidden'); btn.textContent = 'Claimed ✓';
+        } catch (err) { msg.textContent = 'Something went wrong.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'CLAIM 1 CMC37'; }
+      });
+    });
+    function initStars() {
+      const container = document.getElementById('webgl-container');
+      if (!container) return;
+      function layer(id, count) {
+        const el = document.createElement('div'); el.id = id;
+        for (let i = 0; i < count; i++) {
+          const s = document.createElement('div'); s.className = 'star';
+          const size = Math.random() * 2.5 + 0.4;
+          s.style.width = size + 'px'; s.style.height = size + 'px';
+          const a = Math.random() * Math.PI * 2, r = 15 + Math.random() * 42;
+          s.style.left = (50 + Math.cos(a) * r) + '%';
+          s.style.top = (50 + Math.sin(a) * r) + '%';
+          s.style.animationDuration = (Math.random() * 3 + 1.2) + 's';
+          el.appendChild(s);
+        }
+        return el;
+      }
+      container.appendChild(layer('stars-drift', 280));
+      container.appendChild(layer('stars-drift-2', 160));
+    }
+    function showWorkout(level) {
+      if (level === 1) {
+        document.getElementById('level1-experience').classList.add('active');
+        const v = document.getElementById('level1-video');
+        v.muted = false; v.volume = 0.75; v.currentTime = 0;
+        v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+        return;
+      }
+      const modal = document.getElementById('workout-modal');
+      document.getElementById('modal-content').innerHTML = '<h2 class="text-4xl font-bold mb-6 text-orange-400">Level ' + level + '</h2><p class="text-zinc-400">Full workout coming inside the portal.</p>';
+      modal.classList.remove('hidden');
+    }
+    function closeModal() { document.getElementById('workout-modal').classList.add('hidden'); }
+    function closeLevel1() {
+      document.getElementById('level1-experience').classList.remove('active');
+      const v = document.getElementById('level1-video'); v.pause(); v.muted = true;
+    }
+    function goToClaim() { closeLevel1(); setTimeout(() => document.getElementById('signup').scrollIntoView({behavior:'smooth'}), 300); }
+    document.getElementById('ascend-btn').addEventListener('click', () => document.getElementById('levels').scrollIntoView({behavior:'smooth'}));
+    initStars();
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+  </script>
+</body>
+</html>
