@@ -1,1 +1,197 @@
-PLACEHOLDER - too long for this call, will use alternative
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIT — FusionFitPortal | Enter the Portal</title>
+  <meta name="description" content="Ancient balance. Modern power. 3-Day Cosmic Reset. Yoga, Tai Chi, Vestibular Training & the 5 Levels of Ascension.">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#f97316">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    :root { --void: #05050f; --amber: #f97316; --violet: #7c3aed; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--void); color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow-x: hidden; }
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(1px 1px at 10% 20%, #fff, transparent),
+        radial-gradient(1px 1px at 30% 80%, #a5b4fc, transparent),
+        radial-gradient(1.5px 1.5px at 70% 30%, #fff, transparent),
+        radial-gradient(1px 1px at 90% 60%, #c4b5fd, transparent),
+        radial-gradient(1px 1px at 50% 50%, #fff, transparent),
+        radial-gradient(2px 2px at 15% 70%, #fdba74, transparent),
+        radial-gradient(1px 1px at 80% 15%, #fff, transparent);
+      background-size: 220px 220px, 180px 180px, 260px 260px, 200px 200px, 300px 300px, 160px 160px, 240px 240px;
+      animation: drift 80s linear infinite;
+      opacity: .55;
+    }
+    @keyframes drift { to { background-position: 220px 220px, -180px 180px, 260px -260px, -200px 200px, 300px 300px, 160px -160px, -240px 240px; } }
+    .portal {
+      width: min(280px, 70vw); height: min(280px, 70vw); border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, rgba(255,255,255,.35), rgba(249,115,22,.25) 35%, rgba(124,58,237,.2) 60%, transparent 72%);
+      box-shadow: 0 0 40px rgba(249,115,22,.45), 0 0 80px rgba(124,58,237,.35), inset 0 0 40px rgba(255,255,255,.15);
+      animation: swirl 8s ease-in-out infinite, breathe 4.5s ease-in-out infinite;
+    }
+    @keyframes swirl {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.12) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    @keyframes breathe {
+      0%,100% { filter: brightness(1); }
+      50% { filter: brightness(1.25); }
+    }
+    .ring {
+      position: absolute; border-radius: 50%; border: 1px solid rgba(249,115,22,.25);
+      animation: pulse-ring 5s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(.7); opacity: .7; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .glow-btn {
+      box-shadow: 0 0 24px rgba(249,115,22,.55);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .glow-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(249,115,22,.85); }
+    .level-card { transition: transform .25s ease, border-color .25s ease; }
+    .level-card:hover { transform: translateY(-4px); border-color: rgba(249,115,22,.6); }
+    video.bg-vid { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .28; z-index: 0; pointer-events: none; }
+    .overlay { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <video class="bg-vid" autoplay muted loop playsinline poster="">
+    <source src="/generated_video.mp4" type="video/mp4">
+  </video>
+
+  <div class="overlay">
+    <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+      <div class="relative mb-8">
+        <div class="ring" style="width:min(340px,82vw);height:min(340px,82vw);top:50%;left:50%;margin:-170px 0 0 -170px;"></div>
+        <div class="ring" style="width:min(340px,82vw);height:min(340px,82vw);top:50%;left:50%;margin:-170px 0 0 -170px;animation-delay:1.6s;"></div>
+        <div class="portal mx-auto"></div>
+      </div>
+      <p class="text-orange-400 tracking-[0.35em] text-xs md:text-sm mb-3">HEALING FIELD ACTIVE</p>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-3">ENTER THE PORTAL</h1>
+      <p class="text-orange-300/90 tracking-[0.2em] text-sm md:text-base mb-2">✦ 3-DAY COSMIC RESET ✦</p>
+      <p class="text-zinc-300 text-lg md:text-xl mb-8">Ancient balance. Modern power.</p>
+      <a href="#path" class="glow-btn inline-block bg-orange-500 hover:bg-orange-400 text-black font-bold py-4 px-10 rounded-full text-lg">BEGIN YOUR ASCENSION</a>
+    </header>
+
+    <section id="path" class="max-w-5xl mx-auto px-6 py-20">
+      <p class="text-center text-zinc-400 tracking-widest text-sm mb-3">THE PATH</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-3">The 5 Levels of Ascension</h2>
+      <p class="text-center text-zinc-400 mb-12">Tap any level to enter the experience</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <div class="text-3xl mb-2">🌑</div>
+          <p class="text-xs text-zinc-500">Level 1</p>
+          <h3 class="font-semibold">Yin Awakening</h3>
+        </article>
+        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <div class="text-3xl mb-2">🔥</div>
+          <p class="text-xs text-zinc-500">Level 2</p>
+          <h3 class="font-semibold">Yang Ignition</h3>
+        </article>
+        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <div class="text-3xl mb-2">☯️</div>
+          <p class="text-xs text-zinc-500">Level 3</p>
+          <h3 class="font-semibold">Fusion Harmony</h3>
+        </article>
+        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <div class="text-3xl mb-2">✦</div>
+          <p class="text-xs text-zinc-500">Level 4</p>
+          <h3 class="font-semibold">Symbolic Elevation</h3>
+        </article>
+        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <div class="text-3xl mb-2">🪷</div>
+          <p class="text-xs text-zinc-500">Level 5</p>
+          <h3 class="font-semibold">Lotus Mastery</h3>
+        </article>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-20">
+      <p class="text-center text-zinc-400 text-sm mb-2">Ancient Wisdom • Modern Science</p>
+      <h2 class="text-3xl font-bold text-center mb-10">Sacred Practices</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
+          <div class="text-4xl mb-4">🧘</div>
+          <h3 class="text-xl font-bold mb-2">Yoga</h3>
+          <p class="text-zinc-400">Deep Yin flows and breath-led practice that open the body and calm the nervous system.</p>
+        </div>
+        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
+          <div class="text-4xl mb-4">☯️</div>
+          <h3 class="text-xl font-bold mb-2">Tai Chi</h3>
+          <p class="text-zinc-400">Moving meditation for balance, coordination, and the flow of Qi.</p>
+        </div>
+        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
+          <div class="text-4xl mb-4">⚖️</div>
+          <h3 class="text-xl font-bold mb-2">Vestibular Training</h3>
+          <p class="text-zinc-400">Science-backed balance retraining for dizziness, vertigo, and stability.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="claim" class="max-w-lg mx-auto px-6 pb-24">
+      <div class="bg-zinc-900/90 border border-orange-500/30 rounded-3xl p-8 md:p-10">
+        <p class="text-orange-400 text-sm tracking-widest mb-2">LEVEL 1 • YIN AWAKENING</p>
+        <h2 class="text-2xl md:text-3xl font-bold mb-2">Thunder Resonance</h2>
+        <p class="text-zinc-400 mb-6">Claim your CMC37 and step into the field.</p>
+        <form id="claim-form" class="space-y-4">
+          <input required type="email" id="email" placeholder="Email" class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 outline-none focus:border-orange-500">
+          <input type="text" id="wallet" placeholder="Solana wallet (optional)" class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 outline-none focus:border-orange-500 font-mono text-sm">
+          <button type="submit" id="submit-btn" class="glow-btn w-full py-4 bg-orange-500 hover:bg-orange-400 text-black font-bold rounded-xl">Claim Your CMC37 →</button>
+          <p id="form-msg" class="text-center text-sm hidden"></p>
+        </form>
+      </div>
+    </section>
+
+    <footer class="text-center text-zinc-500 text-sm pb-12">
+      FusionFitPortal · FIT · yin + yang
+    </footer>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
+
+    document.getElementById('claim-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('form-msg');
+      const email = document.getElementById('email').value.trim();
+      const wallet = document.getElementById('wallet').value.trim();
+      btn.disabled = true;
+      btn.textContent = 'Entering the field…';
+      msg.classList.add('hidden');
+      try {
+        const { createClient } = supabase;
+        const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { error } = await client.from('signups').insert({
+          email,
+          wallet_address: wallet || null,
+          rewarded: true
+        });
+        if (error) throw error;
+        window.location.href = '/thank-you.html';
+      } catch (err) {
+        msg.textContent = err.message || 'Could not submit. Try again.';
+        msg.classList.remove('hidden');
+        msg.classList.add('text-red-400');
+        btn.disabled = false;
+        btn.textContent = 'Claim Your CMC37 →';
+      }
+    });
+  </script>
+</body>
+</html>
