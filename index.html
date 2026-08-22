@@ -3,194 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIT — FusionFitPortal | Enter the Portal</title>
-  <meta name="description" content="Ancient balance. Modern power. 3-Day Cosmic Reset. Yoga, Tai Chi, Vestibular Training & the 5 Levels of Ascension.">
+  <title>FIT — Enter the Portal</title>
+  <meta name="description" content="FusionFitPortal. Ancient balance. Modern power.">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#f97316">
+  <meta name="theme-color" content="#05050f">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    :root { --void: #05050f; --amber: #f97316; --violet: #7c3aed; }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--void); color: #fff; font-family: system-ui, -apple-system, sans-serif; overflow-x: hidden; }
-    .stars {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    html, body {
+      margin: 0; height: 100%; background: #03030a; color: #fff;
+      font-family: system-ui, -apple-system, sans-serif; overflow: hidden;
+    }
+    #space {
+      position: fixed; inset: 0; z-index: 0;
       background:
-        radial-gradient(1px 1px at 10% 20%, #fff, transparent),
-        radial-gradient(1px 1px at 30% 80%, #a5b4fc, transparent),
-        radial-gradient(1.5px 1.5px at 70% 30%, #fff, transparent),
-        radial-gradient(1px 1px at 90% 60%, #c4b5fd, transparent),
-        radial-gradient(1px 1px at 50% 50%, #fff, transparent),
-        radial-gradient(2px 2px at 15% 70%, #fdba74, transparent),
-        radial-gradient(1px 1px at 80% 15%, #fff, transparent);
-      background-size: 220px 220px, 180px 180px, 260px 260px, 200px 200px, 300px 300px, 160px 160px, 240px 240px;
-      animation: drift 80s linear infinite;
-      opacity: .55;
+        radial-gradient(ellipse at 50% 50%, #12081f 0%, #03030a 62%);
     }
-    @keyframes drift { to { background-position: 220px 220px, -180px 180px, 260px -260px, -200px 200px, 300px 300px, 160px -160px, -240px 240px; } }
-    .portal {
-      width: min(280px, 70vw); height: min(280px, 70vw); border-radius: 50%;
-      background: radial-gradient(circle at 40% 40%, rgba(255,255,255,.35), rgba(249,115,22,.25) 35%, rgba(124,58,237,.2) 60%, transparent 72%);
-      box-shadow: 0 0 40px rgba(249,115,22,.45), 0 0 80px rgba(124,58,237,.35), inset 0 0 40px rgba(255,255,255,.15);
-      animation: swirl 8s ease-in-out infinite, breathe 4.5s ease-in-out infinite;
+    canvas#stars { position: fixed; inset: 0; z-index: 1; }
+    .stage {
+      position: relative; z-index: 2;
+      height: 100%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
     }
-    @keyframes swirl {
-      0% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.12) rotate(180deg); }
-      100% { transform: scale(1) rotate(360deg); }
-    }
-    @keyframes breathe {
-      0%,100% { filter: brightness(1); }
-      50% { filter: brightness(1.25); }
+    .vortex-wrap {
+      position: relative; width: min(72vw, 420px); height: min(72vw, 420px);
+      cursor: pointer; border: 0; background: none; padding: 0;
     }
     .ring {
-      position: absolute; border-radius: 50%; border: 1px solid rgba(249,115,22,.25);
-      animation: pulse-ring 5s ease-out infinite;
+      position: absolute; inset: 0; margin: auto; border-radius: 50%;
+      border: 1px solid rgba(249, 115, 22, 0.22);
+      box-shadow: 0 0 18px rgba(124, 58, 237, 0.15);
     }
-    @keyframes pulse-ring {
-      0% { transform: scale(.7); opacity: .7; }
-      100% { transform: scale(1.8); opacity: 0; }
+    .r1 { width: 28%; height: 28%; animation: spin 9s linear infinite, breathe 3.4s ease-in-out infinite; border-color: rgba(255,255,255,.35); }
+    .r2 { width: 46%; height: 46%; animation: spin 14s linear infinite reverse, breathe 4s ease-in-out infinite; }
+    .r3 { width: 64%; height: 64%; animation: spin 18s linear infinite, breathe 5s ease-in-out infinite; border-color: rgba(167,139,250,.35); }
+    .r4 { width: 82%; height: 82%; animation: spin 24s linear infinite reverse; opacity: .7; }
+    .r5 { width: 100%; height: 100%; animation: spin 32s linear infinite; opacity: .45; }
+    .core {
+      position: absolute; inset: 0; margin: auto; width: 16%; height: 16%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff 0%, #fdba74 28%, #f97316 52%, #7c3aed 100%);
+      box-shadow: 0 0 40px #f97316, 0 0 90px #7c3aed;
+      animation: core 2.8s ease-in-out infinite;
     }
-    .glow-btn {
-      box-shadow: 0 0 24px rgba(249,115,22,.55);
-      transition: transform .25s ease, box-shadow .25s ease;
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes breathe {
+      0%,100% { transform: scale(1); opacity: .75; }
+      50% { transform: scale(1.06); opacity: 1; }
     }
-    .glow-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(249,115,22,.85); }
-    .level-card { transition: transform .25s ease, border-color .25s ease; }
-    .level-card:hover { transform: translateY(-4px); border-color: rgba(249,115,22,.6); }
-    video.bg-vid { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .28; z-index: 0; pointer-events: none; }
-    .overlay { position: relative; z-index: 1; }
+    @keyframes core {
+      0%,100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.18); filter: brightness(1.35); }
+    }
+    .suck .vortex-wrap { animation: suck 1.15s ease-in forwards; }
+    @keyframes suck {
+      0% { transform: scale(1); filter: blur(0); }
+      70% { transform: scale(2.4); filter: blur(2px); opacity: 1; }
+      100% { transform: scale(8); filter: blur(16px); opacity: 0; }
+    }
+    .copy { margin-top: 28px; pointer-events: none; }
+    .hint { letter-spacing: .42em; font-size: 11px; color: #fdba74; }
+    h1 { font-size: clamp(1.6rem, 5vw, 2.6rem); font-weight: 800; margin: 10px 0 6px; letter-spacing: .04em; }
+    .sub { color: #a1a1aa; font-size: .95rem; }
+    .levels {
+      position: fixed; inset: 0; z-index: 3;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(3,3,10,.55); backdrop-filter: blur(8px);
+      padding: 24px;
+    }
+    .levels.show { display: flex; }
+    .levels-inner { max-width: 920px; width: 100%; }
+    .level {
+      display: block; text-decoration: none; color: inherit;
+      background: rgba(24,24,27,.82); border: 1px solid rgba(63,63,70,.9);
+      border-radius: 18px; padding: 18px 14px; text-align: center;
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+    }
+    .level:hover {
+      transform: translateY(-4px);
+      border-color: rgba(249,115,22,.7);
+      box-shadow: 0 0 28px rgba(249,115,22,.2);
+    }
+    .back {
+      margin-top: 22px; color: #a1a1aa; background: none; border: 0;
+      cursor: pointer; letter-spacing: .16em; font-size: 12px;
+    }
   </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <video class="bg-vid" autoplay muted loop playsinline poster="">
-    <source src="/generated_video.mp4" type="video/mp4">
-  </video>
+  <div id="space"></div>
+  <canvas id="stars"></canvas>
 
-  <div class="overlay">
-    <header class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
-      <div class="relative mb-8">
-        <div class="ring" style="width:min(340px,82vw);height:min(340px,82vw);top:50%;left:50%;margin:-170px 0 0 -170px;"></div>
-        <div class="ring" style="width:min(340px,82vw);height:min(340px,82vw);top:50%;left:50%;margin:-170px 0 0 -170px;animation-delay:1.6s;"></div>
-        <div class="portal mx-auto"></div>
-      </div>
-      <p class="text-orange-400 tracking-[0.35em] text-xs md:text-sm mb-3">HEALING FIELD ACTIVE</p>
-      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-3">ENTER THE PORTAL</h1>
-      <p class="text-orange-300/90 tracking-[0.2em] text-sm md:text-base mb-2">✦ 3-DAY COSMIC RESET ✦</p>
-      <p class="text-zinc-300 text-lg md:text-xl mb-8">Ancient balance. Modern power.</p>
-      <a href="#path" class="glow-btn inline-block bg-orange-500 hover:bg-orange-400 text-black font-bold py-4 px-10 rounded-full text-lg">BEGIN YOUR ASCENSION</a>
-    </header>
+  <div class="stage" id="stage">
+    <button class="vortex-wrap" id="portal" aria-label="Enter the portal">
+      <span class="ring r5"></span>
+      <span class="ring r4"></span>
+      <span class="ring r3"></span>
+      <span class="ring r2"></span>
+      <span class="ring r1"></span>
+      <span class="core"></span>
+    </button>
+    <div class="copy">
+      <p class="hint">HEALING FIELD ACTIVE</p>
+      <h1>ENTER THE PORTAL</h1>
+      <p class="sub">Ancient balance. Modern power.</p>
+    </div>
+  </div>
 
-    <section id="path" class="max-w-5xl mx-auto px-6 py-20">
-      <p class="text-center text-zinc-400 tracking-widest text-sm mb-3">THE PATH</p>
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-3">The 5 Levels of Ascension</h2>
-      <p class="text-center text-zinc-400 mb-12">Tap any level to enter the experience</p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+  <div class="levels" id="levels">
+    <div class="levels-inner">
+      <p class="hint text-center mb-2">THE PATH</p>
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">5 Levels of Ascension</h2>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <a class="level" href="/level-1.html">
           <div class="text-3xl mb-2">🌑</div>
           <p class="text-xs text-zinc-500">Level 1</p>
-          <h3 class="font-semibold">Yin Awakening</h3>
-        </article>
-        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <strong>Yin Awakening</strong>
+        </a>
+        <div class="level opacity-50">
           <div class="text-3xl mb-2">🔥</div>
           <p class="text-xs text-zinc-500">Level 2</p>
-          <h3 class="font-semibold">Yang Ignition</h3>
-        </article>
-        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <strong>Yang Ignition</strong>
+        </div>
+        <div class="level opacity-50">
           <div class="text-3xl mb-2">☯️</div>
           <p class="text-xs text-zinc-500">Level 3</p>
-          <h3 class="font-semibold">Fusion Harmony</h3>
-        </article>
-        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <strong>Fusion Harmony</strong>
+        </div>
+        <div class="level opacity-50">
           <div class="text-3xl mb-2">✦</div>
           <p class="text-xs text-zinc-500">Level 4</p>
-          <h3 class="font-semibold">Symbolic Elevation</h3>
-        </article>
-        <article class="level-card bg-zinc-900/80 border border-zinc-700 rounded-2xl p-5 text-center">
+          <strong>Symbolic Elevation</strong>
+        </div>
+        <div class="level opacity-50">
           <div class="text-3xl mb-2">🪷</div>
           <p class="text-xs text-zinc-500">Level 5</p>
-          <h3 class="font-semibold">Lotus Mastery</h3>
-        </article>
-      </div>
-    </section>
-
-    <section class="max-w-5xl mx-auto px-6 pb-20">
-      <p class="text-center text-zinc-400 text-sm mb-2">Ancient Wisdom • Modern Science</p>
-      <h2 class="text-3xl font-bold text-center mb-10">Sacred Practices</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
-          <div class="text-4xl mb-4">🧘</div>
-          <h3 class="text-xl font-bold mb-2">Yoga</h3>
-          <p class="text-zinc-400">Deep Yin flows and breath-led practice that open the body and calm the nervous system.</p>
-        </div>
-        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
-          <div class="text-4xl mb-4">☯️</div>
-          <h3 class="text-xl font-bold mb-2">Tai Chi</h3>
-          <p class="text-zinc-400">Moving meditation for balance, coordination, and the flow of Qi.</p>
-        </div>
-        <div class="bg-zinc-900/80 border border-zinc-700 rounded-2xl p-8">
-          <div class="text-4xl mb-4">⚖️</div>
-          <h3 class="text-xl font-bold mb-2">Vestibular Training</h3>
-          <p class="text-zinc-400">Science-backed balance retraining for dizziness, vertigo, and stability.</p>
+          <strong>Lotus Mastery</strong>
         </div>
       </div>
-    </section>
-
-    <section id="claim" class="max-w-lg mx-auto px-6 pb-24">
-      <div class="bg-zinc-900/90 border border-orange-500/30 rounded-3xl p-8 md:p-10">
-        <p class="text-orange-400 text-sm tracking-widest mb-2">LEVEL 1 • YIN AWAKENING</p>
-        <h2 class="text-2xl md:text-3xl font-bold mb-2">Thunder Resonance</h2>
-        <p class="text-zinc-400 mb-6">Claim your CMC37 and step into the field.</p>
-        <form id="claim-form" class="space-y-4">
-          <input required type="email" id="email" placeholder="Email" class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 outline-none focus:border-orange-500">
-          <input type="text" id="wallet" placeholder="Solana wallet (optional)" class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 outline-none focus:border-orange-500 font-mono text-sm">
-          <button type="submit" id="submit-btn" class="glow-btn w-full py-4 bg-orange-500 hover:bg-orange-400 text-black font-bold rounded-xl">Claim Your CMC37 →</button>
-          <p id="form-msg" class="text-center text-sm hidden"></p>
-        </form>
+      <div class="text-center">
+        <button class="back" id="close-levels">← RETURN TO PORTAL</button>
       </div>
-    </section>
-
-    <footer class="text-center text-zinc-500 text-sm pb-12">
-      FusionFitPortal · FIT · yin + yang
-    </footer>
+    </div>
   </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+
+    const canvas = document.getElementById('stars');
+    const ctx = canvas.getContext('2d');
+    let w, h, stars = [];
+    function resize() {
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+      stars = Array.from({ length: 140 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        z: Math.random() * 2 + 0.2,
+        r: Math.random() * 1.4 + 0.2
+      }));
     }
-
-    const SUPABASE_URL = 'https://aapdqyvfquwhyaiwmgyu.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhcGRxeXZmcXV3aHlhaXdtZ3l1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NjIyNzQsImV4cCI6MjEwMTIzODI3NH0.wPvziqecIGNg8-KuPOtpppcu2E_XlHzUBrsi6w5BgFM';
-
-    document.getElementById('claim-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const msg = document.getElementById('form-msg');
-      const email = document.getElementById('email').value.trim();
-      const wallet = document.getElementById('wallet').value.trim();
-      btn.disabled = true;
-      btn.textContent = 'Entering the field…';
-      msg.classList.add('hidden');
-      try {
-        const { createClient } = supabase;
-        const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const { error } = await client.from('signups').insert({
-          email,
-          wallet_address: wallet || null,
-          rewarded: true
-        });
-        if (error) throw error;
-        window.location.href = '/thank-you.html';
-      } catch (err) {
-        msg.textContent = err.message || 'Could not submit. Try again.';
-        msg.classList.remove('hidden');
-        msg.classList.add('text-red-400');
-        btn.disabled = false;
-        btn.textContent = 'Claim Your CMC37 →';
+    addEventListener('resize', resize);
+    resize();
+    (function draw() {
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2, cy = h / 2;
+      for (const s of stars) {
+        s.x += (s.x - cx) * 0.0009 * s.z;
+        s.y += (s.y - cy) * 0.0009 * s.z;
+        if (s.x < 0 || s.x > w || s.y < 0 || s.y > h) {
+          s.x = cx + (Math.random() - 0.5) * 80;
+          s.y = cy + (Math.random() - 0.5) * 80;
+        }
+        ctx.fillStyle = `rgba(255,255,255,${0.25 + s.z * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
       }
+      requestAnimationFrame(draw);
+    })();
+
+    const stage = document.getElementById('stage');
+    const levels = document.getElementById('levels');
+    document.getElementById('portal').addEventListener('click', () => {
+      stage.classList.add('suck');
+      setTimeout(() => {
+        levels.classList.add('show');
+        stage.classList.remove('suck');
+      }, 900);
+    });
+    document.getElementById('close-levels').addEventListener('click', () => {
+      levels.classList.remove('show');
     });
   </script>
 </body>
