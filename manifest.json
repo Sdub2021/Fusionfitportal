@@ -1,6 +1,7 @@
 {
   "name": "FIT",
   "short_name": "FIT",
+  "id": "https://fusionfitportal.com/",
   "description": "Ancient balance. Modern power. Yoga, Tai Chi, Vestibular Training & the 5 Levels of Ascension.",
   "start_url": "/",
   "scope": "/",
@@ -9,6 +10,7 @@
   "background_color": "#05050f",
   "theme_color": "#f97316",
   "lang": "en",
+  "dir": "ltr",
   "categories": ["health", "fitness", "lifestyle", "education"],
   "icons": [
     {
