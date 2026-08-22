@@ -2,20 +2,23 @@
   "expo": {
     "name": "FIT",
     "slug": "fit-solana-mobile",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "splash": { "backgroundColor": "#07070c" },
+    "scheme": "fit",
+    "splash": {
+      "backgroundColor": "#07070c",
+      "resizeMode": "contain"
+    },
     "android": {
       "package": "com.fusionfitportal.fit",
-      "adaptiveIcon": { "backgroundColor": "#07070c" }
+      "versionCode": 1,
+      "permissions": [],
+      "adaptiveIcon": {
+        "backgroundColor": "#07070c"
+      },
+      "softwareKeyboardLayoutMode": "pan"
     },
-    "extra": {
-      "appIdentity": {
-        "name": "FIT",
-        "uri": "https://fusionfitportal.com",
-        "icon": "icons/icon.svg"
-      }
-    }
+    "plugins": ["expo-dev-client"]
   }
 }

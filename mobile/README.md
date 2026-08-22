@@ -1,22 +1,18 @@
 # FIT — Solana Mobile (Seeker)
 
-Native wellness app for **Solana Seeker / Saga** and any Android phone with a Mobile Wallet Adapter wallet (Seed Vault, Phantom, Solflare).
+Premium wellness dApp for **Solana Seeker**. Built for Seed Vault biometrics, Mobile Wallet Adapter, and the Solana dApp Store.
 
-## What it does
+## Why this is Seeker-first
 
-- Connect wallet via **Mobile Wallet Adapter** (biometric Seed Vault on Seeker)
-- Claim **CMC37** (same Supabase signup as fusionfitportal.com)
-- Level 1 **4-7-8 breath** with on-device timer
+| Feature | Behavior on Seeker |
+|--------|---------------------|
+| Connect | Opens Seed Vault — keys never leave the TEE |
+| Claim CMC37 | Optional **biometric message sign** before signup |
+| Breath | Haptic feedback on every phase change |
+| Device | Detects Seeker for UI (“Unlock Vault”) |
+| Auth cache | Re-authorize with stored token (fewer prompts) |
 
-## Stack
-
-- Expo (dev client) + React Native + TypeScript
-- `@solana-mobile/mobile-wallet-adapter-protocol-web3js`
-- `@solana/web3.js`
-
-Expo Go is **not** enough — MWA needs a **development build** on a real Android / Seeker.
-
-## Run on Seeker or Android
+## Run on Seeker / Android
 
 ```bash
 cd mobile
@@ -25,18 +21,16 @@ npx expo prebuild --platform android
 npx expo run:android
 ```
 
-On device: install a wallet first (Seed Vault Wallet on Seeker, or Phantom / Solflare).
+Expo Go will **not** work — MWA needs a custom native build.
 
-## Publish later
+## dApp Store
 
-1. Build a signed release APK
-2. Follow [Solana dApp Store submit](https://docs.solanamobile.com/dapp-store/submit-new-app)
-
-Faster first listing: wrap the live PWA (fusionfitportal.com) as an APK. This folder is the **native** path.
+See `dapp-store/config.yaml`. Build signed APK then submit via Solana Mobile publisher portal.
 
 ## Identity
 
 ```
 name: FIT
 uri:  https://fusionfitportal.com
+package: com.fusionfitportal.fit
 ```
