@@ -2,34 +2,182 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Level 1 — Yin Awakening</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Level 1 — Yin Awakening · 4-7-8 Breath</title>
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#05050f">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="theme-color" content="#05050a">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    html, body { margin: 0; height: 100%; background: #000; color: #fff; font-family: system-ui, sans-serif; }
-    video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
-    .bar {
-      position: fixed; left: 0; right: 0; top: 0; z-index: 2;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 20px;
-      background: linear-gradient(to bottom, rgba(0,0,0,.7), transparent);
-    }
-    a { color: #fdba74; text-decoration: none; letter-spacing: .14em; font-size: 12px; }
+    :root { --amber:#e8a54b; --void:#05050a; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; background:#05050a; color:#fff; font-family:Outfit,system-ui,sans-serif; }
+    video.bg { position:fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:saturate(.7) brightness(.45); }
+    .shade { position:fixed; inset:0; z-index:1; pointer-events:none; background: radial-gradient(ellipse at center, rgba(5,5,10,.15) 0%, rgba(5,5,10,.72) 70%, #05050a 100%), linear-gradient(to bottom, rgba(5,5,10,.45), transparent 22%, transparent 78%, rgba(5,5,10,.7)); }
+    .bar { position:fixed; top:0; left:0; right:0; z-index:5; display:flex; justify-content:space-between; align-items:center; padding:1.1rem 1.4rem; }
+    .bar a, .bar span { color:rgba(255,255,255,.7); text-decoration:none; letter-spacing:.16em; font-size:.72rem; text-transform:uppercase; }
+    .bar a:hover { color:var(--amber); }
+    .stage { position:relative; z-index:3; min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:6rem 1.25rem 3rem; }
+    .eyebrow { letter-spacing:.32em; text-transform:uppercase; color:var(--amber); font-size:.68rem; margin-bottom:.6rem; }
+    h1 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; font-size:clamp(2rem,6vw,3.4rem); margin:.2rem 0 .4rem; }
+    .cue { color:rgba(255,255,255,.62); font-size:1.05rem; margin:0 0 2rem; }
+    .orb-wrap { position:relative; width:min(68vw,280px); height:min(68vw,280px); margin:0 auto 1.75rem; }
+    .orb { width:100%; height:100%; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff6d8 0%, #f5c56a 28%, #c9842a 62%, #6b3f12 100%); box-shadow:0 0 40px rgba(232,165,75,.28), 0 0 90px rgba(232,165,75,.12); transform:scale(.72); transition:transform 1s linear, box-shadow 1s linear; }
+    .orb.inhale { transform:scale(1); box-shadow:0 0 70px rgba(255,220,150,.45), 0 0 140px rgba(232,165,75,.2); transition-duration:4s; }
+    .orb.hold { transform:scale(1); transition-duration:.4s; }
+    .orb.exhale { transform:scale(.72); box-shadow:0 0 28px rgba(232,165,75,.18); transition-duration:8s; }
+    .count { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',Georgia,serif; font-size:4.2rem; font-weight:500; text-shadow:0 8px 30px rgba(0,0,0,.45); }
+    .phase { font-size:1.15rem; letter-spacing:.22em; text-transform:uppercase; color:var(--amber); min-height:1.5rem; margin-bottom:.35rem; }
+    .meta { color:rgba(255,255,255,.5); font-size:.85rem; letter-spacing:.08em; margin-bottom:1.75rem; min-height:1.2rem; }
+    .controls { display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; }
+    button.act { border:0; cursor:pointer; border-radius:999px; padding:.9rem 1.5rem; font-family:inherit; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; }
+    #start { background:linear-gradient(135deg,#e8a54b,#d4893a); color:#0a0a0f; font-weight:600; }
+    #audio, #reset { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.18); }
+    #audio.on { border-color:rgba(232,165,75,.5); color:#f0c27a; }
+    .hint { margin-top:1.6rem; color:rgba(255,255,255,.38); font-size:.78rem; max-width:22rem; line-height:1.55; }
   </style>
 </head>
 <body>
+  <video class="bg" src="/generated_video.mp4" autoplay muted loop playsinline></video>
+  <div class="shade"></div>
   <div class="bar">
-    <a href="/">← PORTAL</a>
-    <span class="text-xs tracking-widest text-orange-300">LEVEL 1 · YIN AWAKENING</span>
+    <a href="/">← Portal</a>
+    <span>Level 1 · Yin Awakening</span>
   </div>
-  <video id="v" autoplay playsinline controls>
-    <source src="/generated_video.mp4" type="video/mp4">
-  </video>
+  <main class="stage">
+    <p class="eyebrow">4 · 7 · 8</p>
+    <h1>Breathe deeply</h1>
+    <p class="cue">Inhale 4 · Hold 7 · Exhale 8</p>
+    <div class="orb-wrap">
+      <div class="orb" id="orb"></div>
+      <div class="count" id="count">4</div>
+    </div>
+    <div class="phase" id="phase">Ready</div>
+    <div class="meta" id="meta">Four cycles · tap begin</div>
+    <div class="controls">
+      <button class="act" id="start">Begin breath</button>
+      <button class="act" id="audio">Music off</button>
+      <button class="act" id="reset">Reset</button>
+    </div>
+    <p class="hint">Nose in for 4. Hold for 7. Mouth out for 8. Stay soft in the body.</p>
+  </main>
   <script>
-    const v = document.getElementById('v');
-    v.play().catch(() => {});
+    const PHASES = [
+      { name:'Inhale', secs:4, cls:'inhale' },
+      { name:'Hold', secs:7, cls:'hold' },
+      { name:'Exhale', secs:8, cls:'exhale' }
+    ];
+    const TOTAL_CYCLES = 4;
+    const orb = document.getElementById('orb');
+    const countEl = document.getElementById('count');
+    const phaseEl = document.getElementById('phase');
+    const metaEl = document.getElementById('meta');
+    const startBtn = document.getElementById('start');
+    const audioBtn = document.getElementById('audio');
+    const resetBtn = document.getElementById('reset');
+    let running = false, timer = null, cycle = 1, pIndex = 0, left = 4;
+    let audioCtx = null, master = null, nodes = [];
+    function setUI() {
+      const p = PHASES[pIndex];
+      phaseEl.textContent = running ? p.name : 'Ready';
+      countEl.textContent = left;
+      metaEl.textContent = running ? `Cycle ${cycle} of ${TOTAL_CYCLES}` : 'Four cycles · tap begin';
+      orb.className = 'orb' + (running ? ' ' + p.cls : '');
+      startBtn.textContent = running ? 'Pause' : (cycle > 1 || pIndex > 0 ? 'Resume' : 'Begin breath');
+    }
+    function tick() {
+      left -= 1;
+      if (left <= 0) {
+        pIndex += 1;
+        if (pIndex >= PHASES.length) {
+          pIndex = 0;
+          cycle += 1;
+          if (cycle > TOTAL_CYCLES) {
+            running = false;
+            clearInterval(timer);
+            phaseEl.textContent = 'Complete';
+            countEl.textContent = '✦';
+            metaEl.textContent = 'Rest. Notice the quiet.';
+            orb.className = 'orb';
+            startBtn.textContent = 'Begin again';
+            cycle = 1; pIndex = 0; left = PHASES[0].secs;
+            return;
+          }
+        }
+        left = PHASES[pIndex].secs;
+        orb.className = 'orb';
+        void orb.offsetWidth;
+        orb.className = 'orb ' + PHASES[pIndex].cls;
+      }
+      setUI();
+    }
+    function start() {
+      if (running) {
+        running = false;
+        clearInterval(timer);
+        startBtn.textContent = 'Resume';
+        return;
+      }
+      if (phaseEl.textContent === 'Complete' || startBtn.textContent === 'Begin again') {
+        cycle = 1; pIndex = 0; left = PHASES[0].secs;
+      }
+      running = true;
+      orb.className = 'orb ' + PHASES[pIndex].cls;
+      setUI();
+      timer = setInterval(tick, 1000);
+      if (!audioCtx) startPad();
+    }
+    function reset() {
+      running = false;
+      clearInterval(timer);
+      cycle = 1; pIndex = 0; left = PHASES[0].secs;
+      setUI();
+      orb.className = 'orb';
+    }
+    function startPad() {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        master = audioCtx.createGain();
+        master.gain.value = 0.07;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 640;
+        master.connect(filter); filter.connect(audioCtx.destination);
+        const freqs = [110, 164.81, 220, 329.63];
+        nodes = freqs.map((f, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = i % 2 ? 'sine' : 'triangle';
+          o.frequency.value = f;
+          g.gain.value = i === 0 ? 0.45 : 0.16;
+          const lfo = audioCtx.createOscillator();
+          const lg = audioCtx.createGain();
+          lfo.frequency.value = 0.04 + i * 0.015;
+          lg.gain.value = 3 + i;
+          lfo.connect(lg); lg.connect(o.frequency);
+          o.connect(g); g.connect(master);
+          o.start(); lfo.start();
+          return o;
+        });
+        audioBtn.textContent = 'Music on';
+        audioBtn.classList.add('on');
+      } catch (e) {}
+    }
+    function togglePad() {
+      if (!audioCtx) { startPad(); return; }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+        audioBtn.textContent = 'Music on';
+        audioBtn.classList.add('on');
+      } else {
+        audioCtx.suspend();
+        audioBtn.textContent = 'Music off';
+        audioBtn.classList.remove('on');
+      }
+    }
+    startBtn.onclick = start;
+    resetBtn.onclick = reset;
+    audioBtn.onclick = togglePad;
+    setUI();
   </script>
 </body>
 </html>

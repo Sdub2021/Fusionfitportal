@@ -132,62 +132,21 @@ const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
 let stars=[],streaks=[],t=0;
 function spawnStar(){
   const layer=Math.random();
-  return {
-    x:Math.random()*canvas.width,y:Math.random()*canvas.height,
-    r:layer>.92?Math.random()*2.2+1.1:layer>.6?Math.random()*1.2+.4:Math.random()*.7+.12,
-    a:layer>.85?Math.random()*.45+.45:Math.random()*.45+.12,
-    phase:Math.random()*Math.PI*2,
-    tw:0.4+Math.random()*1.2,
-    vx:(0.08+Math.random()*0.22)*(layer>.5?1:0.45),
-    vy:(0.015+Math.random()*0.06)*(layer>.7?1.2:0.5),
-    warm:Math.random()>.82
-  };
+  return {x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:layer>.92?Math.random()*2.2+1.1:layer>.6?Math.random()*1.2+.4:Math.random()*.7+.12,a:layer>.85?Math.random()*.45+.45:Math.random()*.45+.12,phase:Math.random()*Math.PI*2,tw:0.4+Math.random()*1.2,vx:(0.08+Math.random()*0.22)*(layer>.5?1:0.45),vy:(0.015+Math.random()*0.06)*(layer>.7?1.2:0.5),warm:Math.random()>.82};
 }
-function spawnStreak(){
-  return {x:-40,y:Math.random()*canvas.height*.7,len:80+Math.random()*140,spd:6+Math.random()*7,life:1,ang:-.18+Math.random()*.08};
-}
-function resize(){
-  canvas.width=innerWidth;canvas.height=innerHeight;
-  const n=Math.min(980,Math.floor(innerWidth*innerHeight/1400));
-  stars=Array.from({length:n},spawnStar);
-  streaks=[];
-}
+function spawnStreak(){return {x:-40,y:Math.random()*canvas.height*.7,len:80+Math.random()*140,spd:6+Math.random()*7,life:1,ang:-.18+Math.random()*.08};}
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;const n=Math.min(980,Math.floor(innerWidth*innerHeight/1400));stars=Array.from({length:n},spawnStar);streaks=[];}
 resize();addEventListener('resize',resize);
 (function draw(){
-  t+=0.016;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  stars.forEach(s=>{
-    const wave=Math.sin(t*0.35+s.phase)*6;
-    s.x+=s.vx; s.y+=s.vy+Math.sin(t*s.tw+s.phase)*0.12;
-    if(s.x>canvas.width+8){s.x=-8;s.y=Math.random()*canvas.height}
-    if(s.y>canvas.height+8){s.y=-8;s.x=Math.random()*canvas.width}
-    const pulse=.55+.45*Math.sin(t*s.tw+s.phase);
-    const a=Math.max(.08,Math.min(.95,s.a*pulse));
-    if(s.r>1.4){
-      const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*6);
-      g.addColorStop(0,s.warm?`rgba(255,220,160,${a*.45})`:`rgba(255,255,255,${a*.4})`);
-      g.addColorStop(1,'rgba(255,255,255,0)');
-      ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x+wave*.04,s.y,s.r*6,0,Math.PI*2);ctx.fill();
-    }
-    ctx.beginPath();ctx.arc(s.x+wave*.04,s.y,s.r,0,Math.PI*2);
-    ctx.fillStyle=s.warm?`rgba(255,228,186,${a})`:`rgba(255,255,255,${a})`;
-    ctx.fill();
-  });
+  t+=0.016;ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{const wave=Math.sin(t*0.35+s.phase)*6;s.x+=s.vx;s.y+=s.vy+Math.sin(t*s.tw+s.phase)*0.12;if(s.x>canvas.width+8){s.x=-8;s.y=Math.random()*canvas.height}if(s.y>canvas.height+8){s.y=-8;s.x=Math.random()*canvas.width}const pulse=.55+.45*Math.sin(t*s.tw+s.phase);const a=Math.max(.08,Math.min(.95,s.a*pulse));if(s.r>1.4){const g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*6);g.addColorStop(0,s.warm?`rgba(255,220,160,${a*.45})`:`rgba(255,255,255,${a*.4})`);g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x+wave*.04,s.y,s.r*6,0,Math.PI*2);ctx.fill();}ctx.beginPath();ctx.arc(s.x+wave*.04,s.y,s.r,0,Math.PI*2);ctx.fillStyle=s.warm?`rgba(255,228,186,${a})`:`rgba(255,255,255,${a})`;ctx.fill();});
   if(Math.random()<.008 && streaks.length<3) streaks.push(spawnStreak());
-  streaks=streaks.filter(k=>{
-    k.x+=k.spd; k.y+=k.spd*k.ang; k.life-=.01;
-    if(k.life<=0||k.x>canvas.width+80) return false;
-    ctx.strokeStyle=`rgba(255,236,210,${k.life*.55})`;
-    ctx.lineWidth=1.2; ctx.beginPath();
-    ctx.moveTo(k.x,k.y); ctx.lineTo(k.x-k.len,k.y-k.len*k.ang);
-    ctx.stroke();
-    return true;
-  });
+  streaks=streaks.filter(k=>{k.x+=k.spd;k.y+=k.spd*k.ang;k.life-=.01;if(k.life<=0||k.x>canvas.width+80) return false;ctx.strokeStyle=`rgba(255,236,210,${k.life*.55})`;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(k.x,k.y);ctx.lineTo(k.x-k.len,k.y-k.len*k.ang);ctx.stroke();return true;});
   requestAnimationFrame(draw);
 })();
 const nav=document.getElementById('nav');addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40));
 document.querySelectorAll('.reveal').forEach(el=>{const io=new IntersectionObserver(([e])=>{if(e.isIntersecting){el.classList.add('in');io.unobserve(el)}},{threshold:.15});io.observe(el)});
-document.querySelectorAll('.level').forEach(btn=>btn.onclick=()=>{const lv=btn.dataset.level;if(lv==='1'){const o=document.getElementById('level1');o.classList.add('open');const v=o.querySelector('video');v.currentTime=0;v.play().catch(()=>{})}});
+document.querySelectorAll('.level').forEach(btn=>btn.onclick=()=>{const lv=btn.dataset.level;if(lv==='1'){location.href='/level-1.html'}});
 document.querySelector('#level1 .close').onclick=()=>{const o=document.getElementById('level1');o.classList.remove('open');o.querySelector('video').pause()};
 document.getElementById('connect-btn').onclick=async()=>{const btn=document.getElementById('connect-btn'),st=document.getElementById('wallet-status'),inp=document.getElementById('wallet');try{const p=window.solana||(window.phantom&&window.phantom.solana)||window.solflare;if(!p){st.textContent='No wallet detected — paste address instead.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');return}btn.disabled=true;btn.textContent='…';const resp=await p.connect();const key=(resp.publicKey&&resp.publicKey.toString())||(p.publicKey&&p.publicKey.toString());if(!key)throw new Error('No key');inp.value=key;inp.readOnly=true;btn.textContent='Linked';st.textContent='Wallet connected';st.style.color='#86efac';st.classList.remove('hidden')}catch(e){st.textContent='Could not connect — paste address manually.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');btn.disabled=false;btn.textContent='Connect'}};
 document.getElementById('claim-form').onsubmit=async e=>{e.preventDefault();const email=document.getElementById('email').value.trim(),wallet=document.getElementById('wallet').value.trim(),btn=document.getElementById('submit-btn'),msg=document.getElementById('form-msg');msg.textContent='';msg.className='form-msg';if(!email.includes('@')){msg.textContent='Enter a valid email.';msg.classList.add('err');return}if(!isValidSolana(wallet)){msg.textContent='Enter a valid Solana address.';msg.classList.add('err');return}let client=null;try{if(typeof supabase!=='undefined')client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(_){}if(!client){msg.textContent='Not ready. Refresh and try again.';msg.classList.add('err');return}btn.disabled=true;btn.textContent='Claiming…';try{const result=await client.from('signups').insert([{email,wallet_address:wallet,verified:false,rewarded:true}]);if(result.error){msg.textContent=result.error.code==='23505'?'Already registered.':(result.error.message||'Could not save.');msg.classList.add(result.error.code==='23505'?'warn':'err');btn.disabled=false;btn.textContent='Claim 1 CMC37';return}msg.textContent='Success — you are entitled to 1 CMC37.';msg.classList.add('ok');btn.textContent='Claimed ✓';document.getElementById('claim-form').reset();document.getElementById('wallet').readOnly=false}catch(err){msg.textContent='Something went wrong. Try again.';msg.classList.add('err');btn.disabled=false;btn.textContent='Claim 1 CMC37'}};
