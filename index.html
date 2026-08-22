@@ -1,1 +1,171 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FIT — Ancient balance. Modern power.</title>
+<meta name="description" content="FIT is a 3-day cosmic reset blending Yoga, Tai Chi, and Vestibular Training.">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#07070c;--amber:#e8a54b;--amber-soft:#f0c27a;--line:rgba(255,255,255,.08);--text:rgba(255,255,255,.92);--muted:rgba(255,255,255,.45)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--void);color:var(--text);font-family:Outfit,system-ui,sans-serif;font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500}
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:1.25rem 1.5rem;background:linear-gradient(to bottom,rgba(7,7,12,.92),rgba(7,7,12,0));border-bottom:1px solid transparent;transition:.3s}
+.nav.scrolled{background:rgba(7,7,12,.85);backdrop-filter:blur(16px);border-bottom-color:var(--line)}
+.nav-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:.65rem;text-decoration:none;color:#fff}
+.logo img{width:36px;height:36px;border-radius:50%}
+.logo span{font-family:'Cormorant Garamond',serif;font-size:1.5rem;letter-spacing:.2em}
+.nav-links{display:none;gap:2rem;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase}
+.nav-links a{color:var(--muted);text-decoration:none}.nav-links a:hover{color:var(--amber-soft)}
+.nav-cta{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;padding:.7rem 1.25rem;border-radius:999px;border:1px solid rgba(232,165,75,.45);color:var(--amber-soft);text-decoration:none}
+.nav-cta:hover{background:rgba(232,165,75,.12);color:#fff}
+@media(min-width:768px){.nav-links{display:flex}}
+.hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;text-align:center;padding:6rem 1.5rem 4rem;overflow:hidden}
+#stars{position:absolute;inset:0;z-index:0}
+.hero-glow{position:absolute;width:min(92vw,560px);height:min(92vw,560px);left:50%;top:44%;transform:translate(-50%,-50%);background:radial-gradient(circle at 32% 45%,rgba(251,191,36,.22) 0%,transparent 42%),radial-gradient(circle at 68% 55%,rgba(148,163,184,.14) 0%,transparent 40%),radial-gradient(circle,rgba(232,165,75,.06) 0%,transparent 60%);pointer-events:none;z-index:1;animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.9}50%{transform:translate(-50%,-50%) scale(1.06);opacity:1}}
+.portal{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(42vw,280px);height:min(42vw,280px);z-index:1;pointer-events:none}
+.emblem{width:100%;height:100%;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 0 60px rgba(232,165,75,.25),0 0 120px rgba(148,163,184,.12),inset 0 0 40px rgba(0,0,0,.25);animation:emblemFloat 10s ease-in-out infinite}
+@keyframes emblemFloat{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.03) rotate(2deg)}}
+.emblem-sun{position:absolute;left:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 70% 40%,#fff7d6 0%,#fbbf24 28%,#f59e0b 55%,#d97706 100%)}
+.emblem-sun::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 62% 32%,rgba(255,255,255,.55) 0%,transparent 35%),radial-gradient(circle at 45% 70%,rgba(255,200,80,.25) 0%,transparent 40%)}
+.emblem-moon{position:absolute;right:0;top:0;width:50%;height:100%;background:radial-gradient(circle at 35% 45%,#f1f5f9 0%,#cbd5e1 35%,#94a3b8 70%,#64748b 100%)}
+.emblem-moon::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.35) 0%,transparent 28%),radial-gradient(circle at 55% 62%,rgba(100,116,139,.35) 0 8%,transparent 9%),radial-gradient(circle at 32% 58%,rgba(100,116,139,.28) 0 5%,transparent 6%),radial-gradient(circle at 48% 42%,rgba(100,116,139,.22) 0 4%,transparent 5%)}
+.emblem-split{position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-50%);z-index:2}
+.sun-rays{position:absolute;left:0;top:0;width:50%;height:100%;overflow:hidden}
+.sun-rays span{position:absolute;left:100%;top:50%;width:42%;height:2px;background:linear-gradient(90deg,rgba(251,191,36,.55),transparent);transform-origin:left center}
+.sun-rays span:nth-child(1){transform:translateY(-50%) rotate(-52deg)}
+.sun-rays span:nth-child(2){transform:translateY(-50%) rotate(-26deg);width:48%}
+.sun-rays span:nth-child(3){transform:translateY(-50%) rotate(0);width:52%}
+.sun-rays span:nth-child(4){transform:translateY(-50%) rotate(26deg);width:48%}
+.sun-rays span:nth-child(5){transform:translateY(-50%) rotate(52deg)}
+.hero-content{position:relative;z-index:2;max-width:720px}
+.eyebrow{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--amber);margin-bottom:1.5rem}
+.hero h1{font-size:clamp(4.5rem,14vw,8.5rem);line-height:.9;margin:0 0 1.25rem;letter-spacing:.08em}
+.hero-sub{font-size:clamp(1.35rem,3.5vw,2rem);line-height:1.35;color:rgba(255,255,255,.72);margin:0 0 2.5rem}
+.btn-primary{display:inline-flex;padding:1rem 2rem;border-radius:999px;border:0;cursor:pointer;background:linear-gradient(135deg,#e8a54b,#d4893a);color:#0a0a0f;font-family:Outfit,sans-serif;font-weight:500;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 12px 40px rgba(232,165,75,.28);text-decoration:none}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 48px rgba(232,165,75,.4)}
+.section{max-width:1120px;margin:0 auto;padding:6rem 1.5rem}
+.section-label{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--amber);margin-bottom:.75rem;text-align:center}
+.section-title{font-size:clamp(2.2rem,5vw,3.4rem);text-align:center;margin:0 0 .75rem}
+.section-desc{text-align:center;color:var(--muted);max-width:32rem;margin:0 auto 3.5rem;font-size:1.05rem;line-height:1.6}
+.levels-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem}
+@media(min-width:768px){.levels-grid{grid-template-columns:repeat(5,1fr);gap:1rem}}
+.level{padding:1.75rem 1rem;border-radius:1.25rem;background:linear-gradient(165deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid var(--line);text-align:center;cursor:pointer;transition:.3s;color:inherit;font:inherit;width:100%}
+.level:hover{border-color:rgba(232,165,75,.4);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.35)}
+.level-num{font-size:.65rem;letter-spacing:.2em;color:var(--muted);margin-bottom:.5rem}
+.level-icon{font-size:1.75rem;margin-bottom:.6rem}
+.level-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;margin:0}
+.practices{display:grid;gap:1rem}
+@media(min-width:768px){.practices{grid-template-columns:repeat(3,1fr);gap:1.25rem}}
+.practice{padding:2rem 1.75rem;border-radius:1.5rem;background:rgba(255,255,255,.025);border:1px solid var(--line)}
+.practice:hover{border-color:rgba(255,255,255,.16);transform:translateY(-4px)}
+.practice-icon{font-size:2rem;margin-bottom:1.25rem}
+.practice h3{font-size:1.75rem;margin:0 0 .75rem}
+.practice p{margin:0;color:var(--muted);line-height:1.65;font-size:.95rem}
+.claim-wrap{max-width:440px;margin:0 auto;padding:2.5rem 2rem;border-radius:1.75rem;background:linear-gradient(165deg,rgba(232,165,75,.07),rgba(139,124,246,.04));border:1px solid rgba(232,165,75,.22);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.claim-wrap label{display:block;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.claim-wrap input{width:100%;padding:.95rem 1.1rem;border-radius:.85rem;background:rgba(0,0,0,.45);border:1px solid var(--line);color:#fff;font-family:inherit;font-size:.95rem;outline:none}
+.claim-wrap input:focus{border-color:rgba(232,165,75,.55)}
+.wallet-row{display:flex;gap:.5rem}.wallet-row input{flex:1;font-family:ui-monospace,monospace;font-size:.8rem}
+.btn-connect{padding:0 1.1rem;border-radius:.85rem;border:1px solid rgba(139,124,246,.45);background:rgba(139,124,246,.15);color:#c4b5fd;font-size:.75rem;cursor:pointer;font-family:inherit;font-weight:500}
+.btn-claim{width:100%;margin-top:.25rem;padding:1.05rem;border-radius:.95rem;border:0;cursor:pointer;background:linear-gradient(135deg,#e8a54b,#d4893a);color:#0a0a0f;font-family:inherit;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
+.btn-claim:disabled{opacity:.6}.form-msg{text-align:center;font-size:.85rem;margin-top:.75rem;min-height:1.25rem}.form-msg.ok{color:#86efac}.form-msg.err{color:#fca5a5}.form-msg.warn{color:var(--amber-soft)}.field{margin-bottom:1rem}
+footer{text-align:center;padding:3rem 1.5rem 4rem;color:var(--muted);font-size:.8rem;letter-spacing:.12em;border-top:1px solid var(--line)}
+#level1{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;background:#000}#level1.open{display:flex}
+#level1 video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#level1 .shade{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 25%,rgba(0,0,0,.65) 100%);pointer-events:none}
+#level1 .panel{position:relative;z-index:2;text-align:center;padding:2rem;max-width:36rem}
+#level1 .close{position:absolute;top:1.25rem;right:1.5rem;z-index:3;background:none;border:0;color:rgba(255,255,255,.6);font-size:2rem;cursor:pointer}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s,transform .9s}.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.hero-glow,.emblem{animation:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav class="nav" id="nav"><div class="nav-inner">
+<a class="logo" href="/"><img src="/icons/icon.svg" alt="FIT" width="36" height="36"><span>FIT</span></a>
+<div class="nav-links"><a href="#path">The Path</a><a href="#practices">Practices</a><a href="#claim">Claim</a></div>
+<a class="nav-cta" href="#claim">Claim CMC37</a>
+</div></nav>
+<header class="hero">
+<canvas id="stars"></canvas>
+<div class="hero-glow"></div>
+<div class="portal" aria-hidden="true"><div class="emblem">
+<div class="emblem-sun"><div class="sun-rays"><span></span><span></span><span></span><span></span><span></span></div></div>
+<div class="emblem-moon"></div><div class="emblem-split"></div>
+</div></div>
+<div class="hero-content">
+<p class="eyebrow">✦ 3-Day Cosmic Reset ✦</p>
+<h1>FIT</h1>
+<p class="hero-sub serif">Ancient balance.<br>Modern power.</p>
+<a class="btn-primary" href="#path">Begin your ascension</a>
+</div></header>
+<section id="path" class="section">
+<p class="section-label reveal">The Path</p>
+<h2 class="section-title reveal">Five levels of ascension</h2>
+<p class="section-desc reveal">A quiet sequence from still to sovereign. Tap a level to enter.</p>
+<div class="levels-grid">
+<button type="button" class="level reveal" data-level="1"><div class="level-num">01</div><div class="level-icon">🌑</div><h3 class="level-name">Yin Awakening</h3></button>
+<button type="button" class="level reveal" data-level="2"><div class="level-num">02</div><div class="level-icon">🔥</div><h3 class="level-name">Yang Ignition</h3></button>
+<button type="button" class="level reveal" data-level="3"><div class="level-num">03</div><div class="level-icon">☯️</div><h3 class="level-name">Fusion Harmony</h3></button>
+<button type="button" class="level reveal" data-level="4"><div class="level-num">04</div><div class="level-icon">✦</div><h3 class="level-name">Symbolic Elevation</h3></button>
+<button type="button" class="level reveal" data-level="5"><div class="level-num">05</div><div class="level-icon">🪷</div><h3 class="level-name">Lotus Mastery</h3></button>
+</div></section>
+<section id="practices" class="section" style="padding-top:2rem">
+<p class="section-label reveal">Sacred Practices</p>
+<h2 class="section-title reveal">Three pillars</h2>
+<p class="section-desc reveal">Body, breath, and balance — woven into one field.</p>
+<div class="practices">
+<article class="practice reveal"><div class="practice-icon">🧘</div><h3>Yoga</h3><p>Deep Yin flows and breath-led practice that open the body and settle the nervous system.</p></article>
+<article class="practice reveal"><div class="practice-icon">☯️</div><h3>Tai Chi</h3><p>Moving meditation for balance, coordination, and the quiet circulation of Qi.</p></article>
+<article class="practice reveal"><div class="practice-icon">⚖️</div><h3>Vestibular</h3><p>Science-backed balance training for stability, clarity, and grounded presence.</p></article>
+</div></section>
+<section id="claim" class="section">
+<p class="section-label reveal">Entry</p>
+<h2 class="section-title reveal">Claim your CMC37</h2>
+<p class="section-desc reveal">Connect a Solana wallet and leave your email. One claim per field.</p>
+<div class="claim-wrap reveal"><form id="claim-form">
+<div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
+<div class="field"><label for="wallet">Solana wallet</label><div class="wallet-row"><input id="wallet" type="text" required spellcheck="false" autocomplete="off" placeholder="Wallet address"><button type="button" class="btn-connect" id="connect-btn">Connect</button></div>
+<p id="wallet-status" class="text-xs mt-2 hidden" style="color:var(--muted);font-size:.75rem"></p></div>
+<button type="submit" class="btn-claim" id="submit-btn">Claim 1 CMC37</button>
+<p id="form-msg" class="form-msg"></p>
+</form></div></section>
+<footer>FIT · yin + yang · fusionfitportal.com</footer>
+<div id="level1" role="dialog" aria-label="Level 1"><video id="level1-video" src="/generated_video.mp4" loop playsinline></video><div class="shade"></div>
+<button type="button" class="close" id="level1-close" aria-label="Close">×</button>
+<div class="panel"><p class="eyebrow">Level 1 · Yin Awakening</p><h2 class="serif" style="font-size:clamp(2.5rem,8vw,4rem);margin:0 0 1.5rem">Thunder Resonance</h2>
+<button type="button" class="btn-primary" id="level1-claim">Claim your CMC37 →</button></div></div>
+<div id="modal" style="display:none;position:fixed;inset:0;z-index:90;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:1.5rem">
+<div style="position:relative;max-width:28rem;width:100%;border-radius:1.25rem;padding:2rem;background:#12121a;border:1px solid var(--line)">
+<button type="button" id="modal-close" style="position:absolute;top:1rem;right:1.25rem;background:none;border:0;color:rgba(255,255,255,.5);font-size:1.5rem;cursor:pointer">×</button>
+<div id="modal-body"></div></div></div>
+<script>
+(function(){const c=document.getElementById('stars'),x=c.getContext('2d');let w,h,s=[],r;function resize(){w=c.width=innerWidth;h=c.height=innerHeight;s=Array.from({length:Math.min(160,Math.floor(w*h/9000))},()=>({x:Math.random()*w,y:Math.random()*h,z:Math.random()*2+.3,r:Math.random()*1.3+.2}))}function draw(){x.clearRect(0,0,w,h);const cx=w/2,cy=h*.46;for(const t of s){t.x+=(t.x-cx)*0.00055*t.z;t.y+=(t.y-cy)*0.00055*t.z;if(t.x<-20||t.x>w+20||t.y<-20||t.y>h+20){t.x=cx+(Math.random()-.5)*60;t.y=cy+(Math.random()-.5)*60;t.z=Math.random()*2+.3}x.beginPath();x.fillStyle='rgba(255,255,255,'+(0.2+t.z*.28)+')';x.arc(t.x,t.y,t.r,0,Math.PI*2);x.fill()}r=requestAnimationFrame(draw)}addEventListener('resize',resize);resize();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)draw()})();
+const nav=document.getElementById('nav');addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const level1=document.getElementById('level1'),v=document.getElementById('level1-video');
+function openLevel1(){level1.classList.add('open');v.muted=false;v.volume=.7;v.currentTime=0;v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})})}
+function closeLevel1(){level1.classList.remove('open');v.pause();v.muted=true}
+document.getElementById('level1-close').onclick=closeLevel1;
+document.getElementById('level1-claim').onclick=()=>{closeLevel1();setTimeout(()=>document.getElementById('claim').scrollIntoView({behavior:'smooth'}),200)};
+const modal=document.getElementById('modal'),mb=document.getElementById('modal-body');
+const names={2:{title:'Yang Ignition',copy:'Heat, direction, and clean force. Full sequence arriving inside the portal.'},3:{title:'Fusion Harmony',copy:'Yin and yang in one continuous field. Full sequence arriving soon.'},4:{title:'Symbolic Elevation',copy:'Pattern, myth, and meaning as practice. Full sequence arriving soon.'},5:{title:'Lotus Mastery',copy:'Stillness that holds power. Full sequence arriving soon.'}};
+function openModal(n){const d=names[n];if(!d)return;mb.innerHTML='<p class="eyebrow" style="margin-bottom:.75rem">Level 0'+n+'</p><h2 class="serif" style="font-size:2rem;margin:0 0 .75rem">'+d.title+'</h2><p style="color:var(--muted);line-height:1.6;margin:0">'+d.copy+'</p>';modal.style.display='flex'}
+document.getElementById('modal-close').onclick=()=>modal.style.display='none';modal.onclick=e=>{if(e.target===modal)modal.style.display='none'};
+document.querySelectorAll('.level').forEach(btn=>btn.onclick=()=>{const n=+btn.dataset.level;n===1?openLevel1():openModal(n)});
+const SUPABASE_URL='https://kytvzrkretucgkairzny.supabase.co',SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
+function isValidSolana(a){return a&&/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a.trim())}
+document.getElementById('connect-btn').onclick=async()=>{const btn=document.getElementById('connect-btn'),st=document.getElementById('wallet-status'),inp=document.getElementById('wallet');try{const p=window.solana||(window.phantom&&window.phantom.solana)||window.solflare;if(!p){st.textContent='No wallet detected — paste address instead.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');return}btn.disabled=true;btn.textContent='…';const resp=await p.connect();const key=(resp.publicKey&&resp.publicKey.toString())||(p.publicKey&&p.publicKey.toString());if(!key)throw new Error('No key');inp.value=key;inp.readOnly=true;btn.textContent='Linked';st.textContent='Wallet connected';st.style.color='#86efac';st.classList.remove('hidden')}catch(e){st.textContent='Could not connect — paste address manually.';st.style.color='var(--amber-soft)';st.classList.remove('hidden');btn.disabled=false;btn.textContent='Connect'}};
+document.getElementById('claim-form').onsubmit=async e=>{e.preventDefault();const email=document.getElementById('email').value.trim(),wallet=document.getElementById('wallet').value.trim(),btn=document.getElementById('submit-btn'),msg=document.getElementById('form-msg');msg.textContent='';msg.className='form-msg';if(!email.includes('@')){msg.textContent='Enter a valid email.';msg.classList.add('err');return}if(!isValidSolana(wallet)){msg.textContent='Enter a valid Solana address.';msg.classList.add('err');return}let client=null;try{if(typeof supabase!=='undefined')client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}catch(_){}if(!client){msg.textContent='Not ready. Refresh and try again.';msg.classList.add('err');return}btn.disabled=true;btn.textContent='Claiming…';try{const result=await client.from('signups').insert([{email,wallet_address:wallet,verified:false,rewarded:true}]);if(result.error){msg.textContent=result.error.code==='23505'?'Already registered.':(result.error.message||'Could not save.');msg.classList.add(result.error.code==='23505'?'warn':'err');btn.disabled=false;btn.textContent='Claim 1 CMC37';return}msg.textContent='Success — you are entitled to 1 CMC37.';msg.classList.add('ok');btn.textContent='Claimed ✓';document.getElementById('claim-form').reset();document.getElementById('wallet').readOnly=false}catch(err){msg.textContent='Something went wrong. Try again.';msg.classList.add('err');btn.disabled=false;btn.textContent='Claim 1 CMC37'}};
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
