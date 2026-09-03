@@ -1,0 +1,14 @@
+# Draft listing metadata for Solana dApp Store
+name: FIT
+website: https://fusionfitportal.com
+android_package: com.fusionfitportal.fit
+category: health
+short_description: >
+  Ancient balance. Modern power. 4-7-8 breath, Seed Vault biometrics,
+  and CMC37 claims on Solana Seeker.
+long_description: >
+  FIT is a cosmic wellness portal for Solana Mobile. Connect with Seed Vault
+  biometrics, practice Yin Awakening with a guided 4-7-8 breath, and claim
+  CMC37 from the same signup used on fusionfitportal.com.
+screenshots: []
+icon: ../assets/icon.png

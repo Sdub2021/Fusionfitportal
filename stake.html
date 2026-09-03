@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FIT Validator · Stake on Solana</title>
+<meta name="description" content="Join the FIT Solana validator waitlist. Earn CMC37 in Movement Studio first.">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#07070c">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#07070c;--amber:#e8a54b;--amber-soft:#f0c27a;--line:rgba(255,255,255,.1);--muted:rgba(255,255,255,.48);--text:rgba(255,255,255,.92)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--void);color:var(--text);font-family:Outfit,system-ui,sans-serif;font-weight:300}
+a,button,input{touch-action:manipulation}input{font-size:16px}
+.bar{position:fixed;top:0;left:0;right:0;z-index:8;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.4rem;padding-top:max(1.1rem,env(safe-area-inset-top));background:linear-gradient(to bottom,rgba(7,7,12,.92),transparent)}
+.bar a,.bar span{color:rgba(255,255,255,.7);text-decoration:none;letter-spacing:.16em;font-size:.72rem;text-transform:uppercase}
+main{max-width:720px;margin:0 auto;padding:6.2rem 1.2rem 4rem;padding-top:calc(5.2rem + env(safe-area-inset-top))}
+.eyebrow{letter-spacing:.28em;text-transform:uppercase;color:var(--amber);font-size:.68rem}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:clamp(2.1rem,7vw,3.4rem);margin:.1rem 0 .6rem}
+.lede{color:var(--muted);line-height:1.6;margin:0 0 1.6rem}
+.card{border:1px solid var(--line);border-radius:1.2rem;padding:1.2rem 1.15rem;background:rgba(255,255,255,.03);margin-bottom:.85rem}
+.card h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.45rem;margin:0 0 .45rem;font-weight:500}
+.card p{margin:0;color:var(--muted);line-height:1.55;font-size:.95rem}
+.grid{display:grid;gap:.7rem;margin:1.1rem 0 1.4rem}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.stat b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-size:1.6rem;color:var(--amber-soft);font-weight:500}
+.stat span{display:block;color:var(--muted);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-top:.2rem}
+.row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+button,.btn{border:0;cursor:pointer;border-radius:999px;padding:.9rem 1.35rem;font-family:inherit;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.primary{background:linear-gradient(135deg,#e8a54b,#d4893a);color:#0a0a0f;font-weight:600}
+.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.18)}
+label{display:block;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 .4rem}
+input{width:100%;padding:.9rem 1rem;border-radius:.85rem;background:rgba(0,0,0,.45);border:1px solid var(--line);color:#fff;font-family:inherit}
+.field{margin-bottom:.8rem}
+.mono{font-family:ui-monospace,monospace;font-size:.82rem;word-break:break-all;color:#c4b5fd}
+.msg{min-height:1.2rem;margin:.7rem 0 0;font-size:.85rem}
+.ok{color:#86efac}.err{color:#fca5a5}.warn{color:var(--amber-soft)}
+ol.phases{margin:.4rem 0 0;padding-left:1.15rem;color:var(--muted);line-height:1.55}
+.hint{color:rgba(255,255,255,.38);font-size:.78rem;line-height:1.55;margin-top:1.2rem}
+</style>
+</head>
+<body>
+<div class="bar"><a href="/">← Portal</a><span>Solana · Validator</span></div>
+<main>
+  <p class="eyebrow">Mainnet · Waitlist</p>
+  <h1>Stake with FIT</h1>
+  <p class="lede">CMC37 is earned in Movement Studio. Native SOL stake to a FIT vote account comes next. Connect on Solana mainnet. On iPhone, open this page inside Phantom if Connect cannot see a wallet.</p>
+  <div class="grid">
+    <div class="card stat"><b id="net">mainnet</b><span>Cluster</span></div>
+    <div class="card stat"><b id="bal">—</b><span>Wallet SOL</span></div>
+    <div class="card stat"><b>Soon</b><span>Vote account</span></div>
+    <div class="card stat"><b>Studio</b><span>Claim gate</span></div>
+  </div>
+  <section class="card">
+    <h2>Connect</h2>
+    <p>Phantom or Solflare. Balance is read from the public Solana RPC. Nothing is custodied here.</p>
+    <div class="row">
+      <button class="primary" id="connect" type="button">Connect wallet</button>
+      <a class="ghost btn" href="/practice.html?mode=vestibular">Earn in Studio</a>
+    </div>
+    <p class="msg" id="wallet-msg"></p>
+    <p class="mono" id="wallet-key"></p>
+  </section>
+  <section class="card">
+    <h2>Validator waitlist</h2>
+    <p>When the FIT vote account is live, waitlisted wallets can delegate SOL.</p>
+    <form id="wait-form" style="margin-top:1rem">
+      <div class="field"><label for="email">Email</label><input id="email" type="email" required placeholder="you@email.com" autocomplete="email"></div>
+      <div class="field"><label for="amount">Intended stake (SOL)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="1.00"></div>
+      <button class="primary" type="submit" id="wait-btn">Join waitlist</button>
+      <p class="msg" id="wait-msg"></p>
+    </form>
+  </section>
+  <section class="card">
+    <h2>Path</h2>
+    <ol class="phases">
+      <li><b style="color:#fff">Now.</b> Finish vestibular training in Studio to join the list.</li>
+      <li><b style="color:#fff">Next.</b> Publish vote + identity accounts. Waitlist becomes a delegate button.</li>
+      <li><b style="color:#fff">After.</b> Studio completers can receive a CMC37 boost while SOL earns native inflation.</li>
+    </ol>
+  </section>
+  <p class="hint">A mainnet validator is hardware + 24/7 operations + a funded vote account — not a website toggle. Distribution wallet for claims stays locked separately from any future vote account.</p>
+</main>
+<script src="/solana.js?v=20260830s2"></script>
+<script>
+const S = window.FITSolana;
+const SUPABASE_URL = "https://kytvzrkretucgkairzny.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg";
+let address = "";
+async function showWallet(key) {
+  address = key;
+  document.getElementById("wallet-key").textContent = key;
+  document.getElementById("wallet-msg").textContent = "Connected · " + S.shortKey(key);
+  document.getElementById("wallet-msg").className = "msg ok";
+  document.getElementById("connect").textContent = "Linked";
+  try { document.getElementById("bal").textContent = (await S.getSolBalance(key)).toFixed(3); }
+  catch (_) { document.getElementById("bal").textContent = "RPC"; }
+}
+document.getElementById("connect").onclick = async () => {
+  const msg = document.getElementById("wallet-msg");
+  msg.className = "msg";
+  try {
+    const { address: key } = await S.connectWallet();
+    await showWallet(key);
+  } catch (e) {
+    if (e && e.code === "NO_WALLET") {
+      msg.textContent = "No injected wallet. On iPhone open in Phantom, or install Phantom / Solflare.";
+      msg.className = "msg warn";
+      if (S.mobileWalletUrl) location.href = S.mobileWalletUrl(location.href);
+      return;
+    }
+    msg.textContent = "Could not connect.";
+    msg.className = "msg err";
+  }
+};
+document.getElementById("wait-form").onsubmit = async (e) => {
+  e.preventDefault();
+  window.location.href = "/practice.html?mode=vestibular";
+};
+try { const cached = localStorage.getItem("fit_wallet"); if (S.isValidSolana(cached)) showWallet(cached); } catch (_) {}
+</script>
+<script src="/waitlist-gate.js?v=20260903vest2"></script>
+</body>
+</html>

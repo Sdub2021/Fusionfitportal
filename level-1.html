@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Level 1 — Yin Awakening · 4-7-8 Breath</title>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#05050a">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.min.js"></script>
+  <style>
+    :root { --amber:#e8a54b; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; min-height:100%; background:#05050a; color:#fff; font-family:Outfit,system-ui,sans-serif; }
+    a,button { touch-action:manipulation; text-decoration:none; }
+    .bar { position:fixed; top:0; left:0; right:0; z-index:5; display:flex; justify-content:space-between; padding:1.1rem 1.4rem; padding-top:max(1.1rem,env(safe-area-inset-top)); }
+    .bar a, .bar span { color:rgba(255,255,255,.7); letter-spacing:.16em; font-size:.72rem; text-transform:uppercase; }
+    .stage { min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:6rem 1.25rem 3rem; background:radial-gradient(ellipse at center, rgba(232,165,75,.12), #05050a 70%); }
+    .eyebrow { letter-spacing:.32em; text-transform:uppercase; color:var(--amber); font-size:.68rem; }
+    h1 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; font-size:clamp(2rem,6vw,3.4rem); margin:.2rem 0 .4rem; }
+    .cue { color:rgba(255,255,255,.62); font-size:1.05rem; margin:0 0 2rem; }
+    .orb-wrap { position:relative; width:min(68vw,280px); height:min(68vw,280px); margin:0 auto 1.75rem; }
+    .orb { width:100%; height:100%; border-radius:50%; background:radial-gradient(circle at 38% 34%, #fff6d8 0%, #f5c56a 28%, #c9842a 62%, #6b3f12 100%); box-shadow:0 0 40px rgba(232,165,75,.28); transform:scale(.72); transition:transform 1s linear, box-shadow 1s linear; }
+    .orb.inhale { transform:scale(1); box-shadow:0 0 70px rgba(255,220,150,.45); transition-duration:4s; }
+    .orb.hold { transform:scale(1); transition-duration:.4s; }
+    .orb.exhale { transform:scale(.72); transition-duration:8s; }
+    .count { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',Georgia,serif; font-size:4.2rem; }
+    .phase { letter-spacing:.22em; text-transform:uppercase; color:var(--amber); min-height:1.5rem; }
+    .meta { color:rgba(255,255,255,.5); font-size:.85rem; margin-bottom:1.75rem; }
+    .controls { display:flex; gap:.6rem; flex-wrap:wrap; justify-content:center; }
+    button.act { border:0; cursor:pointer; border-radius:999px; padding:.9rem 1.5rem; min-height:48px; font-family:inherit; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; }
+    #start { background:linear-gradient(135deg,#e8a54b,#d4893a); color:#0a0a0f; font-weight:600; }
+    #audio, #reset { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.18); }
+    .hint { margin-top:1.6rem; color:rgba(255,255,255,.38); font-size:.78rem; max-width:22rem; line-height:1.55; }
+    .hint a { color:#f0c27a; }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="/">← Portal</a><span>Level 1 · Yin Awakening</span></div>
+  <main class="stage">
+    <p class="eyebrow">4 · 7 · 8</p>
+    <h1>Breathe deeply</h1>
+    <p class="cue">Inhale 4 · Hold 7 · Exhale 8</p>
+    <div class="orb-wrap"><div class="orb" id="orb"></div><div class="count" id="count">4</div></div>
+    <div class="phase" id="phase">Ready</div>
+    <div class="meta" id="meta">Four cycles · tap begin</div>
+    <div class="controls">
+      <button class="act" id="start">Begin breath</button>
+      <button class="act" id="audio">Music off</button>
+      <button class="act" id="reset">Reset</button>
+    </div>
+    <p class="hint">Nose in for 4. Hold for 7. Mouth out for 8. Then <a href="/practice.html?mode=meditation">enter Studio</a>.</p>
+  </main>
+  <script>
+    const PHASES = [{ name:'Inhale', secs:4, cls:'inhale' },{ name:'Hold', secs:7, cls:'hold' },{ name:'Exhale', secs:8, cls:'exhale' }];
+    const TOTAL_CYCLES = 4;
+    const orb = document.getElementById('orb');
+    const countEl = document.getElementById('count');
+    const phaseEl = document.getElementById('phase');
+    const metaEl = document.getElementById('meta');
+    const startBtn = document.getElementById('start');
+    const audioBtn = document.getElementById('audio');
+    const resetBtn = document.getElementById('reset');
+    let running = false, timer = null, cycle = 1, pIndex = 0, left = 4;
+    let musicReady = false, musicOn = false, healGainNode = null;
+    function setUI() {
+      const p = PHASES[pIndex];
+      phaseEl.textContent = running ? p.name : 'Ready';
+      countEl.textContent = left;
+      metaEl.textContent = running ? ('Cycle ' + cycle + ' of ' + TOTAL_CYCLES) : 'Four cycles · tap begin';
+      orb.className = 'orb' + (running ? ' ' + p.cls : '');
+      startBtn.textContent = running ? 'Pause' : (cycle > 1 || pIndex > 0 ? 'Resume' : 'Begin breath');
+    }
+    function tick() {
+      left -= 1;
+      if (left <= 0) {
+        pIndex += 1;
+        if (pIndex >= PHASES.length) {
+          pIndex = 0; cycle += 1;
+          if (cycle > TOTAL_CYCLES) {
+            running = false; clearInterval(timer);
+            phaseEl.textContent = 'Complete'; countEl.textContent = '✦';
+            metaEl.textContent = 'Rest. Notice the quiet.'; orb.className = 'orb';
+            startBtn.textContent = 'Begin again'; cycle = 1; pIndex = 0; left = PHASES[0].secs; return;
+          }
+        }
+        left = PHASES[pIndex].secs; orb.className = 'orb'; void orb.offsetWidth;
+        orb.className = 'orb ' + PHASES[pIndex].cls;
+      }
+      setUI();
+    }
+    function start() {
+      if (running) { running = false; clearInterval(timer); startBtn.textContent = 'Resume'; return; }
+      if (phaseEl.textContent === 'Complete' || startBtn.textContent === 'Begin again') { cycle = 1; pIndex = 0; left = PHASES[0].secs; }
+      running = true; orb.className = 'orb ' + PHASES[pIndex].cls; setUI();
+      timer = setInterval(tick, 1000);
+      if (!musicOn) startMusic();
+    }
+    function reset() {
+      running = false; clearInterval(timer); cycle = 1; pIndex = 0; left = PHASES[0].secs; setUI(); orb.className = 'orb';
+    }
+    function buildMusic() {
+      const verb = new Tone.Reverb({ decay: 6.5, wet: 0.42 }).toDestination();
+      const healGain = new Tone.Gain(0.045).connect(verb); healGainNode = healGain;
+      const pianoGain = new Tone.Gain(0.22).connect(verb);
+      const drumGain = new Tone.Gain(0.16).toDestination();
+      const heal = new Tone.Oscillator({ frequency: 528, type: 'sine' }).connect(healGain);
+      const healLow = new Tone.Oscillator({ frequency: 264, type: 'sine' }).connect(healGain);
+      heal.start(); healLow.start();
+      const piano = new Tone.PolySynth(Tone.Synth, {
+        maxPolyphony: 4,
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.012, decay: 1.6, sustain: 0.12, release: 2.8 }
+      }).connect(pianoGain);
+      const kick = new Tone.MembraneSynth({ pitchDecay: 0.05, octaves: 4, oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.38, sustain: 0, release: 0.18 } }).connect(drumGain);
+      const hat = new Tone.NoiseSynth({ noise: { type: 'pink' }, envelope: { attack: 0.001, decay: 0.07, sustain: 0, release: 0.04 } }).connect(new Tone.Filter(7000, 'highpass').connect(drumGain));
+      const melody = ['C4','E4','G4','C5','A4','G4','E4','C4','G4','E4','A4','G4'];
+      let i = 0;
+      new Tone.Loop(function(time) {
+        piano.triggerAttackRelease(melody[i % melody.length], '2n', time);
+        i += 1;
+      }, '2n').start(0);
+      new Tone.Loop(function(time) {
+        kick.triggerAttackRelease('C1', '8n', time, 0.55);
+        hat.triggerAttackRelease('16n', time + Tone.Time('8n'), 0.12);
+      }, '1m').start(0);
+      Tone.Transport.bpm.value = 56;
+      musicReady = true;
+    }
+    async function startMusic() {
+      try {
+        if (typeof Tone === 'undefined') return;
+        await Tone.start();
+        if (!musicReady) buildMusic();
+        Tone.Transport.start(); musicOn = true;
+        audioBtn.textContent = 'Music on';
+      } catch (e) {}
+    }
+    async function togglePad() {
+      if (!musicOn) { await startMusic(); return; }
+      if (Tone.Transport.state === 'started') {
+        Tone.Transport.pause();
+        if (healGainNode) healGainNode.gain.rampTo(0, 0.4);
+        audioBtn.textContent = 'Music off';
+      } else {
+        Tone.Transport.start();
+        if (healGainNode) healGainNode.gain.rampTo(0.045, 0.6);
+        audioBtn.textContent = 'Music on';
+      }
+    }
+    startBtn.onclick = start; resetBtn.onclick = reset; audioBtn.onclick = togglePad; setUI();
+  </script>
+</body>
+</html>

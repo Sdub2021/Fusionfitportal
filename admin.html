@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - FusionFitPortal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>body { font-family: system-ui, sans-serif; }</style>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen">
+  <div id="login-screen" class="min-h-screen flex items-center justify-center px-4">
+    <div class="bg-zinc-900 p-10 rounded-3xl max-w-md w-full border border-zinc-700">
+      <h1 class="text-3xl font-bold mb-2 text-center">Admin Panel</h1>
+      <p class="text-zinc-400 text-center mb-8">Enter password to view CMC37 claims</p>
+      <input type="password" id="password" class="w-full p-4 rounded-xl bg-zinc-800 border border-zinc-600 text-white mb-4 outline-none focus:border-orange-500" placeholder="Password">
+      <button onclick="checkPassword()" class="w-full py-4 bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold">Unlock</button>
+      <p id="login-error" class="text-red-400 text-center mt-4 hidden">Wrong password</p>
+    </div>
+  </div>
+
+  <div id="admin-content" class="hidden max-w-6xl mx-auto px-6 py-12">
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+      <div>
+        <h1 class="text-4xl font-bold">CMC37 Claims</h1>
+        <p class="text-zinc-400 mt-2">Payouts only leave the locked distribution wallet through Solflare.</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="connect-treasury" type="button" class="px-6 py-3 bg-violet-600 hover:bg-violet-500 rounded-xl">Connect Solflare</button>
+        <button onclick="loadData()" type="button" class="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 rounded-xl">Refresh</button>
+      </div>
+    </div>
+    <p id="treasury-status" class="text-zinc-400 text-sm mb-2">Solflare not connected</p>
+    <p class="text-zinc-500 text-xs mb-2 font-mono break-all">Required Solflare account: 68wcbLLBULTWKBriRq5BmgYw6fQREV54e59hRqrWWtj8</p>
+    <p class="text-zinc-500 text-xs mb-8">Use Chrome or Brave. Allow popups. Send 1 signs in Solflare then broadcasts without OnFinality.</p>
+
+    <div class="grid grid-cols-3 gap-6 mb-10">
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700"><p class="text-zinc-400 text-sm">Total Claims</p><p id="total-count" class="text-3xl font-bold mt-1">-</p></div>
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700"><p class="text-zinc-400 text-sm">Still Need Coin</p><p id="pending-count" class="text-3xl font-bold mt-1 text-orange-400">-</p></div>
+      <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-700"><p class="text-zinc-400 text-sm">Already Paid</p><p id="paid-count" class="text-3xl font-bold mt-1 text-green-400">-</p></div>
+    </div>
+
+    <div class="bg-zinc-900 rounded-2xl border border-zinc-700 overflow-x-auto">
+      <table class="w-full text-left">
+        <thead class="bg-zinc-800 text-zinc-400 text-sm">
+          <tr><th class="p-4">Email</th><th class="p-4">Wallet</th><th class="p-4">Date</th><th class="p-4">Status</th><th class="p-4">Pay</th></tr>
+        </thead>
+        <tbody id="table-body"><tr><td colspan="5" class="p-8 text-center text-zinc-500">Loading...</td></tr></tbody>
+      </table>
+    </div>
+    <p class="text-zinc-500 text-sm mt-6 text-center">Pays 1 CMC37 from the locked distribution wallet only. That wallet needs CMC37 + a little SOL. Never paste a seed phrase here.</p>
+  </div>
+
+  <script type="module">
+    import Solflare from "https://esm.sh/@solflare-wallet/sdk@1.4.2";
+
+    const DISTRIBUTION_WALLET = "68wcbLLBULTWKBriRq5BmgYw6fQREV54e59hRqrWWtj8";
+    const MINT_STR = "QKWV6rjY5vy4fdpinnX8DkxQAoDkdRSpN4KCSCMpump";
+    const DECIMALS = 6;
+    const AMOUNT = BigInt(1) * BigInt(10 ** DECIMALS);
+    const RPCS = [
+      "https://solana.leorpc.com/?api_key=FREE",
+      "https://solana-mainnet.gateway.tatum.io"
+    ];
+    const CORRECT_PASSWORD = "21Jump13!@";
+    const SUPABASE_URL = "https://kytvzrkretucgkairzny.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg";
+
+    let treasury = null;
+    let splReady = null;
+    let flare = null;
+
+    function keyStr(value) {
+      if (!value) return "";
+      if (typeof value === "string") return value;
+      try { return value.toString(); } catch (_) { return String(value); }
+    }
+
+    function getFlare() {
+      if (!flare) flare = new Solflare({ network: "mainnet-beta" });
+      return flare;
+    }
+
+    function paidSet() {
+      try { return new Set(JSON.parse(localStorage.getItem("fit_paid") || "[]")); }
+      catch (_) { return new Set(); }
+    }
+    function markPaid(wallet) {
+      const s = paidSet();
+      s.add(wallet);
+      localStorage.setItem("fit_paid", JSON.stringify([...s]));
+    }
+
+    async function rpc(method, params) {
+      let last = null;
+      for (const url of RPCS) {
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params || [] })
+          });
+          const body = await res.json().catch(function () { return {}; });
+          if (!res.ok || body.error) {
+            throw new Error((body.error && body.error.message) || (url + " " + res.status));
+          }
+          return body.result;
+        } catch (err) {
+          last = err;
+        }
+      }
+      throw last || new Error("RPC blocked");
+    }
+
+    async function loadSpl() {
+      if (splReady) return splReady;
+      splReady = Promise.all([
+        import("https://esm.sh/@solana/web3.js@1.98.2"),
+        import("https://esm.sh/@solana/spl-token@0.4.13")
+      ]).then(([web3, spl]) => ({ web3, spl }));
+      return splReady;
+    }
+
+    async function connectTreasury() {
+      const st = document.getElementById("treasury-status");
+      const btn = document.getElementById("connect-treasury");
+      st.textContent = "Opening Solflare… allow the popup if the browser asks.";
+      btn.disabled = true;
+      try {
+        const wallet = getFlare();
+        if (wallet.connected || wallet.isConnected) {
+          try { await wallet.disconnect(); } catch (_) {}
+        }
+        await wallet.connect();
+        const connected = keyStr(wallet.publicKey);
+        if (!connected) throw new Error("Solflare opened but returned no address.");
+        if (connected !== DISTRIBUTION_WALLET) {
+          treasury = null;
+          st.textContent = "Connected " + connected.slice(0,4) + "…" + connected.slice(-4) + " — wrong account. In Solflare switch to 68wcb…Wtj8, then click Connect Solflare again.";
+          btn.textContent = "Connect Solflare";
+          btn.disabled = false;
+          return;
+        }
+        treasury = connected;
+        st.textContent = "Solflare linked: 68wcb…Wtj8";
+        btn.textContent = "Solflare linked";
+        btn.disabled = false;
+      } catch (e) {
+        treasury = null;
+        btn.disabled = false;
+        btn.textContent = "Connect Solflare";
+        const msg = (e && e.message) ? e.message : "Solflare did not connect.";
+        st.textContent = msg + " Allow popups, then try again.";
+      }
+    }
+
+    document.getElementById("connect-treasury").addEventListener("click", function (e) {
+      e.preventDefault();
+      connectTreasury();
+    });
+
+    window.sendOne = async function sendOne(toWallet, btn) {
+      const wallet = getFlare();
+      const fromKey = keyStr(wallet.publicKey);
+      if (!fromKey) { alert("Connect Solflare first."); return; }
+      if (fromKey !== DISTRIBUTION_WALLET) {
+        alert("Solflare must be 68wcbLLBULTWKBriRq5BmgYw6fQREV54e59hRqrWWtj8");
+        return;
+      }
+      if (toWallet === DISTRIBUTION_WALLET) {
+        alert("Cannot pay the distribution wallet itself.");
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Sending…";
+      try {
+        const { web3, spl } = await loadSpl();
+        const mint = new web3.PublicKey(MINT_STR);
+        const from = new web3.PublicKey(fromKey);
+        const to = new web3.PublicKey(toWallet);
+        const fromAta = await spl.getAssociatedTokenAddress(mint, from);
+        const toAta = await spl.getAssociatedTokenAddress(mint, to);
+        const destInfo = await rpc("getAccountInfo", [toAta.toBase58(), { encoding: "base64" }]);
+        const tx = new web3.Transaction();
+        if (!destInfo || !destInfo.value) {
+          tx.add(spl.createAssociatedTokenAccountInstruction(
+            from, toAta, to, mint, spl.TOKEN_PROGRAM_ID, spl.ASSOCIATED_TOKEN_PROGRAM_ID
+          ));
+        }
+        tx.add(spl.createTransferInstruction(fromAta, toAta, from, AMOUNT));
+        tx.feePayer = from;
+        const latest = await rpc("getLatestBlockhash", [{ commitment: "confirmed" }]);
+        const value = latest.value || latest;
+        tx.recentBlockhash = value.blockhash;
+        const signed = await wallet.signTransaction(tx);
+        const raw = signed.serialize();
+        const bytes = raw instanceof Uint8Array ? raw : new Uint8Array(raw);
+        let binary = "";
+        bytes.forEach(function (b) { binary += String.fromCharCode(b); });
+        const wire = btoa(binary);
+        const sig = await rpc("sendTransaction", [wire, { encoding: "base64", skipPreflight: false, preflightCommitment: "confirmed" }]);
+        markPaid(toWallet);
+        btn.textContent = "Sent";
+        btn.className = "px-3 py-1 bg-green-600 rounded-lg text-sm";
+        alert("Sent 1 CMC37. Signature: " + sig);
+        loadData();
+      } catch (err) {
+        console.error(err);
+        btn.disabled = false;
+        btn.textContent = "Send 1";
+        alert(err && err.message ? err.message : "Send failed. Check CMC37 balance and SOL for fees.");
+      }
+    };
+
+    window.copyWallet = function (address) {
+      navigator.clipboard.writeText(address).then(() => alert("Wallet copied"));
+    };
+
+    window.checkPassword = function checkPassword() {
+      if (document.getElementById("password").value === CORRECT_PASSWORD) {
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("admin-content").classList.remove("hidden");
+        loadData();
+      } else {
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    };
+    document.getElementById("password").addEventListener("keypress", (e) => { if (e.key === "Enter") window.checkPassword(); });
+
+    async function loadData() {
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-zinc-500">Loading...</td></tr>';
+      let paid = new Set();
+      try { paid = new Set(JSON.parse(localStorage.getItem("fit_paid") || "[]")); } catch (_) {}
+      try {
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data, error } = await client.from("signups").select("*").eq("rewarded", true).order("created_at", { ascending: false });
+        if (error) { tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400">${error.message}</td></tr>`; return; }
+        if (!data || !data.length) {
+          tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-zinc-500">No claims yet</td></tr>';
+          document.getElementById("total-count").textContent = "0";
+          document.getElementById("pending-count").textContent = "0";
+          document.getElementById("paid-count").textContent = "0";
+          return;
+        }
+        const paidN = data.filter(r => paid.has(r.wallet_address)).length;
+        document.getElementById("total-count").textContent = data.length;
+        document.getElementById("pending-count").textContent = data.length - paidN;
+        document.getElementById("paid-count").textContent = paidN;
+        tbody.innerHTML = data.map(row => {
+          const w = row.wallet_address || "";
+          const isPaid = paid.has(w);
+          const shortW = w ? w.slice(0,6) + "..." + w.slice(-4) : "—";
+          const date = row.created_at ? new Date(row.created_at).toLocaleDateString() : "—";
+          const payBtn = !w ? "" : isPaid
+            ? '<span class="text-green-400 text-sm">Paid</span>'
+            : `<button onclick="sendOne('${w}', this)" class="px-3 py-1 bg-orange-500 hover:bg-orange-400 rounded-lg text-sm text-black font-semibold">Send 1</button>`;
+          return `<tr class="border-t border-zinc-800">
+            <td class="p-4">${row.email || "—"}</td>
+            <td class="p-4 font-mono text-sm">${shortW} ${w ? `<button onclick="copyWallet('${w}')" class="ml-2 text-orange-400 text-xs">Copy</button>` : ""}</td>
+            <td class="p-4 text-zinc-400">${date}</td>
+            <td class="p-4">${isPaid ? '<span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">Paid</span>' : '<span class="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">Needs Coin</span>'}</td>
+            <td class="p-4">${payBtn}</td>
+          </tr>`;
+        }).join("");
+      } catch (err) {
+        const m = (err && err.message) ? err.message : "Could not load claims";
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-400">${m}</td></tr>`;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /signer/
+Disallow: /supabase/
+
+Sitemap: https://fusionfitportal.com/sitemap.xml

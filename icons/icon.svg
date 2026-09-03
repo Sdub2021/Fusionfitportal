@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#000000"/>
+  <!-- White yang half (left) -->
+  <path d="M256 36 A220 220 0 0 1 256 476 A110 110 0 0 0 256 256 A110 110 0 0 1 256 36 Z" fill="#f8fafc"/>
+  <!-- Black yin half (right) -->
+  <path d="M256 36 A220 220 0 0 0 256 476 A110 110 0 0 0 256 256 A110 110 0 0 1 256 36 Z" fill="#0a0a0f"/>
+  <!-- Sun = yin circle (upper, in white half) -->
+  <circle cx="256" cy="146" r="52" fill="#f59e0b"/>
+  <circle cx="256" cy="146" r="40" fill="#fbbf24"/>
+  <circle cx="246" cy="136" r="12" fill="#fde68a" opacity="0.7"/>
+  <g stroke="#fbbf24" stroke-width="4" stroke-linecap="round" opacity="0.9">
+    <line x1="256" y1="78" x2="256" y2="60"/>
+    <line x1="256" y1="214" x2="256" y2="232"/>
+    <line x1="188" y1="146" x2="170" y2="146"/>
+    <line x1="324" y1="146" x2="342" y2="146"/>
+    <line x1="208" y1="98" x2="195" y2="85"/>
+    <line x1="304" y1="194" x2="317" y2="207"/>
+    <line x1="304" y1="98" x2="317" y2="85"/>
+    <line x1="208" y1="194" x2="195" y2="207"/>
+  </g>
+  <!-- Full moon = yang circle (lower, in black half) -->
+  <circle cx="256" cy="366" r="52" fill="#cbd5e1"/>
+  <circle cx="256" cy="366" r="48" fill="#e2e8f0"/>
+  <!-- subtle crater marks for realism -->
+  <circle cx="240" cy="350" r="8" fill="#94a3b8" opacity="0.35"/>
+  <circle cx="270" cy="375" r="12" fill="#94a3b8" opacity="0.3"/>
+  <circle cx="248" cy="380" r="6" fill="#94a3b8" opacity="0.25"/>
+  <circle cx="265" cy="348" r="5" fill="#94a3b8" opacity="0.3"/>
+</svg>

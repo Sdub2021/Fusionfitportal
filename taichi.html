@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Tai Chi · CMC37 — FIT</title>
+  <meta name="description" content="Practice Cheng Man-Ching 37 with a reference video. Your camera stays on this device.">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/fit.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous" data-mp-hands="1"></script>
+  <style>
+    .tc-wrap { max-width: 1100px; margin: 0 auto; padding: 6.5rem 1.25rem 3rem; }
+    .tc-grid { display: grid; gap: 1rem; }
+    @media (min-width: 900px) { .tc-grid { grid-template-columns: 1.1fr 0.9fr; } }
+    .tc-frame {
+      position: relative; background: #0a0a14; border: 1px solid rgba(255,255,255,.1);
+      border-radius: 1.25rem; overflow: hidden; min-height: 240px;
+    }
+    .tc-frame h3 {
+      position: absolute; left: .8rem; top: .7rem; z-index: 2; margin: 0;
+      font-family: Inter, sans-serif; font-size: .7rem; letter-spacing: .14em;
+      text-transform: uppercase; color: #fdba74; background: rgba(0,0,0,.45);
+      padding: .25rem .5rem; border-radius: .4rem;
+    }
+    .tc-yt { width: 100%; aspect-ratio: 16 / 9; background: #000; }
+    .tc-cam-box { position: relative; aspect-ratio: 16 / 9; max-height: 440px; margin: 0 auto; background: #05050f; }
+    .tc-cam-box video, .tc-cam-box canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+      transform: scaleX(-1); background: #000;
+    }
+    .tc-score {
+      display: flex; gap: 1rem; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; margin: 1rem 0; padding: 1rem 1.1rem;
+      border: 1px solid rgba(249,115,22,.3); border-radius: 1.1rem;
+      background: rgba(249,115,22,.06);
+    }
+    .tc-pct { font-size: 2.4rem; font-weight: 300; color: #fdba74; font-variant-numeric: tabular-nums; }
+    .tc-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+    .tc-list li {
+      display: flex; justify-content: space-between; gap: 1rem;
+      padding: .55rem .7rem; margin: .28rem 0; border-radius: .7rem;
+      border: 1px solid rgba(255,255,255,.08); color: #a1a1aa; font-size: .9rem;
+    }
+    .tc-list li.on { border-color: #f97316; color: #fff; background: rgba(249,115,22,.12); }
+    .tc-list li.ok { border-color: #34d399; color: #6ee7b7; }
+    .tc-row { display: flex; gap: .5rem; flex-wrap: wrap; margin: 1rem 0; }
+    .tc-row input {
+      flex: 1; min-width: 12rem; padding: .85rem 1rem; border-radius: .9rem;
+      background: #18181b; border: 1px solid #3f3f46; color: #fff; font-size: 16px;
+    }
+    .tc-btn {
+      padding: .85rem 1.1rem; border-radius: .9rem; font-weight: 600; cursor: pointer;
+      background: linear-gradient(135deg, #f97316, #fbbf24); color: #111;
+    }
+    .tc-btn.ghost { background: transparent; color: #e4e4e7; border: 1px solid rgba(255,255,255,.2); }
+    .tc-note { color: #71717a; font-size: .8rem; line-height: 1.5; }
+  </style>
+</head>
+<body class="bg-black text-white">
+  <nav class="fixed top-0 left-0 right-0 nav-glass z-50 py-4">
+    <div class="max-w-7xl mx-auto px-5 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 text-2xl font-bold tracking-widest">
+        <img src="/icons/icon.svg" alt="FIT" class="w-9 h-9 rounded-full" width="36" height="36">
+        <span class="text-orange-500">FIT</span>
+      </a>
+      <a href="/" class="text-sm text-zinc-400">← Portal</a>
+    </div>
+  </nav>
+
+  <main class="tc-wrap">
+    <p class="text-orange-400 tracking-[0.25em] text-sm uppercase mb-3">Sacred Practices · Tai Chi</p>
+    <h1 class="text-4xl md:text-5xl font-bold mb-3">CMC37 form check</h1>
+    <p class="text-zinc-400 max-w-2xl mb-6">The reference is Professor Cheng Man-Ching performing his own 37-movement form (colour print). We track your body with Pose Landmarker (full) and your hands with Hand Landmarker (full), both on this device. Open-hand moves look for a <strong class="text-white">beautiful lady’s hand</strong>: side view, wrist straight, no bend.</p>
+
+    <div class="tc-row">
+      <button type="button" class="tc-btn ghost" data-vid="sy5_d5QUbf8" id="pick-cmc">Professor · colour</button>
+      <button type="button" class="tc-btn ghost" data-vid="qdQNjyo1WD4" id="pick-1">Class · first third</button>
+      <button type="button" class="tc-btn ghost" data-vid="L3ikwm_cuWI" id="pick-2">Class · rest</button>
+      <input id="yt-url" type="url" placeholder="Or paste another YouTube link">
+      <button type="button" class="tc-btn ghost" id="load-url">Load</button>
+    </div>
+    <p id="video-label" class="tc-note mb-6">Reference: Cheng Man Ching — 37 Movement Tai Chi superb quality (in colour). Uploaded by Boz Odusanya. Historical film of Professor Cheng, not a FIT recording.</p>
+
+    <div class="tc-score">
+      <div>
+        <p class="text-xs text-orange-400 tracking-widest uppercase mb-2" id="form-kicker">Waiting</p>
+        <h2 class="text-2xl font-bold" id="form-name">Choose a video, then start</h2>
+        <p class="text-zinc-400 mt-2" id="form-cue">Hands tracker is on. Bring both palms close to the camera.</p>
+      </div>
+      <div class="text-right">
+        <div class="tc-pct" id="match-pct">—</div>
+        <p class="text-xs text-zinc-500" id="match-label">match · lady’s hand</p>
+      </div>
+    </div>
+
+    <div class="tc-row">
+      <button type="button" class="tc-btn" id="start-btn">Start camera + video</button>
+      <button type="button" class="tc-btn ghost" id="pause-btn">Pause</button>
+      <button type="button" class="tc-btn ghost" id="skip-btn">Count this move</button>
+      <button type="button" class="tc-btn ghost" id="lock-btn">Full body</button>
+    </div>
+    <p id="status" class="tc-note">On a desktop webcam: sit closer, turn on a lamp, keep both hands in the middle of the picture. Tracker loads after Start.</p>
+
+    <div class="tc-grid mt-10">
+      <div class="tc-frame">
+        <h3>Teacher · YouTube</h3>
+        <div class="tc-yt"><div id="yt-player"></div></div>
+      </div>
+      <div class="tc-frame">
+        <h3>You · Hands</h3>
+        <div class="tc-cam-box">
+          <video id="user-cam" playsinline muted autoplay></video>
+          <canvas id="user-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <ol class="tc-list" id="form-list"></ol>
+    <p class="tc-note mt-10">FIT is general wellness, not a teacher certificate and not medical care. Soft knees. Hold a wall if you need it. Stop if anything feels wrong.</p>
+  </main>
+  <script src="/fit-hands.js"></script>
+  <script src="/taichi.js"></script>
+</body>
+</html>

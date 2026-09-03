@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "FIT",
+    "slug": "fit-solana-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "fit",
+    "splash": {
+      "backgroundColor": "#07070c",
+      "resizeMode": "contain"
+    },
+    "android": {
+      "package": "com.fusionfitportal.fit",
+      "versionCode": 1,
+      "permissions": [],
+      "adaptiveIcon": {
+        "backgroundColor": "#07070c"
+      },
+      "softwareKeyboardLayoutMode": "pan"
+    },
+    "plugins": ["expo-dev-client"]
+  }
+}

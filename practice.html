@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
+  <title>Movement Studio · FIT</title>
+  <meta name="description" content="On-device pose and face tracking. Vestibular: LEFT RIGHT LEFT RIGHT, UP DOWN UP DOWN, mouth open close twice.">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#05050a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="/icons/smmkn.png">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/vision_bundle.mjs">
+  <link rel="preload" href="/studio.js?v=20260903opt" as="script" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --amber:#e8a54b; --amber-soft:#f0c27a; --line:rgba(255,255,255,.1); --muted:rgba(255,255,255,.48); }
+    * { box-sizing:border-box; }
+    html, body { margin:0; min-height:100%; background:#05050a; color:#fff; font-family:Outfit,system-ui,sans-serif; font-weight:300; overflow-x:hidden; }
+    a,button,input { touch-action:manipulation; }
+    input { font-size:16px; }
+    .bar { position:fixed; top:0; left:0; right:0; z-index:8; display:flex; justify-content:space-between; align-items:center; padding:1.1rem 1.4rem; padding-top:max(1.1rem,env(safe-area-inset-top)); background:linear-gradient(to bottom,rgba(5,5,10,.92),transparent); }
+    .bar a, .bar span { color:rgba(255,255,255,.7); text-decoration:none; letter-spacing:.16em; font-size:.72rem; text-transform:uppercase; }
+    .stage { position:relative; min-height:100dvh; display:flex; flex-direction:column; align-items:center; padding:5.2rem 1.15rem max(2.4rem,calc(1.2rem + env(safe-area-inset-bottom))); padding-top:calc(4.4rem + env(safe-area-inset-top)); }
+    .eyebrow { letter-spacing:.32em; text-transform:uppercase; color:var(--amber); font-size:.68rem; margin:0 0 .45rem; }
+    h1 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; font-size:clamp(2rem,6vw,3.2rem); margin:.1rem 0 .35rem; text-align:center; }
+    .lede { color:var(--muted); text-align:center; max-width:28rem; line-height:1.55; margin:0 0 1rem; font-size:.95rem; }
+    .chips { display:flex; gap:.35rem; flex-wrap:wrap; justify-content:center; margin:0 0 1rem; }
+    .chip { font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:.28rem .55rem; color:rgba(255,255,255,.4); }
+    .chip.done { border-color:rgba(232,165,75,.5); color:#f0c27a; }
+    .modes { display:flex; gap:.45rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.15rem; }
+    .mode { border:1px solid var(--line); background:rgba(255,255,255,.03); color:rgba(255,255,255,.72); border-radius:999px; padding:.55rem 1rem; min-height:44px; font:inherit; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
+    .mode.on { border-color:rgba(232,165,75,.55); color:var(--amber-soft); background:rgba(232,165,75,.1); }
+    .frame { position:relative; width:min(100%,720px); aspect-ratio:3/4; max-height:min(58vh,640px); border-radius:1.4rem; overflow:hidden; border:1px solid var(--line); background:#000; }
+    video, canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+    canvas { pointer-events:none; }
+    .veil { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem; background:radial-gradient(ellipse at center,rgba(5,5,10,.35),rgba(5,5,10,.78)); text-align:center; padding:1.5rem; }
+    .veil.hidden { display:none; }
+    .progress { position:absolute; left:1rem; right:1rem; bottom:1rem; height:6px; border-radius:99px; background:rgba(255,255,255,.12); overflow:hidden; z-index:2; display:none; }
+    .progress.on { display:block; }
+    .progress > span { display:block; height:100%; width:0; background:linear-gradient(90deg,#e8a54b,#f0c27a); }
+    button.act { border:0; cursor:pointer; border-radius:999px; padding:.9rem 1.5rem; font-family:inherit; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; }
+    #go { background:linear-gradient(135deg,#e8a54b,#d4893a); color:#0a0a0f; font-weight:600; }
+    #stop { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.18); }
+    #skipMove { background:transparent; color:#f0c27a; border:1px solid rgba(232,165,75,.35); }
+    .hud { width:min(100%,720px); margin-top:1rem; display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+    @media(max-width:520px){ .hud { grid-template-columns:1fr; } }
+    .card { border:1px solid var(--line); border-radius:1.1rem; padding:1rem 1.1rem; background:rgba(255,255,255,.03); }
+    .card h2 { font-family:'Cormorant Garamond',Georgia,serif; font-size:1.35rem; margin:0 0 .35rem; font-weight:500; }
+    .score { font-family:'Cormorant Garamond',Georgia,serif; font-size:2.4rem; color:var(--amber-soft); line-height:1; }
+    .cue { color:rgba(255,255,255,.78); margin:.45rem 0 0; font-size:.95rem; min-height:2.6rem; }
+    .meta { color:var(--muted); font-size:.78rem; margin:.35rem 0 0; }
+    .controls { display:flex; gap:.55rem; flex-wrap:wrap; justify-content:center; margin-top:1.1rem; }
+    .hint { margin-top:1.2rem; color:rgba(255,255,255,.38); font-size:.78rem; max-width:26rem; text-align:center; line-height:1.55; }
+    .dot { display:inline-block; width:.55rem; height:.55rem; border-radius:50%; background:#f87171; margin-right:.4rem; }
+    .dot.live { background:#86efac; }
+    .forms { display:none; width:min(100%,720px); margin-top:1rem; border:1px solid var(--line); border-radius:1.15rem; padding:1rem 1.1rem; }
+    .forms.open { display:block; }
+    .form-item { border:1px solid var(--line); border-radius:.85rem; padding:.65rem .8rem; cursor:pointer; margin:.4rem 0; }
+    .form-item.on { border-color:rgba(232,165,75,.5); }
+    .claim { width:min(100%,720px); margin-top:1rem; display:none; padding:1.35rem 1.25rem; border-radius:1.25rem; border:1px solid rgba(232,165,75,.28); }
+    .claim.open { display:block; }
+    .claim input { width:100%; padding:.9rem 1rem; border-radius:.85rem; background:rgba(0,0,0,.45); border:1px solid var(--line); color:#fff; font-size:16px; }
+    .wallet-row { display:flex; gap:.5rem; }
+    .wallet-row input { flex:1; }
+    .field { margin-bottom:.85rem; }
+    .btn-connect { padding:0 1rem; border-radius:.85rem; border:1px solid rgba(139,124,246,.45); background:rgba(139,124,246,.15); color:#c4b5fd; }
+    .btn-claim { width:100%; padding:1rem; border:0; border-radius:.95rem; background:linear-gradient(135deg,#e8a54b,#d4893a); color:#0a0a0f; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
+    .form-msg { text-align:center; font-size:.85rem; margin:.7rem 0 0; min-height:1.2rem; }
+    .form-msg.ok { color:#86efac; } .form-msg.err { color:#fca5a5; } .form-msg.warn { color:var(--amber-soft); }
+    @media (max-width:640px) { .wallet-row { flex-direction:column; } .btn-connect, .btn-claim, button.act { min-height:48px; width:100%; } }
+  </style>
+</head>
+<body>
+  <div class="bar"><a href="/">← Portal</a><span>MediaPipe Studio</span></div>
+  <main class="stage">
+    <p class="eyebrow">On-device · MediaPipe Face + Pose</p>
+    <h1>Movement Studio</h1>
+    <p class="lede">Yoga, Tai Chi, Vestibular, and Meditation live here. Camera stays on this device. Vestibular gaze unlocks the waitlist.</p>
+    <div class="chips" id="chips"></div>
+    <div class="modes">
+      <button class="mode" data-mode="yoga" type="button">Yoga</button>
+      <button class="mode" data-mode="taichi" type="button">Tai Chi</button>
+      <button class="mode on" data-mode="vestibular" type="button">Vestibular</button>
+      <button class="mode" data-mode="meditation" type="button">Meditation</button>
+    </div>
+    <div class="frame">
+      <video id="cam" playsinline muted></video>
+      <canvas id="overlay"></canvas>
+      <div class="progress" id="bar"><span id="barFill"></span></div>
+      <div class="veil" id="veil">
+        <p>Allow the camera to begin. Nothing is uploaded.</p>
+        <button class="act" id="go">Open camera</button>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="card">
+        <h2 id="modeTitle">Vestibular · Gaze</h2>
+        <div class="score"><span id="score">—</span><small id="unit">gaze</small></div>
+        <p class="cue" id="cue">Face the camera. Look LEFT RIGHT LEFT RIGHT, then UP DOWN UP DOWN, then mouth open mouth close mouth open mouth close.</p>
+      </div>
+      <div class="card">
+        <h2>Field</h2>
+        <p class="meta"><span class="dot" id="dot"></span><span id="status">Camera idle</span></p>
+        <p class="meta" id="hold">Hold 0.0s</p>
+        <p class="meta" id="detail">Landmarks: 0</p>
+      </div>
+    </div>
+    <section class="forms" id="forms"><h2>Tai Chi sequence</h2><ol id="formList"></ol></section>
+    <section class="claim" id="claim">
+      <h2>Gaze complete · Join the list</h2>
+      <p class="lead">Vestibular sequence finished. Leave your email and Solana wallet to join the waitlist. One signup per person.</p>
+      <form id="claim-form">
+        <div class="field"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="you@email.com" required autocomplete="email"></div>
+        <div class="field"><label for="wallet">Solana Wallet</label><div class="wallet-row"><input type="text" id="wallet" name="wallet" placeholder="Paste or connect Phantom" required autocomplete="off"><button type="button" class="btn-connect" id="connect-btn">Connect</button></div></div>
+        <button type="submit" class="btn-claim" id="submit-btn">Join the waitlist</button>
+        <p id="form-msg" class="form-msg"></p>
+      </form>
+    </section>
+    <div class="controls">
+      <button class="act" id="stop" type="button">Close camera</button>
+      <button class="act" id="skipMove" type="button">Count this move</button>
+      <button class="act" id="mute" type="button">Sound on</button>
+    </div>
+    <p class="hint">Waitlist signup unlocks only after the vestibular sequence. Hold each cue to advance. If a mouth cue is missed, tap Count this move. Yoga, Tai Chi, and Meditation are practice only.</p>
+  </main>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=fit25');</script>
+  <script>
+    window.addEventListener('pointerdown', function loadSb() {
+      window.removeEventListener('pointerdown', loadSb);
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+      s.defer = true;
+      document.body.appendChild(s);
+    }, { once: true });
+  </script>
+  <script src="/solana.js?v=20260830s2"></script>
+  <script type="module" src="/studio.js?v=20260903opt"></script>
+  <script src="/studio-gate.js?v=20260903vest2"></script>
+  <script src="/field-audio.js?v=20260830a"></script>
+</body>
+</html>

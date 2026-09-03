@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="FIT — Ancient balance. Modern power. Yoga, Tai Chi, balance practice and the 5 Levels of Ascension.">
+  <title>FIT</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#f97316">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FIT">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/fit.css">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous" data-mp-hands="1"></script>
+</head>
+<body class="bg-black text-white">
+  <nav class="fixed top-0 left-0 right-0 nav-glass z-50 py-4">
+    <div class="max-w-7xl mx-auto px-5 flex justify-between items-center">
+      <a href="/" class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-widest">
+        <img src="/icons/icon.svg" alt="FIT" class="w-9 h-9 md:w-10 md:h-10 rounded-full" width="40" height="40">
+        <span class="text-orange-500">FIT</span>
+      </a>
+      <div class="hidden md:flex gap-10 text-sm font-medium">
+        <a href="#levels" class="hover:text-orange-400">THE PATH</a>
+        <a href="#services" class="hover:text-orange-400">PRACTICES</a>
+        <a href="/taichi.html" class="hover:text-orange-400">CMC37</a>
+        <a href="#signup" class="hover:text-orange-400">JOIN THE LIST</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="sound-toggle" class="sound-toggle muted" title="Toggle practice sound" aria-label="Toggle sound">
+          <svg id="icon-sound-on" class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          <svg id="icon-sound-off" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+        </button>
+        <button onclick="document.getElementById('signup')?.scrollIntoView({behavior:'smooth'})" class="hidden sm:inline-flex px-5 py-3 bg-white text-black rounded-2xl font-semibold hover:bg-orange-500 hover:text-white transition-all text-sm">ENTER</button>
+        <button id="menu-btn" class="md:hidden w-11 h-11 rounded-xl border border-white/20" aria-label="Open menu">☰</button>
+      </div>
+    </div>
+  </nav>
+  <div id="mobile-drawer" class="mobile-drawer">
+    <button id="menu-close" class="absolute top-5 right-5 text-3xl text-zinc-400" aria-label="Close menu">×</button>
+    <a href="#levels" class="drawer-link text-2xl py-4">The Path</a>
+    <a href="#services" class="drawer-link text-2xl py-4">Practices</a>
+    <a href="/taichi.html" class="drawer-link text-2xl py-4">Tai Chi · CMC37</a>
+    <a href="#signup" class="drawer-link text-2xl py-4">Join the list</a>
+    <a href="/privacy.html" class="drawer-link text-lg py-3 text-zinc-400">Privacy</a>
+    <a href="/terms.html" class="drawer-link text-lg py-3 text-zinc-400">Terms</a>
+  </div>
+  <div id="sound-toast">Practice sound on</div>
+  <section class="main-portal pt-20">
+    <div id="webgl-container"></div>
+    <div class="portal-parallax" aria-hidden="true"><div class="portal-ring"></div></div>
+    <div class="relative z-20 text-center px-6 max-w-4xl mx-auto hero-parallax">
+      <div class="hero-badge inline-flex items-center gap-3 px-6 py-3 rounded-3xl mb-8 text-xs md:text-sm tracking-widest"><span class="text-orange-400">✦</span> SHORT DAILY PRACTICE <span class="text-orange-400">✦</span></div>
+      <h1 class="mb-5 text-7xl sm:text-8xl md:text-[7.5rem] leading-none tracking-wider">FIT</h1>
+      <p class="text-2xl md:text-5xl leading-tight max-w-3xl mx-auto mb-6 opacity-90">Ancient balance.<br>Modern power.</p>
+      <p class="text-sm md:text-base text-zinc-400 max-w-xl mx-auto mb-10">Yoga, Tai Chi, and gentle balance work. Wellness practice only — not medical treatment.</p>
+      <button id="ascend-btn" class="ascend-btn text-black font-bold rounded-full px-10 py-5 md:px-16 md:py-8 text-lg md:text-2xl">BEGIN YOUR PRACTICE</button>
+    </div>
+  </section>
+  <section id="levels" class="max-w-7xl mx-auto px-6 py-20 md:py-28 bg-zinc-950 text-white">
+    <div class="text-center mb-14 reveal">
+      <h2 class="text-4xl md:text-6xl font-bold mb-4 text-white">The 5 Levels of Ascension</h2>
+      <p class="text-lg md:text-2xl text-zinc-400">Tap a level to start a short guided session</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+      <button type="button" onclick="showWorkout(1)" class="level-card p-8 rounded-3xl shadow-2xl text-center">
+        <h3 class="text-2xl font-bold">Level 1</h3>
+        <p class="text-emerald-400 font-semibold mt-2">Yin Awakening</p>
+        <p class="text-zinc-500 text-sm mt-3">5 min · breath</p>
+      </button>
+      <button type="button" onclick="showWorkout(2)" class="level-card p-8 rounded-3xl shadow-2xl text-center">
+        <h3 class="text-2xl font-bold">Level 2</h3>
+        <p class="text-orange-400 font-semibold mt-2">Yang Ignition</p>
+        <p class="text-zinc-500 text-sm mt-3">6 min · heat</p>
+      </button>
+      <button type="button" onclick="showWorkout(3)" class="level-card p-8 rounded-3xl shadow-2xl text-center">
+        <h3 class="text-2xl font-bold">Level 3</h3>
+        <p class="text-cyan-400 font-semibold mt-2">Fusion Harmony</p>
+        <p class="text-zinc-500 text-sm mt-3">6 min · flow</p>
+      </button>
+      <button type="button" onclick="showWorkout(4)" class="level-card p-8 rounded-3xl shadow-2xl text-center">
+        <h3 class="text-2xl font-bold">Level 4</h3>
+        <p class="text-purple-400 font-semibold mt-2">Symbolic Elevation</p>
+        <p class="text-zinc-500 text-sm mt-3">5 min · posture</p>
+      </button>
+      <button type="button" onclick="showWorkout(5)" class="level-card p-8 rounded-3xl shadow-2xl text-center">
+        <h3 class="text-2xl font-bold">Level 5</h3>
+        <p class="text-pink-400 font-semibold mt-2">Lotus Mastery</p>
+        <p class="text-zinc-500 text-sm mt-3">5 min · still</p>
+      </button>
+    </div>
+  </section>
+  <section id="services" class="py-20 md:py-28 bg-zinc-950">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14 reveal">
+        <p class="text-orange-400 tracking-[0.25em] text-sm uppercase mb-4">Ancient Wisdom • Modern Practice</p>
+        <h2 class="text-4xl md:text-6xl font-bold mb-6">Sacred Practices</h2>
+        <p class="text-lg text-zinc-400 max-w-2xl mx-auto">Three 5-minute sessions you can do today. Stop if anything feels wrong.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="service-card">
+          <div class="text-4xl mb-6">🧘</div>
+          <h3 class="text-3xl font-bold mb-4 text-white">Yoga</h3>
+          <p class="text-zinc-400 leading-relaxed mb-6">Prayer pose at the heart. The camera reads your hands on this device.</p>
+          <button type="button" onclick="startPractice('yoga')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition">Start prayer pose</button>
+        </div>
+        <div class="service-card">
+          <div class="text-4xl mb-6">☯️</div>
+          <h3 class="text-3xl font-bold mb-4 text-white">Tai Chi</h3>
+          <p class="text-zinc-400 leading-relaxed mb-6">Cheng Man-Ching 37 (CMC37). Play a teacher video and we score your shape next to it.</p>
+          <a href="/taichi.html" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Compare with CMC37 video</a>
+        </div>
+        <div class="service-card">
+          <div class="text-4xl mb-6">⚖️</div>
+          <h3 class="text-3xl font-bold mb-4 text-white">Vestibular Training</h3>
+          <p class="text-zinc-400 leading-relaxed mb-6">Gentle seated and standing balance drills. Not treatment for vertigo or dizziness.</p>
+          <button type="button" onclick="startPractice('vestibular')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition">Start 5-min session</button>
+        </div>
+      </div>
+      <p class="text-center text-xs text-zinc-500 mt-10 max-w-2xl mx-auto">FIT is general wellness. It does not diagnose, treat, or cure any condition. If you have medical symptoms, speak with a clinician.</p>
+    </div>
+  </section>
+  <section id="signup" class="py-28 bg-black">
+    <div class="max-w-xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Join the FIT list</h2>
+      <p class="text-lg text-zinc-400 mb-8">Save your email and Solana wallet for updates. CMC37 is <span class="text-white">not sent yet</span>. Joining only puts you on the list.</p>
+      <form id="signup-form" class="space-y-6 text-left">
+        <div><label class="block text-sm text-zinc-400 mb-2">Email</label><input type="email" id="email" required class="w-full p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none" placeholder="you@email.com"></div>
+        <div><label class="block text-sm text-zinc-400 mb-2">Solana Wallet</label><div class="flex gap-3"><input type="text" id="wallet" required class="flex-1 p-5 rounded-2xl bg-zinc-900 border border-zinc-700 text-white focus:border-orange-500 outline-none font-mono text-sm" placeholder="Wallet address"><button type="button" id="connect-wallet-btn" class="px-6 py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 font-semibold">Connect</button></div><p id="wallet-status" class="text-xs text-zinc-500 mt-2 hidden"></p></div>
+        <button type="submit" id="submit-btn" class="w-full py-5 text-lg font-bold rounded-2xl bg-gradient-to-r from-orange-500 to-rose-600">Join the list</button>
+        <p id="form-message" class="text-center text-sm mt-4 hidden"></p>
+        <p class="text-xs text-zinc-500 text-center">By joining you agree to the <a href="/terms.html" class="text-orange-400 underline">Terms</a> and <a href="/privacy.html" class="text-orange-400 underline">Privacy Policy</a>.</p>
+      </form>
+    </div>
+  </section>
+  <footer class="border-t border-white/10 py-10 px-6 text-sm text-zinc-500">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+      <p>FIT · FusionFit Portal · Wellness practice, not medical care.</p>
+      <div class="flex flex-wrap gap-5">
+        <a href="#levels" class="hover:text-white">Levels</a>
+        <a href="#services" class="hover:text-white">Practices</a>
+        <a href="/taichi.html" class="hover:text-white">Tai Chi</a>
+        <a href="/privacy.html" class="hover:text-white">Privacy</a>
+        <a href="/terms.html" class="hover:text-white">Terms</a>
+      </div>
+    </div>
+  </footer>
+  <div id="level1-experience">
+    <div class="level1-fallback" aria-hidden="true"></div>
+    <video id="level1-video" data-src="generated_video.mp4" preload="none" loop playsinline muted></video>
+    <div class="level1-overlay"></div>
+    <button type="button" onclick="closeLevel1()" class="absolute top-8 right-8 text-5xl text-white/70 z-20" aria-label="Close">×</button>
+    <div class="level1-content">
+      <div class="beat-ring"></div>
+      <p class="text-orange-400 tracking-[0.3em] text-sm mb-4 uppercase">Level 1 · Yin Awakening</p>
+      <h2 class="text-4xl md:text-6xl font-bold mb-6">Thunder Resonance</h2>
+      <ol class="text-left text-zinc-200 max-w-md mx-auto mb-8 space-y-2 text-base">
+        <li>1. Sit or lie down in a quiet spot.</li>
+        <li>2. Breathe in for 4, out for 6.</li>
+        <li>3. Drop the jaw and shoulders.</li>
+        <li>4. Stay for about 5 minutes.</li>
+      </ol>
+      <button type="button" onclick="goToList()" class="px-10 py-4 text-lg font-bold rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black">Join the list →</button>
+    </div>
+  </div>
+  <div id="session-overlay">
+    <button type="button" onclick="closeSession()" class="absolute top-6 right-6 text-4xl text-white/70 z-20" aria-label="Close session">×</button>
+    <div class="relative z-10 w-full max-w-lg px-6 py-16 text-center">
+      <p id="session-kicker" class="text-orange-400 tracking-[0.25em] text-xs uppercase mb-3"></p>
+      <h2 id="session-title" class="text-4xl font-bold mb-3"></h2>
+      <p id="session-note" class="text-zinc-400 mb-6"></p>
+      <div id="face-lab" class="face-lab">
+        <div class="face-lab-frame">
+          <video id="face-cam" playsinline webkit-playsinline muted autoplay></video>
+          <canvas id="face-canvas"></canvas>
+        </div>
+        <p id="face-prompt" class="face-prompt">Allow the camera to begin</p>
+        <ul id="face-checks" class="face-checks"></ul>
+        <p id="face-status" class="face-status"></p>
+        <button type="button" id="face-skip" class="face-skip">Count this move</button>
+      </div>
+      <div id="yoga-lab" class="face-lab">
+        <div class="face-lab-frame">
+          <video id="yoga-cam" playsinline webkit-playsinline muted autoplay></video>
+          <canvas id="yoga-canvas"></canvas>
+        </div>
+        <p class="face-prompt" id="yoga-prompt">Allow the camera to begin</p>
+        <p class="yoga-pct" id="yoga-pct">—</p>
+        <ul id="yoga-checks" class="face-checks"></ul>
+        <p id="yoga-status" class="face-status"></p>
+        <button type="button" id="yoga-skip" class="face-skip">Count this move</button>
+      </div>
+      <p id="session-timer" class="text-5xl font-light tabular-nums mb-8 text-orange-300">5:00</p>
+      <ol id="session-steps" class="text-left mb-10"></ol>
+      <div class="flex gap-3 justify-center">
+        <button type="button" id="session-toggle" class="px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-400 text-black font-bold">Start timer</button>
+        <button type="button" onclick="closeSession()" class="px-8 py-4 rounded-full border border-white/20">Done</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const SUPABASE_URL = 'https://kytvzrkretucgkairzny.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg';
+    const SUPABASE_SRC = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+    let supabaseClient = null;
+    let supabaseLoading = null;
+    function loadSupabase() {
+      if (supabaseClient) return Promise.resolve(supabaseClient);
+      if (supabaseLoading) return supabaseLoading;
+      supabaseLoading = new Promise(function (resolve) {
+        const s = document.createElement('script');
+        s.src = SUPABASE_SRC;
+        s.async = true;
+        s.onload = function () {
+          try {
+            if (typeof supabase !== 'undefined' && supabase.createClient) {
+              supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+          } catch (e) {}
+          resolve(supabaseClient);
+        };
+        s.onerror = function () { supabaseLoading = null; resolve(null); };
+        document.head.appendChild(s);
+      });
+      return supabaseLoading;
+    }
+    let connectedWallet = null;
+    let sessionTimer = null;
+    let sessionLeft = 0;
+    let sessionRunning = false;
+    const SESSIONS = {
+      2: {
+        kicker: 'Level 2 · Yang Ignition',
+        title: 'Build a little heat',
+        note: 'Clear a small space. Skip any move that hurts.',
+        seconds: 360,
+        steps: [
+          'Shake out arms and legs for 30 seconds.',
+          '10 easy squats. Hold a chair if you need it.',
+          '8 wall or floor push-ups.',
+          'March in place for 1 minute.',
+          'Stand still and breathe for 1 minute.'
+        ]
+      },
+      3: {
+        kicker: 'Level 3 · Fusion Harmony',
+        title: 'Breath meets movement',
+        note: 'Slow is better than fast.',
+        seconds: 360,
+        steps: [
+          'Cat-cow on hands and knees, 8 slow breaths.',
+          'Stand. Balance on the left foot for 20 seconds, then the right. Touch a wall if needed.',
+          'Sweep both arms in a wide, slow circle, 10 times.',
+          'Box breath: in 4, hold 4, out 4, hold 4. Repeat 6 times.'
+        ]
+      },
+      4: {
+        kicker: 'Level 4 · Symbolic Elevation',
+        title: 'Stand tall',
+        note: 'Think of each shape as a pause, not a pose contest.',
+        seconds: 300,
+        steps: [
+          'Mountain: feet under hips, arms by your sides, 5 breaths.',
+          'Reach up, then fold forward with soft knees, 5 breaths.',
+          'Step one foot back into a short lunge. Switch sides.',
+          'Return to standing. Hands at the heart for 8 breaths.'
+        ]
+      },
+      5: {
+        kicker: 'Level 5 · Lotus Mastery',
+        title: 'Sit and finish',
+        note: 'Chair or floor is fine. Comfort first.',
+        seconds: 300,
+        steps: [
+          'Sit with a long spine.',
+          'Close the eyes or soften the gaze.',
+          'Count 10 full breaths.',
+          'Name one simple intention for the rest of your day.',
+          'Open the eyes slowly before you stand.'
+        ]
+      },
+      yoga: {
+        kicker: 'Yoga · Prayer pose',
+        title: 'Anjali mudra',
+        note: 'Sit or stand tall. Press the palms together at the heart. Camera stays on this device.',
+        seconds: 300,
+        prayerLab: true,
+        steps: [
+          'Show both hands to the camera.',
+          'Press the palms together. Fingers point up.',
+          'Rest the joined hands at the heart.',
+          'Hold and take slow breaths.',
+          'Lower the hands when you are done.'
+        ]
+      },
+      taichi: {
+        kicker: 'Tai Chi · 5 minutes',
+        title: 'Slow standing flow',
+        note: 'Keep knees soft. Move as if through water.',
+        seconds: 300,
+        steps: [
+          'Stand with feet under hips. Sink 1 cm.',
+          'Raise both arms to shoulder height, then lower, 8 times.',
+          'Shift weight left, then right, arms floating, 8 times.',
+          'Push both palms forward and draw them back, 8 times.',
+          'Close with hands stacked at the belly for 5 breaths.'
+        ]
+      },
+      vestibular: {
+        kicker: 'Balance · 5 minutes',
+        title: 'Gentle stability',
+        note: 'Start seated. Camera sequence: head left, right, left, right, then up, down, up, down, then left blink, right blink, then open mouth. Video stays on this device. Not treatment for vertigo or dizziness.',
+        seconds: 300,
+        faceLab: true,
+        steps: [
+          'Turn your head LEFT, then RIGHT, then LEFT, then RIGHT.',
+          'Look UP, then DOWN, then UP, then DOWN.',
+          'Blink your LEFT eye, then your RIGHT eye.',
+          'Open your mouth.',
+          'Sit tall afterward if you want extra quiet time.'
+        ]
+      }
+    };
+    function isValidSolanaAddress(addr) { return addr && typeof addr === 'string' && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr.trim()); }
+    async function connectWallet() {
+      const btn = document.getElementById('connect-wallet-btn');
+      const status = document.getElementById('wallet-status');
+      const walletInput = document.getElementById('wallet');
+      try {
+        const provider = window.solana || window.phantom?.solana || window.solflare;
+        if (!provider) { status.textContent = 'No in-browser wallet found. Paste your address. On Solana Mobile, copy it from your device wallet.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden'); return; }
+        btn.disabled = true; btn.textContent = 'Connecting...';
+        const resp = await provider.connect();
+        const pubkey = resp.publicKey?.toString() || provider.publicKey?.toString();
+        if (!pubkey) throw new Error('No key');
+        connectedWallet = pubkey; walletInput.value = pubkey; walletInput.readOnly = true;
+        btn.textContent = 'Connected'; status.textContent = 'Wallet connected ✓'; status.className = 'text-xs text-green-400 mt-2'; status.classList.remove('hidden');
+      } catch (err) {
+        status.textContent = 'Could not connect. Paste address manually.'; status.className = 'text-xs text-orange-400 mt-2'; status.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Connect';
+      }
+    }
+    function initSignup() {
+      const form = document.getElementById('signup-form');
+      const connectBtn = document.getElementById('connect-wallet-btn');
+      const signup = document.getElementById('signup');
+      if (connectBtn) connectBtn.addEventListener('click', connectWallet);
+      if (signup) {
+        try {
+          const ready = new IntersectionObserver(function (entries) {
+            if (entries.some(function (e) { return e.isIntersecting; })) {
+              loadSupabase();
+              ready.disconnect();
+            }
+          }, { rootMargin: '200px' });
+          ready.observe(signup);
+        } catch (e) {}
+      }
+      if (form) {
+        form.addEventListener('focusin', function () { loadSupabase(); }, { once: true });
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('email').value.trim();
+          const wallet = document.getElementById('wallet').value.trim();
+          const btn = document.getElementById('submit-btn');
+          const msg = document.getElementById('form-message');
+          if (!email || !email.includes('@')) { msg.textContent = 'Valid email required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
+          if (!isValidSolanaAddress(wallet)) { msg.textContent = 'Valid Solana address required.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); return; }
+          btn.disabled = true; btn.textContent = 'Saving...'; msg.classList.add('hidden');
+          const client = await loadSupabase();
+          if (!client) { msg.textContent = 'Not ready. Refresh and try again.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Join the list'; return; }
+          try {
+            const { error } = await client.from('signups').insert([{ email, wallet_address: wallet, verified: false, rewarded: false }]);
+            if (error) { msg.textContent = error.code === '23505' ? 'Already on the list.' : error.message; msg.className = 'text-center text-sm mt-4 text-orange-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Join the list'; return; }
+            msg.textContent = 'You are on the list. No tokens have been sent.'; msg.className = 'text-center text-sm mt-4 text-green-400'; msg.classList.remove('hidden'); btn.textContent = 'Saved'; form.reset();
+          } catch (err) { msg.textContent = 'Something went wrong.'; msg.className = 'text-center text-sm mt-4 text-red-400'; msg.classList.remove('hidden'); btn.disabled = false; btn.textContent = 'Join the list'; }
+        });
+      }
+    }
+    let audioCtx = null, masterGain = null, reverbNode = null, dryGain = null, wetGain = null, isPlaying = false, activeNodes = [], thunderInterval = null, melodyTimer = null, audioUnlocked = true;
+    function showToast(msg) { const t = document.getElementById('sound-toast'); if (!t) return; t.textContent = msg; t.classList.add('show'); clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 4000); }
+    function makeReverbIR(ctx, seconds, decay) {
+      const rate = ctx.sampleRate;
+      const len = Math.floor(rate * seconds);
+      const buf = ctx.createBuffer(2, len, rate);
+      for (let c = 0; c < 2; c++) {
+        const data = buf.getChannelData(c);
+        for (let i = 0; i < len; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+        }
+      }
+      return buf;
+    }
+    function getCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.2;
+        dryGain = audioCtx.createGain();
+        dryGain.gain.value = 0.55;
+        wetGain = audioCtx.createGain();
+        wetGain.gain.value = 0.42;
+        reverbNode = audioCtx.createConvolver();
+        reverbNode.buffer = makeReverbIR(audioCtx, 3.2, 2.4);
+        dryGain.connect(masterGain);
+        wetGain.connect(reverbNode);
+        reverbNode.connect(masterGain);
+        masterGain.connect(audioCtx.destination);
+      }
+      return audioCtx;
+    }
+    function connectToPad(node) {
+      node.connect(dryGain);
+      node.connect(wetGain);
+    }
+    function startHealingPad() {
+      if (!audioUnlocked) return;
+      const ctx = getCtx();
+      stopPad(true);
+      const now = ctx.currentTime;
+      const notes = [
+        { f: 162.0, g: 0.028, fade: 4.5 },
+        { f: 216.0, g: 0.038, fade: 3.5 },
+        { f: 324.0, g: 0.026, fade: 4.0 },
+        { f: 432.0, g: 0.045, fade: 2.8 },
+        { f: 540.0, g: 0.016, fade: 5.0 },
+        { f: 648.0, g: 0.010, fade: 6.0 }
+      ];
+      const oscs = [], gains = [];
+      notes.forEach((n, i) => {
+        const o = ctx.createOscillator();
+        o.type = 'sine';
+        o.frequency.value = n.f;
+        o.detune.value = (i % 2 === 0 ? -3 : 3);
+        const f = ctx.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 850;
+        f.Q.value = 0.4;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(n.g, now + n.fade);
+        o.connect(f); f.connect(g);
+        connectToPad(g);
+        o.start(now);
+        oscs.push(o); gains.push(g);
+      });
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.value = 0.05;
+      const lg = ctx.createGain();
+      lg.gain.value = 0.006;
+      lfo.connect(lg);
+      gains.forEach(g => { try { lg.connect(g.gain); } catch (e) {} });
+      lfo.start(now);
+      const o2 = ctx.createOscillator();
+      o2.type = 'sine';
+      o2.frequency.value = 433.2;
+      const g2 = ctx.createGain();
+      g2.gain.setValueAtTime(0, now);
+      g2.gain.linearRampToValueAtTime(0.012, now + 5);
+      const f2 = ctx.createBiquadFilter();
+      f2.type = 'lowpass';
+      f2.frequency.value = 650;
+      o2.connect(f2); f2.connect(g2);
+      connectToPad(g2);
+      o2.start(now);
+      activeNodes = [...oscs, ...gains, lfo, lg, o2, g2, f2];
+      startSoftMelody(ctx);
+      isPlaying = true;
+      updateUI(true);
+      showToast('Practice sound on');
+    }
+    function startSoftMelody(ctx) {
+      const phrase = [432, 486, 540, 648, 540, 486, 432, 324, 432, 540, 486, 432];
+      let step = 0;
+      function playNote() {
+        if (!isPlaying) return;
+        const freq = phrase[step % phrase.length];
+        step++;
+        const now = ctx.currentTime;
+        const o = ctx.createOscillator();
+        o.type = 'sine';
+        o.frequency.value = freq;
+        const f = ctx.createBiquadFilter();
+        f.type = 'lowpass';
+        f.frequency.value = 1100;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.032, now + 0.45);
+        g.gain.linearRampToValueAtTime(0.018, now + 1.8);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+        o.connect(f); f.connect(g);
+        connectToPad(g);
+        o.start(now);
+        o.stop(now + 3.6);
+        activeNodes.push(o, g, f);
+      }
+      playNote();
+      melodyTimer = setInterval(playNote, 2800);
+    }
+    function startThunderResonance() { if (!audioUnlocked) return; const ctx = getCtx(); const start = () => { stopPad(true); startHealingPad(); showToast('Thunder Resonance'); }; if (ctx.state === 'suspended') ctx.resume().then(start); else start(); }
+    function stopPad(silent) {
+      if (thunderInterval) { clearInterval(thunderInterval); thunderInterval = null; }
+      if (melodyTimer) { clearInterval(melodyTimer); melodyTimer = null; }
+      activeNodes.forEach(n => { try { if (n.stop) n.stop(); if (n.disconnect) n.disconnect(); } catch (e) {} });
+      activeNodes = [];
+      isPlaying = false;
+      if (!silent) { updateUI(false); showToast('Sound off'); }
+    }
+    function toggleSound() { if (isPlaying) stopPad(); else startHealingPad(); }
+    function playPortalTone() {
+      const ctx = getCtx();
+      if (ctx.state === 'suspended') ctx.resume();
+      const now = ctx.currentTime;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(216, now);
+      o.frequency.exponentialRampToValueAtTime(432, now + 1.6);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(0.09, now + 0.25);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 2.4);
+      o.connect(g);
+      connectToPad(g);
+      o.start(now);
+      o.stop(now + 2.5);
+    }
+    function updateUI(on) { const btn = document.getElementById('sound-toggle'); const onI = document.getElementById('icon-sound-on'); const offI = document.getElementById('icon-sound-off'); if (!btn) return; if (on) { btn.classList.remove('muted'); btn.classList.add('active'); if (onI) onI.classList.remove('hidden'); if (offI) offI.classList.add('hidden'); } else { btn.classList.add('muted'); btn.classList.remove('active'); if (onI) onI.classList.add('hidden'); if (offI) offI.classList.remove('hidden'); } }
+    function initWebGL() {
+      const container = document.getElementById('webgl-container');
+      if (!container || container.dataset.ready === '1') return;
+      container.dataset.ready = '1';
+      container.innerHTML = '';
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const mobile = window.innerWidth < 768;
+      const scale = reduce ? 0.2 : (mobile ? 0.35 : 1);
+      function makeLayer(id, count, sizeMin, sizeMax) {
+        const layer = document.createElement('div');
+        layer.id = id;
+        const n = Math.max(8, Math.round(count * scale));
+        for (let i = 0; i < n; i++) {
+          const s = document.createElement('div');
+          s.className = 'star';
+          const size = Math.random() * (sizeMax - sizeMin) + sizeMin;
+          s.style.width = size + 'px';
+          s.style.height = size + 'px';
+          const angle = Math.random() * Math.PI * 2;
+          const radius = 15 + Math.random() * 42;
+          s.style.left = (50 + Math.cos(angle) * radius) + '%';
+          s.style.top = (50 + Math.sin(angle) * radius) + '%';
+          s.style.animationDuration = (Math.random() * 3 + 1.2) + 's';
+          s.style.animationDelay = (Math.random() * 5) + 's';
+          if (Math.random() > 0.75) {
+            s.style.boxShadow = '0 0 ' + (4 + Math.random() * 8) + 'px 1px rgba(255,190,100,0.85)';
+            s.style.background = 'rgb(255, 220, 160)';
+          } else if (Math.random() > 0.9) {
+            s.style.boxShadow = '0 0 6px 1px rgba(180,200,255,0.9)';
+            s.style.background = 'rgb(200, 220, 255)';
+          }
+          layer.appendChild(s);
+        }
+        return layer;
+      }
+      container.appendChild(makeLayer('stars-drift', 140, 0.6, 3.5));
+      container.appendChild(makeLayer('stars-drift-2', 90, 0.4, 2.5));
+      if (!mobile && !reduce) container.appendChild(makeLayer('stars-drift-3', 50, 0.25, 1.8));
+      try {
+        const vis = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            container.classList.toggle('stars-paused', !e.isIntersecting);
+          });
+        }, { threshold: 0.05 });
+        vis.observe(container);
+      } catch (e) {}
+    }
+    function formatTime(total) {
+      const m = Math.floor(total / 60);
+      const s = total % 60;
+      return m + ':' + String(s).padStart(2, '0');
+    }
+    const MP_VISION = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.17';
+    const MP_MODEL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
+    const FACE_STEPS = [
+      { id: 'h-l1', kind: 'yaw', dir: 'left', label: '1. Head left' },
+      { id: 'h-r1', kind: 'yaw', dir: 'right', label: '2. Head right' },
+      { id: 'h-l2', kind: 'yaw', dir: 'left', label: '3. Head left' },
+      { id: 'h-r2', kind: 'yaw', dir: 'right', label: '4. Head right' },
+      { id: 'h-u1', kind: 'pitch', dir: 'up', label: '5. Look up' },
+      { id: 'h-d1', kind: 'pitch', dir: 'down', label: '6. Look down' },
+      { id: 'h-u2', kind: 'pitch', dir: 'up', label: '7. Look up' },
+      { id: 'h-d2', kind: 'pitch', dir: 'down', label: '8. Look down' },
+      { id: 'b-l', kind: 'blink', dir: 'left', label: '9. Blink left eye' },
+      { id: 'b-r', kind: 'blink', dir: 'right', label: '10. Blink right eye' },
+      { id: 'm-o', kind: 'mouth', dir: 'open', label: '11. Open mouth' }
+    ];
+    const FACE_PROMPTS = {
+      left: 'Turn your head LEFT',
+      right: 'Turn your head RIGHT',
+      up: 'Look UP',
+      down: 'Look DOWN',
+      blinkLeft: 'Blink your LEFT eye',
+      blinkRight: 'Blink your RIGHT eye',
+      open: 'Open your mouth'
+    };
+    let faceLandmarker = null;
+    let faceStream = null;
+    let faceRaf = 0;
+    let faceIndex = 0;
+    let faceHold = 0;
+    let faceLastDetect = 0;
+    let faceGen = 0;
+    let faceBase = null;
+    let faceNeedCenter = false;
+    let faceDone = false;
+    function dist(a, b) {
+      if (!a || !b) return 0;
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+    function blendScore(result, name) {
+      const cats = result.faceBlendshapes && result.faceBlendshapes[0] && result.faceBlendshapes[0].categories;
+      if (!cats) return 0;
+      for (let i = 0; i < cats.length; i++) {
+        if (cats[i].categoryName === name) return cats[i].score;
+      }
+      return 0;
+    }
+    function eyeOpen(face, top, bot, outer, inner) {
+      const h = dist(face[outer], face[inner]);
+      if (!h) return 1;
+      return dist(face[top], face[bot]) / h;
+    }
+    function readFace(result) {
+      const face = result && result.faceLandmarks && result.faceLandmarks[0];
+      if (!face || !face[1]) return null;
+      const brow = face[10], chin = face[152], nose = face[1];
+      const faceH = dist(brow, chin) || 0.3;
+      const leftCheek = face[234], rightCheek = face[454];
+      const nl = dist(nose, leftCheek);
+      const nr = dist(nose, rightCheek);
+      const yawRaw = (nr - nl) / ((nr + nl) || 1);
+      const eyeY = ((face[33] && face[33].y) + (face[263] && face[263].y)) / 2;
+      const pitchRaw = (eyeY - nose.y) / faceH;
+      const leftEAR = eyeOpen(face, 159, 145, 33, 133);
+      const rightEAR = eyeOpen(face, 386, 374, 263, 362);
+      const mouth = dist(face[13], face[14]) / faceH;
+      const blinkL = Math.max(blendScore(result, 'eyeBlinkLeft'), leftEAR < 0.16 ? 0.7 : 0);
+      const blinkR = Math.max(blendScore(result, 'eyeBlinkRight'), rightEAR < 0.16 ? 0.7 : 0);
+      const jaw = Math.max(blendScore(result, 'jawOpen'), mouth > 0.07 ? 0.6 : mouth);
+      return { face, yawRaw, pitchRaw, blinkL, blinkR, jaw, leftEAR, rightEAR, mouth };
+    }
+    function setFaceStep(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('active', 'done');
+      if (state) el.classList.add(state);
+    }
+    function setFacePrompt(text, status) {
+      const p = document.getElementById('face-prompt');
+      const s = document.getElementById('face-status');
+      if (p) p.textContent = text;
+      if (s && status !== undefined) s.textContent = status;
+    }
+    function renderFaceChecks() {
+      const list = document.getElementById('face-checks');
+      if (!list) return;
+      list.innerHTML = FACE_STEPS.map(function (step) {
+        return '<li id="' + step.id + '">' + step.label + '</li>';
+      }).join('');
+    }
+    function currentFaceStep() { return FACE_STEPS[faceIndex] || null; }
+    function markActiveStep() {
+      FACE_STEPS.forEach(function (step, i) {
+        if (i < faceIndex) setFaceStep(step.id, 'done');
+        else if (i === faceIndex) setFaceStep(step.id, 'active');
+        else setFaceStep(step.id, '');
+      });
+    }
+    function advanceFaceStep() {
+      const done = currentFaceStep();
+      if (done) setFaceStep(done.id, 'done');
+      faceIndex += 1;
+      faceHold = 0;
+      if (faceIndex >= FACE_STEPS.length) {
+        faceDone = true;
+        setFacePrompt('Sequence complete', 'You can keep the timer running');
+        showToast('Face sequence complete');
+        return;
+      }
+      const prev = FACE_STEPS[faceIndex - 1];
+      const next = FACE_STEPS[faceIndex];
+      if (prev && next && prev.kind !== next.kind) faceNeedCenter = true;
+      markActiveStep();
+    }
+    function stopFaceLab() {
+      faceGen += 1;
+      if (faceRaf) { cancelAnimationFrame(faceRaf); faceRaf = 0; }
+      if (faceStream) {
+        faceStream.getTracks().forEach(function (t) { t.stop(); });
+        faceStream = null;
+      }
+      const video = document.getElementById('face-cam');
+      if (video) video.srcObject = null;
+      const lab = document.getElementById('face-lab');
+      if (lab) lab.classList.remove('show');
+      faceIndex = 0;
+      faceHold = 0;
+      faceLastDetect = 0;
+      faceBase = null;
+      faceNeedCenter = false;
+      faceDone = false;
+    }
+    async function loadFaceLandmarker() {
+      if (faceLandmarker) return faceLandmarker;
+      const mod = await import(MP_VISION + '/vision_bundle.mjs');
+      const fileset = await mod.FilesetResolver.forVisionTasks(MP_VISION + '/wasm');
+      faceLandmarker = await mod.FaceLandmarker.createFromOptions(fileset, {
+        baseOptions: { modelAssetPath: MP_MODEL, delegate: 'GPU' },
+        runningMode: 'VIDEO',
+        numFaces: 1,
+        outputFaceBlendshapes: true
+      }).catch(function () {
+        return mod.FaceLandmarker.createFromOptions(fileset, {
+          baseOptions: { modelAssetPath: MP_MODEL },
+          runningMode: 'VIDEO',
+          numFaces: 1,
+          outputFaceBlendshapes: true
+        });
+      });
+      return faceLandmarker;
+    }
+    function tickFaceLab() {
+      const video = document.getElementById('face-cam');
+      const canvas = document.getElementById('face-canvas');
+      if (!video || !canvas || !faceLandmarker) {
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      if (video.readyState < 2) {
+        setFacePrompt('Starting camera…', 'Waiting for video');
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      if (canvas.width !== video.videoWidth && video.videoWidth) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+      }
+      const now = performance.now();
+      if (now - faceLastDetect < 60) {
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      faceLastDetect = now;
+      let result = null;
+      try { result = faceLandmarker.detectForVideo(video, now); } catch (e) { result = null; }
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const data = readFace(result);
+      if (!data) {
+        if (!faceDone) setFacePrompt('Look at the camera', 'No face yet — sit closer and add light');
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      if (!faceBase) faceBase = { yaw: data.yawRaw, pitch: data.pitchRaw };
+      const yaw = data.yawRaw - faceBase.yaw;
+      const pitch = data.pitchRaw - faceBase.pitch;
+      function dot(i, color) {
+        const pt = data.face[i];
+        if (!pt || !ctx) return;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(pt.x * canvas.width, pt.y * canvas.height, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      dot(1, '#fbbf24');
+      dot(159, data.blinkL > 0.4 ? '#34d399' : '#fb923c');
+      dot(386, data.blinkR > 0.4 ? '#34d399' : '#fb923c');
+      dot(13, data.jaw > 0.3 ? '#34d399' : '#f97316');
+      dot(14, data.jaw > 0.3 ? '#34d399' : '#f97316');
+
+      if (faceDone) {
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      if (faceNeedCenter) {
+        setFacePrompt('Look back at the camera', 'Then the next move');
+        if (Math.abs(yaw) < 0.16 && Math.abs(pitch) < 0.08) {
+          faceHold += 1;
+          if (faceHold >= 2) { faceNeedCenter = false; faceHold = 0; }
+        } else faceHold = 0;
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      const step = currentFaceStep();
+      if (!step) {
+        faceRaf = requestAnimationFrame(tickFaceLab);
+        return;
+      }
+      markActiveStep();
+      let hit = false;
+      const hint = (faceIndex + 1) + ' / ' + FACE_STEPS.length + ' · tracking';
+      if (step.kind === 'yaw' && step.dir === 'left') {
+        setFacePrompt(FACE_PROMPTS.left, hint);
+        hit = yaw > 0.12;
+      } else if (step.kind === 'yaw' && step.dir === 'right') {
+        setFacePrompt(FACE_PROMPTS.right, hint);
+        hit = yaw < -0.12;
+      } else if (step.kind === 'pitch' && step.dir === 'up') {
+        setFacePrompt(FACE_PROMPTS.up, hint);
+        hit = pitch > 0.045;
+      } else if (step.kind === 'pitch' && step.dir === 'down') {
+        setFacePrompt(FACE_PROMPTS.down, hint);
+        hit = pitch < -0.045;
+      } else if (step.kind === 'blink' && step.dir === 'left') {
+        setFacePrompt(FACE_PROMPTS.blinkLeft, 'Keep the right eye open');
+        hit = data.blinkL > 0.4 && data.blinkR < 0.45 && data.rightEAR > 0.15;
+      } else if (step.kind === 'blink' && step.dir === 'right') {
+        setFacePrompt(FACE_PROMPTS.blinkRight, 'Keep the left eye open');
+        hit = data.blinkR > 0.4 && data.blinkL < 0.45 && data.leftEAR > 0.15;
+      } else if (step.kind === 'mouth') {
+        setFacePrompt(FACE_PROMPTS.open, hint);
+        hit = data.jaw > 0.28 || data.mouth > 0.06;
+      }
+      if (hit) {
+        faceHold += 1;
+        if (faceHold >= 2) advanceFaceStep();
+      } else faceHold = 0;
+      faceRaf = requestAnimationFrame(tickFaceLab);
+    }
+    async function startFaceLab() {
+      const lab = document.getElementById('face-lab');
+      if (!lab) return;
+      lab.classList.add('show');
+      const gen = ++faceGen;
+      faceIndex = 0;
+      faceHold = 0;
+      faceBase = null;
+      faceNeedCenter = false;
+      faceDone = false;
+      faceLastDetect = 0;
+      renderFaceChecks();
+      markActiveStep();
+      const skip = document.getElementById('face-skip');
+      if (skip) skip.onclick = function () { if (!faceDone) advanceFaceStep(); };
+      setFacePrompt('Allow the camera', 'Video stays on this device');
+      const video = document.getElementById('face-cam');
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('This browser cannot use the camera');
+        }
+        faceStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        if (gen !== faceGen) {
+          faceStream.getTracks().forEach(function (t) { t.stop(); });
+          faceStream = null;
+          return;
+        }
+        video.setAttribute('playsinline', 'true');
+        video.setAttribute('webkit-playsinline', 'true');
+        video.muted = true;
+        video.srcObject = faceStream;
+        await video.play().catch(function () {});
+        setFacePrompt('Loading face tracker…', 'First load can take a few seconds');
+        await loadFaceLandmarker();
+        if (gen !== faceGen) return;
+        setFacePrompt(FACE_PROMPTS.left, '1 / ' + FACE_STEPS.length + ' · tracking');
+        faceRaf = requestAnimationFrame(tickFaceLab);
+      } catch (err) {
+        const msg = (err && err.message) ? err.message : 'Camera or tracker failed';
+        setFacePrompt('Could not start tracker', msg + '. Use Count this move if needed.');
+        showToast('Face tracker needs camera');
+      }
+    }
+    function renderSession(data) {
+      document.getElementById('session-kicker').textContent = data.kicker;
+      document.getElementById('session-title').textContent = data.title;
+      document.getElementById('session-note').textContent = data.note;
+      sessionLeft = data.seconds;
+      document.getElementById('session-timer').textContent = formatTime(sessionLeft);
+      document.getElementById('session-steps').innerHTML = data.steps.map(function (step, i) {
+        return '<li class="step-item">' + (i + 1) + '. ' + step + '</li>';
+      }).join('');
+      const toggle = document.getElementById('session-toggle');
+      toggle.textContent = 'Start timer';
+      sessionRunning = false;
+      if (sessionTimer) { clearInterval(sessionTimer); sessionTimer = null; }
+      toggle.onclick = function () {
+        if (sessionRunning) {
+          sessionRunning = false;
+          if (sessionTimer) clearInterval(sessionTimer);
+          toggle.textContent = 'Resume';
+          return;
+        }
+        sessionRunning = true;
+        toggle.textContent = 'Pause';
+        sessionTimer = setInterval(function () {
+          sessionLeft -= 1;
+          if (sessionLeft <= 0) {
+            sessionLeft = 0;
+            document.getElementById('session-timer').textContent = '0:00';
+            clearInterval(sessionTimer);
+            sessionRunning = false;
+            toggle.textContent = 'Finished';
+            showToast('Session complete');
+            return;
+          }
+          document.getElementById('session-timer').textContent = formatTime(sessionLeft);
+        }, 1000);
+      };
+      const lab = document.getElementById('face-lab');
+      if (lab) lab.classList.toggle('show', !!data.faceLab);
+      const yogaLab = document.getElementById('yoga-lab');
+      if (yogaLab) yogaLab.classList.toggle('show', !!data.prayerLab);
+      document.getElementById('session-overlay').classList.add('active');
+      if (data.faceLab) startFaceLab();
+      else stopFaceLab();
+      if (data.prayerLab && typeof startYogaLab === 'function') startYogaLab();
+      else if (typeof stopYogaLab === 'function') stopYogaLab();
+    }
+    function closeSession() {
+      if (sessionTimer) { clearInterval(sessionTimer); sessionTimer = null; }
+      sessionRunning = false;
+      stopFaceLab();
+      if (typeof stopYogaLab === 'function') stopYogaLab();
+      const overlay = document.getElementById('session-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+    function startPractice(key) {
+      if (key === 'taichi') { window.location.href = '/taichi.html'; return; }
+      const data = SESSIONS[key];
+      if (data) renderSession(data);
+    }
+    function showWorkout(level) {
+      if (level === 1) {
+        const exp = document.getElementById('level1-experience');
+        const video = document.getElementById('level1-video');
+        if (exp) exp.classList.add('active');
+        if (video) {
+          if (!video.getAttribute('src')) {
+            const src = video.getAttribute('data-src');
+            if (src) video.src = src;
+          }
+          video.addEventListener('error', function () { video.style.display = 'none'; }, { once: true });
+          video.muted = false;
+          video.volume = 0.75;
+          video.currentTime = 0;
+          video.play().catch(function () {
+            video.muted = true;
+            video.play().catch(function () { video.style.display = 'none'; });
+          });
+        }
+        startThunderResonance();
+        return;
+      }
+      const data = SESSIONS[level];
+      if (data) renderSession(data);
+    }
+    function closeLevel1() {
+      const exp = document.getElementById('level1-experience');
+      const video = document.getElementById('level1-video');
+      if (exp) exp.classList.remove('active');
+      if (video) { video.pause(); video.muted = true; try { video.removeAttribute('src'); video.load(); } catch (e) {} }
+      stopPad(true);
+    }
+    function goToList() {
+      closeLevel1();
+      closeSession();
+      setTimeout(function () { document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' }); }, 300);
+    }
+    function initParallax() {
+      const stars = document.getElementById('webgl-container');
+      const portalWrap = document.querySelector('.portal-parallax');
+      const hero = document.querySelector('.hero-parallax');
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY || 0;
+          if (stars) stars.style.transform = 'translate3d(0, ' + (y * 0.18) + 'px, 0)';
+          if (portalWrap) portalWrap.style.transform = 'translate3d(0, ' + (y * 0.38) + 'px, 0) scale(' + (1 + Math.min(y, 700) * 0.00018) + ')';
+          if (hero) {
+            hero.style.transform = 'translate3d(0, ' + (y * 0.52) + 'px, 0)';
+            hero.style.opacity = String(Math.max(0, 1 - y / 620));
+          }
+          ticking = false;
+        });
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+    function initMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const open = document.getElementById('menu-btn');
+      const close = document.getElementById('menu-close');
+      if (!drawer) return;
+      if (open) open.addEventListener('click', function () { drawer.classList.add('open'); });
+      if (close) close.addEventListener('click', function () { drawer.classList.remove('open'); });
+      drawer.querySelectorAll('.drawer-link').forEach(function (a) {
+        a.addEventListener('click', function () { drawer.classList.remove('open'); });
+      });
+    }
+    let didInit = false;
+    function safeInit() {
+      if (didInit) return;
+      didInit = true;
+      const st = document.getElementById('sound-toggle'); if (st) st.addEventListener('click', toggleSound);
+      const ab = document.getElementById('ascend-btn'); if (ab) ab.addEventListener('click', function () {
+        document.getElementById('levels')?.scrollIntoView({ behavior: 'smooth' });
+        if (!isPlaying) { toggleSound(); setTimeout(playPortalTone, 400); } else playPortalTone();
+      });
+      try { initSignup(); } catch (e) {}
+      try { initWebGL(); } catch (e) {}
+      try { initParallax(); } catch (e) {}
+      try { initMenu(); } catch (e) {}
+      try { const obs = new IntersectionObserver((entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.15 }); document.querySelectorAll('.reveal, .level-card').forEach(el => obs.observe(el)); } catch (e) {}
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', safeInit); else safeInit();
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); }); }
+  </script>
+  <script src="/fit-hands.js"></script>
+  <script src="/yoga.js"></script>
+</body>
+</html>
