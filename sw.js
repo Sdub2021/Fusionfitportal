@@ -1,15 +1,32 @@
 /* FIT Service Worker — offline shell for Solana dApp / PWA */
-const CACHE_NAME = 'fit-v25';
+const CACHE_NAME = 'fit-v26';
 const ASSETS = [
   '/',
   '/index.html',
   '/fit.css',
+  '/solana.js',
+  '/fit-hands.js',
+  '/yoga.js',
+  '/taichi.js',
+  '/studio.js',
+  '/studio-gate.js',
+  '/studio-speed.js',
+  '/field-audio.js',
+  '/waitlist-gate.js',
+  '/sw.js',
+  '/level-1.html',
+  '/level-2.html',
+  '/level-3.html',
+  '/level-4.html',
+  '/level-5.html',
   '/privacy.html',
   '/terms.html',
   '/taichi.html',
   '/practice.html',
   '/stake.html',
   '/manifest.json',
+  '/robots.txt',
+  '/sitemap.xml',
   '/icons/icon.svg',
   '/icons/pX1Em.png',
   '/icons/smmkn.png'
@@ -53,7 +70,12 @@ self.addEventListener('fetch', (event) => {
           }
           return res;
         })
-        .catch(() => caches.match(event.request).then((c) => c || caches.match('/index.html')))
+        .catch(() => caches.match(event.request).then((c) => {
+          if (c) return c;
+          // Navigation fallback: serve the offline shell (homepage) so the
+          // app still opens when the network is gone.
+          return caches.match('/index.html');
+        }))
     );
     return;
   }

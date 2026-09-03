@@ -1,11 +1,12 @@
 {
-  "name": "FIT",
+  "name": "FIT — Ancient balance. Modern power.",
   "short_name": "FIT",
   "id": "https://fusionfitportal.com/",
   "description": "Ancient balance. Modern power. Yoga, Tai Chi, Vestibular Training & the 5 Levels of Ascension.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait-primary",
   "background_color": "#05050f",
   "theme_color": "#f97316",
@@ -30,6 +31,29 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Movement Studio",
+      "short_name": "Studio",
+      "description": "Yoga, Tai Chi, vestibular and meditation on-device",
+      "url": "/practice.html",
+      "icons": [{ "src": "/icons/pX1Em.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Tai Chi · CMC37",
+      "short_name": "CMC37",
+      "description": "Practice Cheng Man-Ching 37 with a reference video",
+      "url": "/taichi.html",
+      "icons": [{ "src": "/icons/pX1Em.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stake with FIT",
+      "short_name": "Stake",
+      "description": "Solana validator waitlist",
+      "url": "/stake.html",
+      "icons": [{ "src": "/icons/pX1Em.png", "sizes": "192x192" }]
     }
   ]
 }
