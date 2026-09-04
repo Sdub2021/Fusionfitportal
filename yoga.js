@@ -119,8 +119,12 @@
   ready(function () {
     var grid = document.querySelector("#services .grid");
     if (!grid) return;
-    var taichiCardLink = grid.querySelector("a[href='/taichi.html']");
-    if (taichiCardLink) {
+    // Primary Tai Chi link is now a static studio link (data-studio-link="taichi").
+    // Only patch plain /taichi.html anchors that are not already studio CTAs,
+    // so the secondary "compare with the CMC37 video" link is not hijacked.
+    var taichiCardLink = grid.querySelector("a[data-studio-link='taichi']");
+    if (!taichiCardLink) taichiCardLink = grid.querySelector("a[href='/taichi.html']");
+    if (taichiCardLink && taichiCardLink.getAttribute("href") !== studio.taichi) {
       taichiCardLink.setAttribute("href", studio.taichi);
       taichiCardLink.textContent = "Open Tai Chi studio";
     }

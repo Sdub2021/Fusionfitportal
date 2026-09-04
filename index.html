@@ -42,6 +42,7 @@
       <div class="hidden md:flex gap-10 text-sm font-medium">
         <a href="#levels" class="hover:text-orange-400">THE PATH</a>
         <a href="#services" class="hover:text-orange-400">PRACTICES</a>
+        <a href="/practice.html" class="hover:text-orange-400">STUDIO</a>
         <a href="/taichi.html" class="hover:text-orange-400">CMC37</a>
         <a href="#signup" class="hover:text-orange-400">JOIN THE LIST</a>
       </div>
@@ -59,6 +60,7 @@
     <button id="menu-close" class="absolute top-5 right-5 text-3xl text-zinc-400" aria-label="Close menu">×</button>
     <a href="#levels" class="drawer-link text-2xl py-4">The Path</a>
     <a href="#services" class="drawer-link text-2xl py-4">Practices</a>
+    <a href="/practice.html" class="drawer-link text-2xl py-4">Movement Studio</a>
     <a href="/taichi.html" class="drawer-link text-2xl py-4">Tai Chi · CMC37</a>
     <a href="#signup" class="drawer-link text-2xl py-4">Join the list</a>
     <a href="/privacy.html" class="drawer-link text-lg py-3 text-zinc-400">Privacy</a>
@@ -74,6 +76,10 @@
       <p class="text-2xl md:text-5xl leading-tight max-w-3xl mx-auto mb-6 opacity-90">Ancient balance.<br>Modern power.</p>
       <p class="text-sm md:text-base text-zinc-400 max-w-xl mx-auto mb-10">Yoga, Tai Chi, and gentle balance work. Wellness practice only — not medical treatment.</p>
       <button id="ascend-btn" class="ascend-btn text-black font-bold rounded-full px-10 py-5 md:px-16 md:py-8 text-lg md:text-2xl">BEGIN YOUR PRACTICE</button>
+      <div class="mt-8">
+        <a href="/practice.html" class="studio-btn"><span aria-hidden="true">✦</span> Movement Studio</a>
+        <p class="text-xs text-zinc-500 mt-3 tracking-widest uppercase">Yoga · Tai Chi · Vestibular · Meditation</p>
+      </div>
     </div>
   </section>
   <section id="levels" class="max-w-7xl mx-auto px-6 py-20 md:py-28 bg-zinc-950 text-white">
@@ -116,24 +122,31 @@
         <h2 class="text-4xl md:text-6xl font-bold mb-6">Sacred Practices</h2>
         <p class="text-lg text-zinc-400 max-w-2xl mx-auto">Three 5-minute sessions you can do today. Stop if anything feels wrong.</p>
       </div>
-      <div class="grid md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div class="service-card">
           <div class="text-4xl mb-6">🧘</div>
           <h3 class="text-3xl font-bold mb-4 text-white">Yoga</h3>
           <p class="text-zinc-400 leading-relaxed mb-6">Prayer pose at the heart. The camera reads your hands on this device.</p>
-          <button type="button" onclick="startPractice('yoga')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition">Start prayer pose</button>
+          <a href="/practice.html?mode=yoga" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Start prayer pose in Studio</a>
         </div>
         <div class="service-card">
           <div class="text-4xl mb-6">☯️</div>
           <h3 class="text-3xl font-bold mb-4 text-white">Tai Chi</h3>
           <p class="text-zinc-400 leading-relaxed mb-6">Cheng Man-Ching 37 (CMC37). Play a teacher video and we score your shape next to it.</p>
-          <a href="/taichi.html" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Compare with CMC37 video</a>
+          <a href="/practice.html?mode=taichi" data-studio-link="taichi" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Open Tai Chi studio</a>
+          <a href="/taichi.html" class="block mt-2 text-xs text-zinc-500 hover:text-white text-center">compare with the CMC37 video</a>
+        </div>
+        <div class="service-card" data-fit-meditation="1">
+          <div class="text-4xl mb-6">🕯️</div>
+          <h3 class="text-3xl font-bold mb-4 text-white">Meditation</h3>
+          <p class="text-zinc-400 leading-relaxed mb-6">Hold the face still for ten seconds. Camera stays on this device.</p>
+          <a href="/practice.html?mode=meditation" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Open Meditation studio</a>
         </div>
         <div class="service-card">
           <div class="text-4xl mb-6">⚖️</div>
           <h3 class="text-3xl font-bold mb-4 text-white">Vestibular Training</h3>
           <p class="text-zinc-400 leading-relaxed mb-6">Gentle seated and standing balance drills. Not treatment for vertigo or dizziness.</p>
-          <button type="button" onclick="startPractice('vestibular')" class="w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition">Start 5-min session</button>
+          <a href="/practice.html?mode=vestibular" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Start 5-min session in Studio</a>
         </div>
       </div>
       <p class="text-center text-xs text-zinc-500 mt-10 max-w-2xl mx-auto">FIT is general wellness. It does not diagnose, treat, or cure any condition. If you have medical symptoms, speak with a clinician.</p>
@@ -158,6 +171,7 @@
       <div class="flex flex-wrap gap-5">
         <a href="#levels" class="hover:text-white">Levels</a>
         <a href="#services" class="hover:text-white">Practices</a>
+        <a href="/practice.html" class="hover:text-white">Studio</a>
         <a href="/taichi.html" class="hover:text-white">Tai Chi</a>
         <a href="/privacy.html" class="hover:text-white">Privacy</a>
         <a href="/terms.html" class="hover:text-white">Terms</a>
