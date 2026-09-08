@@ -21,11 +21,9 @@
   <meta name="theme-color" content="#05050a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="/icons/pX1Em.png">
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
+  <link rel="preload" href="/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root { --amber:#e8a54b; --amber-soft:#f0c27a; --line:rgba(255,255,255,.1); --muted:rgba(255,255,255,.48); }
     * { box-sizing:border-box; }
@@ -137,7 +135,7 @@
     </div>
     <p class="hint">Waitlist signup unlocks only after the vestibular sequence. Hold each cue to advance. If a mouth cue is missed, tap Count this move. Yoga, Tai Chi, and Meditation are practice only.</p>
   </main>
-  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=fit29');</script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=fit30');</script>
   <script>
     window.addEventListener('pointerdown', function loadSb() {
       window.removeEventListener('pointerdown', loadSb);
@@ -145,11 +143,11 @@
       s.src = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
       s.defer = true;
       document.body.appendChild(s);
+      ['/solana.js?v=20260908cam','/studio-gate.js?v=20260903vest2','/field-audio.js?v=20260830a'].forEach(function (src) {
+        var x = document.createElement('script'); x.src = src; x.defer = true; document.body.appendChild(x);
+      });
     }, { once: true });
   </script>
-  <script src="/solana.js?v=20260908perf" defer></script>
-  <script type="module" src="/studio.js?v=20260908perf"></script>
-  <script src="/studio-gate.js?v=20260903vest2"></script>
-  <script src="/field-audio.js?v=20260830a"></script>
+  <script type="module" src="/studio.js?v=20260908cam"></script>
 </body>
 </html>
