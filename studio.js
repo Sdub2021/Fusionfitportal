@@ -1,4 +1,4 @@
-/* FIT Studio loader — MediaPipe graph starts after first paint. */
+/* FIT Studio loader — MediaPipe graph starts after Open camera. */
 const SRC = "https://cdn.jsdelivr.net/gh/Sdub2021/Fusionfitportal@950c351b67b35b81f56897e751d472d5653c4d8a/studio.js";
 let booting = null;
 function bootStudio() {
@@ -33,9 +33,4 @@ if (go) {
       go.textContent = prev || "Open camera";
     }
   }, true);
-}
-if ("requestIdleCallback" in window) {
-  requestIdleCallback(function () { bootStudio(); }, { timeout: 2500 });
-} else {
-  window.addEventListener("load", function () { setTimeout(bootStudio, 1); });
 }
