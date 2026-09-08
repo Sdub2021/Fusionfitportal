@@ -6,7 +6,6 @@ on:
     paths:
       - ".github/workflows/perf-html.yml"
       - "index.html"
-      - "stake.html"
 permissions:
   contents: write
 jobs:
@@ -14,33 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Strip blocking Hands JS and heavy OG PNG
+        with:
+          fetch-depth: 0
+      - name: Patch homepage critical path
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
-          p = Path('index.html')
+          p = Path("index.html")
           t = p.read_text()
-          t = t.replace('https://fusionfitportal.com/icons/smmkn.png', 'https://fusionfitportal.com/icons/pX1Em.png')
-          old = '''  <link rel="stylesheet" href="/fit.css">\n  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous" data-mp-hands="1"></script>\n'''
-          new = '''  <link rel="stylesheet" href="/fit.css">\n'''
-          if old in t:
-              t = t.replace(old, new, 1)
-          t = t.replace('  <script src="/fit-hands.js"></script>\n  <script src="/yoga.js"></script>\n', '  <script src="/fit-hands.js" defer></script>\n  <script src="/yoga.js" defer></script>\n', 1)
+          t = t.replace("https://fusionfitportal.com/icons/smmkn.png", "https://fusionfitportal.com/icons/pX1Em.png")
+          old_fonts = """  <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n  <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n  <link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap\" rel=\"stylesheet\">\n  <link rel=\"stylesheet\" href=\"/fit.css\">\n"""
+          new_fonts = """  <link rel=\"preload\" href=\"/fonts.css\" as=\"style\" onload=\"this.onload=null;this.rel='stylesheet'\">\n  <noscript><link rel=\"stylesheet\" href=\"/fonts.css\"></noscript>\n  <link rel=\"stylesheet\" href=\"/fit.css\">\n"""
+          if old_fonts in t:
+              t = t.replace(old_fonts, new_fonts, 1)
+          t = t.replace("  <script src=\"/fit-hands.js\"></script>\n  <script src=\"/yoga.js\"></script>\n", "")
+          t = t.replace("  <script src=\"/fit-hands.js\" defer></script>\n  <script src=\"/yoga.js\" defer></script>\n", "")
+          needle = "      if (data.prayerLab && typeof startYogaLab === 'function') startYogaLab();\n      else if (typeof stopYogaLab === 'function') stopYogaLab();"
+          repl = """      if (data.prayerLab) {\n        var load = window.__yogaStack || (window.__yogaStack = new Promise(function (resolve) {\n          function add(src, next) { var s = document.createElement('script'); s.src = src; s.onload = next; s.onerror = next; document.body.appendChild(s); }\n          add('/fit-hands.js?v=30', function () { add('/yoga.js?v=30', resolve); });\n        }));\n        load.then(function () { if (typeof startYogaLab === 'function') startYogaLab(); });\n      } else if (typeof stopYogaLab === 'function') stopYogaLab();"""
+          if needle in t:
+              t = t.replace(needle, repl, 1)
           p.write_text(t)
-
-          for name in ['stake.html', 'taichi.html']:
-              f = Path(name)
-              if f.exists():
-                  s = f.read_text()
-                  f.write_text(s.replace('https://fusionfitportal.com/icons/smmkn.png', 'https://fusionfitportal.com/icons/pX1Em.png').replace('/icons/smmkn.png', '/icons/pX1Em.png'))
-          print('index hands', '@mediapipe/hands' in Path('index.html').read_text())
+          print("gfonts", "fonts.googleapis" in t)
+          print("yoga stack", "__yogaStack" in t)
           PY
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html stake.html taichi.html
+          git add index.html
           git diff --cached --quiet && echo no-change && exit 0
-          git commit -m "Perf: remove blocking Hands JS; use 192px icon for OG and touch"
+          git commit -m "Perf: async fonts and on-demand yoga/hands on homepage"
+          git pull --rebase origin perf/lazy-mediapipe
           git push
