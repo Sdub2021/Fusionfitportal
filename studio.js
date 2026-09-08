@@ -1,21 +1,41 @@
-/* FIT Studio loader — do not static-import MediaPipe on first paint. */
+/* FIT Studio loader — MediaPipe graph starts after first paint. */
 const SRC = "https://cdn.jsdelivr.net/gh/Sdub2021/Fusionfitportal@950c351b67b35b81f56897e751d472d5653c4d8a/studio.js";
+let booting = null;
 function bootStudio() {
-  if (window.__FIT_STUDIO_BOOTED) return;
-  window.__FIT_STUDIO_BOOTED = true;
-  import(SRC).catch(function (err) {
-    window.__FIT_STUDIO_BOOTED = false;
-    const status = document.getElementById("status");
-    if (status) status.textContent = "Studio failed to load";
-    console.warn("studio boot failed", err);
-  });
+  if (!booting) {
+    booting = import(SRC).catch(function (err) {
+      booting = null;
+      const status = document.getElementById("status");
+      if (status) status.textContent = "Studio failed to load";
+      console.warn("studio boot failed", err);
+      throw err;
+    });
+  }
+  return booting;
 }
 const go = document.getElementById("go");
 if (go) {
-  go.addEventListener("click", bootStudio, { once: true, capture: true });
+  go.addEventListener("click", async function (ev) {
+    if (window.__FIT_STUDIO_READY) return;
+    ev.preventDefault();
+    ev.stopImmediatePropagation();
+    go.disabled = true;
+    const prev = go.textContent;
+    go.textContent = "Loading model\u2026";
+    try {
+      await bootStudio();
+      window.__FIT_STUDIO_READY = true;
+      go.disabled = false;
+      go.textContent = prev || "Open camera";
+      if (typeof go.onclick === "function") go.onclick();
+    } catch (err) {
+      go.disabled = false;
+      go.textContent = prev || "Open camera";
+    }
+  }, true);
 }
 if ("requestIdleCallback" in window) {
-  requestIdleCallback(bootStudio, { timeout: 2500 });
+  requestIdleCallback(function () { bootStudio(); }, { timeout: 2500 });
 } else {
   window.addEventListener("load", function () { setTimeout(bootStudio, 1); });
 }
