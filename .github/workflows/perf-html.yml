@@ -1,0 +1,46 @@
+name: perf-html
+on:
+  workflow_dispatch:
+  push:
+    branches: [perf/lazy-mediapipe]
+    paths:
+      - ".github/workflows/perf-html.yml"
+      - "index.html"
+      - "stake.html"
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strip blocking Hands JS and heavy OG PNG
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          t = p.read_text()
+          t = t.replace('https://fusionfitportal.com/icons/smmkn.png', 'https://fusionfitportal.com/icons/pX1Em.png')
+          old = '''  <link rel="stylesheet" href="/fit.css">\n  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous" data-mp-hands="1"></script>\n'''
+          new = '''  <link rel="stylesheet" href="/fit.css">\n'''
+          if old in t:
+              t = t.replace(old, new, 1)
+          t = t.replace('  <script src="/fit-hands.js"></script>\n  <script src="/yoga.js"></script>\n', '  <script src="/fit-hands.js" defer></script>\n  <script src="/yoga.js" defer></script>\n', 1)
+          p.write_text(t)
+
+          for name in ['stake.html', 'taichi.html']:
+              f = Path(name)
+              if f.exists():
+                  s = f.read_text()
+                  f.write_text(s.replace('https://fusionfitportal.com/icons/smmkn.png', 'https://fusionfitportal.com/icons/pX1Em.png').replace('/icons/smmkn.png', '/icons/pX1Em.png'))
+          print('index hands', '@mediapipe/hands' in Path('index.html').read_text())
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html stake.html taichi.html
+          git diff --cached --quiet && echo no-change && exit 0
+          git commit -m "Perf: remove blocking Hands JS; use 192px icon for OG and touch"
+          git push
