@@ -1,0 +1,32 @@
+# Used if this repo is also served from Cloudflare Pages.
+# GitHub Pages ignores this file.
+
+/
+  Cache-Control: public, max-age=60, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=60, must-revalidate
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/icons/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.css
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.js
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.webp
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/*.json
+  Cache-Control: public, max-age=3600

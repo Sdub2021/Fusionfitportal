@@ -1,0 +1,34 @@
+name: shrink-icons
+on:
+  workflow_dispatch:
+  push:
+    branches: [perf/lazy-mediapipe]
+    paths:
+      - "icons/smmkn.png"
+      - "icons/pX1Em.png"
+      - ".github/workflows/shrink-icons.yml"
+permissions:
+  contents: write
+jobs:
+  shrink:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compress PNGs
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y imagemagick
+          before=$(wc -c < icons/smmkn.png)
+          convert icons/smmkn.png -strip -colors 64 PNG8:icons/smmkn.png
+          convert icons/pX1Em.png -strip -colors 64 PNG8:icons/pX1Em.png
+          after=$(wc -c < icons/smmkn.png)
+          echo "smmkn.png $before -> $after"
+          identify icons/smmkn.png icons/pX1Em.png
+      - name: Commit if smaller
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add icons/smmkn.png icons/pX1Em.png
+          git diff --cached --quiet && echo "no change" && exit 0
+          git commit -m "Perf: compress PWA and OG PNGs"
+          git push

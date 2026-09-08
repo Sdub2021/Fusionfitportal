@@ -1,5 +1,5 @@
 /* FIT Service Worker — offline shell for Solana dApp / PWA */
-const CACHE_NAME = 'fit-v28';
+const CACHE_NAME = 'fit-v29';
 const ASSETS = [
   '/',
   '/index.html',
@@ -50,8 +50,6 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => caches.match(event.request).then((c) => {
           if (c) return c;
-          // Navigation fallback: serve the offline shell (homepage) so the
-          // app still opens when the network is gone.
           return caches.match('/index.html');
         }))
     );

@@ -1,0 +1,6 @@
+name = "fusionfitportal-edge"
+main = "worker.js"
+compatibility_date = "2026-09-08"
+
+[vars]
+ORIGIN = "https://sdub2021.github.io/Fusionfitportal"
