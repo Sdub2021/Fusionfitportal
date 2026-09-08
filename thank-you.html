@@ -4,78 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thank You - FusionFitPortal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
   <style>
-    /* Flowing cosmic background */
     body {
-      background: linear-gradient(45deg, #0a0a23, #1e1e4a, #3b0764, #1e1e4a);
-      background-size: 600%;
-      animation: cosmicFlow 12s ease infinite;
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+      overflow:hidden; position:relative; color:#111;
+      font-family:Georgia,system-ui,sans-serif;
+      background:linear-gradient(45deg,#0a0a23,#1e1e4a,#3b0764,#1e1e4a);
+      background-size:600%; animation:cosmicFlow 12s ease infinite;
     }
-    @keyframes cosmicFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    /* Multi-layered portal animation */
+    @keyframes cosmicFlow { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
     .portal {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(59,130,246,0.3) 50%, rgba(147,51,234,0.2) 70%);
-      border-radius: 50%;
-      animation: swirl 5s ease-in-out infinite;
-      box-shadow: 0 0 40px rgba(255,255,255,0.7), 0 0 60px rgba(147,51,234,0.5);
-      z-index: 0;
+      position:absolute; top:50%; left:50%; width:300px; height:300px; border-radius:50%;
+      transform:translate(-50%,-50%);
+      background:radial-gradient(circle,rgba(255,255,255,.5) 0%,rgba(59,130,246,.3) 50%,rgba(147,51,234,.2) 70%);
+      animation:swirl 5s ease-in-out infinite;
+      box-shadow:0 0 40px rgba(255,255,255,.7),0 0 60px rgba(147,51,234,.5);
     }
     @keyframes swirl {
-      0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 0.7; }
-      50% { transform: translate(-50%, -50%) scale(1.4) rotate(180deg); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); opacity: 0.7; }
+      0%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:.7}
+      50%{transform:translate(-50%,-50%) scale(1.4) rotate(180deg);opacity:1}
+      100%{transform:translate(-50%,-50%) scale(1) rotate(360deg);opacity:.7}
     }
-    /* Glowing yin-yang text */
-    .yin-yang-text {
-      font-family: 'Georgia', serif;
-      background: linear-gradient(to right, #ffffff, #000000, #ffffff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 15px rgba(255,255,255,0.9), 0 0 30px rgba(59,130,246,0.7);
+    .card { position:relative; z-index:1; background:rgba(255,255,255,.95); padding:3rem; border-radius:1.25rem; max-width:32rem; width:calc(100% - 2rem); text-align:center; box-shadow:0 25px 50px rgba(0,0,0,.35); }
+    h1 { font-size:clamp(2rem,6vw,3rem); margin:0 0 1rem;
+      background:linear-gradient(to right,#fff,#000,#fff); -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow:0 0 15px rgba(255,255,255,.9);
     }
-    /* Enhanced glowing button */
-    .glow-button {
-      box-shadow: 0 0 20px rgba(59,130,246,0.8), 0 0 40px rgba(147,51,234,0.6);
-      transition: all 0.4s ease;
+    p { color:#1f2937; font-size:1.05rem; line-height:1.6; margin:0 0 2rem; }
+    a { display:inline-block; color:#fff; font-weight:700; font-size:1.15rem; padding:1rem 2.2rem; border-radius:999px; text-decoration:none;
+      background:linear-gradient(to right,#1d4ed8,#7e22ce);
+      box-shadow:0 0 20px rgba(59,130,246,.8),0 0 40px rgba(147,51,234,.6);
     }
-    .glow-button:hover {
-      box-shadow: 0 0 30px rgba(59,130,246,1), 0 0 60px rgba(147,51,234,1);
-      transform: scale(1.15) rotate(2deg);
-    }
+    pre { margin:2rem 0 0; color:#4b5563; font-size:.7rem; }
   </style>
 </head>
-<body class="flex items-center justify-center min-h-screen relative overflow-hidden">
-  <!-- Portal animation -->
+<body>
   <div class="portal"></div>
-  <!-- Main content -->
-  <div class="bg-white bg-opacity-95 p-12 rounded-2xl shadow-2xl max-w-lg w-full text-center relative z-10">
-    <h1 class="text-5xl font-extrabold yin-yang-text mb-6">Thank You!</h1>
-    <p class="text-gray-800 text-lg mb-10 leading-relaxed">Your essence has entered the FusionFitPortal. We’ve received your message and will connect with you in harmony. Embrace the flow of mind, body, and spirit!</p>
-    <a href="/" class="inline-block bg-gradient-to-r from-blue-700 to-purple-700 text-white font-bold text-xl py-4 px-10 rounded-full glow-button">Return to FusionFitPortal</a>
-    <!-- Intricate yin-yang and lotus ASCII art -->
-    <div class="mt-10 text-gray-600 font-mono text-xs">
-      <pre>
-        ,_____,  
-       /  ***  \ 
-      /  *   *  \ 
-     /___*___*___\ 
-     |  _/|\_  |  Lotus & Yin-Yang
-     | /  |  \ |  Find Your Inner Balance
-     |/___|___\|
-     </pre>
-    </div>
+  <div class="card">
+    <h1>Thank You!</h1>
+    <p>Your essence has entered the FusionFitPortal. We’ve received your message and will connect with you in harmony. Embrace the flow of mind, body, and spirit!</p>
+    <a href="/">Return to FusionFitPortal</a>
   </div>
 </body>
 </html>
