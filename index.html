@@ -11,12 +11,12 @@
   <meta property="og:title" content="FIT — Ancient balance. Modern power.">
   <meta property="og:description" content="Yoga, Tai Chi, vestibular training and the 5 Levels of Ascension. On-device practice, no video leaves your phone.">
   <meta property="og:url" content="https://fusionfitportal.com/">
-  <meta property="og:image" content="https://fusionfitportal.com/icons/smmkn.png">
+  <meta property="og:image" content="https://fusionfitportal.com/icons/pX1Em.png">
   <meta property="og:image:alt" content="FIT portal mark">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="FIT — Ancient balance. Modern power.">
   <meta name="twitter:description" content="Yoga, Tai Chi, vestibular training and the 5 Levels of Ascension.">
-  <meta name="twitter:image" content="https://fusionfitportal.com/icons/smmkn.png">
+  <meta name="twitter:image" content="https://fusionfitportal.com/icons/pX1Em.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#f97316">
   <meta name="mobile-web-app-capable" content="yes">
@@ -25,12 +25,9 @@
   <meta name="apple-mobile-web-app-title" content="FIT">
   <link rel="apple-touch-icon" href="/icons/pX1Em.png">
   <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" href="/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/fonts.css"></noscript>
   <link rel="stylesheet" href="/fit.css">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous" data-mp-hands="1"></script>
 </head>
 <body class="bg-black text-white">
   <nav class="fixed top-0 left-0 right-0 nav-glass z-50 py-4">
@@ -945,8 +942,13 @@
       document.getElementById('session-overlay').classList.add('active');
       if (data.faceLab) startFaceLab();
       else stopFaceLab();
-      if (data.prayerLab && typeof startYogaLab === 'function') startYogaLab();
-      else if (typeof stopYogaLab === 'function') stopYogaLab();
+      if (data.prayerLab) {
+        var load = window.__yogaStack || (window.__yogaStack = new Promise(function (resolve) {
+          function add(src, next) { var s = document.createElement('script'); s.src = src; s.onload = next; s.onerror = next; document.body.appendChild(s); }
+          add('/fit-hands.js?v=30', function () { add('/yoga.js?v=30', resolve); });
+        }));
+        load.then(function () { if (typeof startYogaLab === 'function') startYogaLab(); });
+      } else if (typeof stopYogaLab === 'function') stopYogaLab();
     }
     function closeSession() {
       if (sessionTimer) { clearInterval(sessionTimer); sessionTimer = null; }
@@ -1049,7 +1051,5 @@
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', safeInit); else safeInit();
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); }); }
   </script>
-  <script src="/fit-hands.js"></script>
-  <script src="/yoga.js"></script>
 </body>
 </html>
