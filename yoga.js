@@ -99,7 +99,7 @@
     }
   };
 })();
-(function(){var s=document.createElement("script");s.src="/waitlist-gate.js?v=20260903vest2";document.body.appendChild(s);})();
+(function(){var s=document.createElement("script");s.src="/waitlist-gate.js?v=20260903vest2";document.body.appendChild(s);var t=document.createElement("script");t.src="/portal-tic.js?v=20260922";document.body.appendChild(t);})();
 (function () {
   var studio = {
     yoga: "/practice.html?mode=yoga",
@@ -119,9 +119,6 @@
   ready(function () {
     var grid = document.querySelector("#services .grid");
     if (!grid) return;
-    // Primary Tai Chi link is now a static studio link (data-studio-link="taichi").
-    // Only patch plain /taichi.html anchors that are not already studio CTAs,
-    // so the secondary "compare with the CMC37 video" link is not hijacked.
     var taichiCardLink = grid.querySelector("a[data-studio-link='taichi']");
     if (!taichiCardLink) taichiCardLink = grid.querySelector("a[href='/taichi.html']");
     if (taichiCardLink && taichiCardLink.getAttribute("href") !== studio.taichi) {
