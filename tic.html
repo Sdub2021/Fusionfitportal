@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>TIC — FusionFit Portal</title>
+<link rel="canonical" href="https://fusionfitportal.com/tic.html">
+<meta name="description" content="You are a cat. The others are tics. Reach your human so they can pull them off before the timer runs out.">
+<meta name="theme-color" content="#0b0a08">
+<style>
+html,body{margin:0;height:100%;background:#0b0a08;color:#fff8ea;font-family:system-ui,sans-serif}
+.boot{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:1rem}
+.boot a{color:#e8a54b;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;font-size:.72rem}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">
+  <p>Opening the yard…</p>
+  <a href="/">← FIT portal</a>
+</div>
+<script>
+(function(){
+  var sources = [
+    "https://cdn.jsdelivr.net/gh/Sdub2021/Tic@main/index.html",
+    "https://raw.githubusercontent.com/Sdub2021/Tic/main/index.html"
+  ];
+  function patch(html){
+    html = html.replace("<title>TIC — Get to your human</title>", "<title>TIC — FusionFit Portal</title>");
+    html = html.replace(
+      '<div class="brand">TIC</div>',
+      '<div style="display:flex;align-items:center;gap:.85rem"><a href="/" style="color:#e8a54b;letter-spacing:.18em;text-transform:uppercase;font-size:.62rem;text-decoration:none">← FIT</a><div class="brand">TIC</div></div>'
+    );
+    if (html.indexOf("Back to portal") < 0) {
+      html = html.replace(
+        '<div><button class="ghost" id="how" type="button">How to move</button></div>',
+        '<div><button class="ghost" id="how" type="button">How to move</button></div><div><a class="ghost" href="/" style="display:inline-block;text-decoration:none;margin-top:.35rem">Back to portal</a></div>'
+      );
+    }
+    return html;
+  }
+  function boot(i){
+    if (i >= sources.length) {
+      document.getElementById("boot").innerHTML = '<p>Could not load TIC.</p><a href="/">← FIT portal</a>';
+      return;
+    }
+    fetch(sources[i], { cache: "no-store" }).then(function(r){
+      if (!r.ok) throw new Error("bad");
+      return r.text();
+    }).then(function(html){
+      document.open();
+      document.write(patch(html));
+      document.close();
+    }).catch(function(){ boot(i+1); });
+  }
+  boot(0);
+})();
+</script>
+</body>
+</html>
