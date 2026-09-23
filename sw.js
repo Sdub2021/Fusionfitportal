@@ -1,5 +1,5 @@
 /* FIT Service Worker — offline shell for Solana dApp / PWA */
-const CACHE_NAME = 'fit-v28';
+const CACHE_NAME = 'fit-v29';
 const ASSETS = [
   '/',
   '/index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
   '/field-audio.js',
   '/waitlist-gate.js',
   '/portal-tic.js',
+  '/tic-game.js',
   '/sw.js',
   '/level-1.html',
   '/level-2.html',
@@ -56,12 +57,10 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
-
   const path = url.pathname;
   const isScript = path.endsWith('.js');
   const isDoc = event.request.mode === 'navigate' || path.endsWith('.html') || path === '/';
   const isStatic = path.endsWith('.png') || path.endsWith('.svg') || path.endsWith('.jpg') || path.endsWith('.css') || path.endsWith('.webp') || path.includes('/icons/');
-
   if (isScript || isDoc) {
     event.respondWith(
       fetch(event.request)
@@ -79,7 +78,6 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
-
   if (isStatic) {
     event.respondWith(
       caches.match(event.request).then((cached) => cached || fetch(event.request).then((res) => {
