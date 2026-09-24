@@ -139,6 +139,19 @@ function startGame(from){
   ui.classList.add('hidden');
 }
 
+function goToClaim(kind){
+  try {
+    localStorage.setItem('fit_tic_done', '1');
+    localStorage.setItem('fit_tic_level', String(level+1));
+  } catch (e) {}
+  const q = new URLSearchParams({
+    from: 'tic',
+    level: String(level+1)
+  });
+  if (kind === 'clear') q.set('clear', '1');
+  location.href = '/claim.html?' + q.toString();
+}
+
 function beginRescue(){
   state = 'rescue';
   const stuck = ticks.filter(t => t.stuck);
@@ -152,7 +165,7 @@ function beginRescue(){
 function finishRescue(){
   best = Math.max(best, level+1);
   localStorage.setItem('tic-best-level', String(best));
-  show(level >= LEVELS.length-1 ? 'clear' : 'win');
+  goToClaim(level >= LEVELS.length-1 ? 'clear' : 'win');
 }
 
 function show(kind){
@@ -169,12 +182,12 @@ function show(kind){
     copyEl.textContent = rescue && rescue.count
       ? 'They run a circle around you. '+rescue.count+' tic'+(rescue.count===1?'':'s')+' spin off into the dark. The lamp still holds.'
       : 'You reach them clean. They still run a small circle, just to be sure. The yard goes quiet.';
-    goBtn.textContent = 'Yard ' + (level+2);
+    goBtn.textContent = 'Claim wallet';
   } else if (kind==='clear'){
     eyeEl.textContent = 'Yard 100';
     titleEl.textContent = 'Home';
     copyEl.textContent = 'One hundred yards. Your human ran the last circle. No tic left on you. The lamp holds.';
-    goBtn.textContent = 'Walk the night again';
+    goBtn.textContent = 'Claim wallet';
   } else if (kind==='lose'){
     eyeEl.textContent = 'Lamp out \u00b7 ' + (level+1) + ' / 100';
     titleEl.textContent = 'Too late';
@@ -463,11 +476,10 @@ stick.addEventListener('pointerup', endJoy);
 stick.addEventListener('pointercancel', endJoy);
 
 goBtn.onclick = ()=>{
-  if (state==='win'){
-    if (level < LEVELS.length-1){ level++; startGame(); }
+  if (state==='win' || state==='clear'){
+    goToClaim(state);
     return;
   }
-  if (state==='clear'){ startGame('fresh'); return; }
   startGame(state==='title' ? 'fresh' : 'retry');
 };
 howBtn.onclick = ()=>{
@@ -477,5 +489,15 @@ howBtn.onclick = ()=>{
 resize();
 spawnLevel(0);
 state='title';
-if (/[?&]play\\b/.test(location.search)) startGame('fresh');
+(function bootFromQuery(){
+  const q = new URLSearchParams(location.search);
+  const wantPlay = /(?:^|[?&])play(?:&=|$)/.test(location.search) || q.has('play');
+  const wantLevel = Number(q.get('level')||0);
+  if (wantLevel >= 1 && wantLevel <= LEVELS.length){
+    level = wantLevel - 1;
+    startGame();
+    return;
+  }
+  if (wantPlay) startGame('fresh');
+})();
 requestAnimationFrame(loop);
