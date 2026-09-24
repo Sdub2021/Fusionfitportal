@@ -65,9 +65,13 @@
       var method = ((init && init.method) || (input && input.method) || "GET").toUpperCase();
       if (method !== "GET" && /\/rest\/v1\/signups/.test(url)) {
         var onStudio = /practice\.html/.test(location.pathname);
+        var onClaim = /claim\.html/.test(location.pathname);
         var claim = document.getElementById("claim");
-        var allowed = onStudio && claim && claim.classList.contains("open") && done();
+        var ticDone = false;
+        try { ticDone = localStorage.getItem("fit_tic_done") === "1"; } catch (e) {}
+        var allowed = (onStudio && claim && claim.classList.contains("open") && done()) || (onClaim && ticDone);
         if (!allowed) {
+          if (onClaim) return origFetch.apply(this, arguments);
           goStudio();
           return Promise.resolve(new Response(JSON.stringify({ error: "vestibular_required" }), { status: 403 }));
         }
