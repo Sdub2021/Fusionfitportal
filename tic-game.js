@@ -25,7 +25,7 @@ function makeLevel(i){
   const ticks = 8 + i;
   const bushes = Math.min(8, 2 + i);
   const time = Math.max(16, 34 - i * 1.5);
-  const base = 56 + i * 4;
+  const base = 56 + i * 8;
   return {
     name: NAMES[i % NAMES.length],
     time, ticks, bushes, base
@@ -109,7 +109,7 @@ function spawnLevel(i){
       phase:rand(0,Math.PI*2),
       stuck:false, flung:false, peelAt:1,
       orbit:rand(0,Math.PI*2),
-      speed:rand(L.base, L.base+28)
+      speed:rand(L.base, L.base+28) + (n===0 ? 16 + i*6 : 0)
     });
   }
   particles = [];
@@ -173,27 +173,27 @@ function show(kind){
   state = kind;
   ui.classList.remove('hidden');
   if (kind==='title'){
-    eyeEl.textContent = best ? ('Best reach \u00b7 level ' + best + ' / 10') : '10 yards';
+    eyeEl.textContent = best ? ('Best reach \u00b7 level ' + best + ' / 10') : '10 levels';
     titleEl.textContent = 'TIC';
-    copyEl.textContent = 'You are the cat. The others are tics. Beat ten yards. Start with eight tics, then one more each yard. Reach your human \u2014 they will run a circle and fling every tic off you before the lamp burns out. Clear all ten to submit your wallet.';
+    copyEl.textContent = 'You are the cat. The others are tics. Beat ten levels. Start with eight tics, then one more each level. One tic runs a little faster each level. Reach your human \u2014 they will run a circle and fling every tic off you before the lamp burns out. Clear all ten to submit your wallet.';
     goBtn.textContent = 'Find them';
   } else if (kind==='win'){
     eyeEl.textContent = LEVELS[level].name + ' \u00b7 ' + (level+1) + ' / 10';
     titleEl.textContent = 'Safe';
     copyEl.textContent = rescue && rescue.count
-      ? 'They run a circle around you. '+rescue.count+' tic'+(rescue.count===1?'':'s')+' spin off into the dark. Next yard has '+(9+level)+' tics.'
-      : 'You reach them clean. Next yard has '+(9+level)+' tics.';
-    goBtn.textContent = 'Yard ' + (level+2);
+      ? 'They run a circle around you. '+rescue.count+' tic'+(rescue.count===1?'':'s')+' spin off into the dark. Next level has '+(9+level)+' tics.'
+      : 'You reach them clean. Next level has '+(9+level)+' tics.';
+    goBtn.textContent = 'Level ' + (level+2);
   } else if (kind==='clear'){
-    eyeEl.textContent = 'Yard 10';
+    eyeEl.textContent = 'Level 10';
     titleEl.textContent = 'Home';
-    copyEl.textContent = 'Ten yards. Your human ran the last circle. No tic left on you. Submit your wallet.';
+    copyEl.textContent = 'Ten levels. Your human ran the last circle. No tic left on you. Submit your wallet.';
     goBtn.textContent = 'Claim wallet';
   } else if (kind==='lose'){
     eyeEl.textContent = 'Lamp out \u00b7 ' + (level+1) + ' / 10';
     titleEl.textContent = 'Too late';
     copyEl.textContent = 'The dark thickens. Tics keep their hold. Your human is a shape you cannot reach in time.';
-    goBtn.textContent = 'Try the yard again';
+    goBtn.textContent = 'Try the level again';
   }
 }
 
@@ -592,7 +592,7 @@ goBtn.onclick = ()=>{
   startGame(state==='title' ? 'fresh' : 'retry');
 };
 howBtn.onclick = ()=>{
-  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Bushes break a tic\u2019s line. If one latches on you get slower \u2014 reach your human and they run a circle that flings every tic off. Ten yards. Yard 1 has 8 tics, then one more each yard. Beat all ten to claim.';
+  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Bushes break a tic\u2019s line. If one latches on you get slower \u2014 reach your human and they run a circle that flings every tic off. Ten levels. Level 1 has 8 tics, then one more each level. One tic is a little faster each level. Beat all ten to claim.';
 };
 
 resize();
