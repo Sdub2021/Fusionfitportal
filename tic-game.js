@@ -22,16 +22,16 @@ const NAMES = [
 
 function makeLevel(i){
   const n = i + 1;
-  const ticks = Math.min(34, 3 + Math.floor(i * 0.31));
-  const bushes = Math.min(16, 3 + Math.floor(i * 0.12));
-  const time = Math.max(12, Math.round(36 - i * 0.22));
-  const base = 56 + i * 1.05;
+  const ticks = n;
+  const bushes = Math.min(8, 2 + i);
+  const time = Math.max(16, 34 - i * 1.5);
+  const base = 56 + i * 4;
   return {
-    name: NAMES[i % NAMES.length] + (i >= NAMES.length ? ' \u00b7 ' + n : ''),
+    name: NAMES[i % NAMES.length],
     time, ticks, bushes, base
   };
 }
-const LEVELS = Array.from({length:100}, (_, i) => makeLevel(i));
+const LEVELS = Array.from({length:10}, (_, i) => makeLevel(i));
 
 let W=800, H=520, dpr=1;
 let state='title';
@@ -165,31 +165,32 @@ function beginRescue(){
 function finishRescue(){
   best = Math.max(best, level+1);
   localStorage.setItem('tic-best-level', String(best));
-  goToClaim(level >= LEVELS.length-1 ? 'clear' : 'win');
+  if (level >= LEVELS.length-1) goToClaim('clear');
+  else show('win');
 }
 
 function show(kind){
   state = kind;
   ui.classList.remove('hidden');
   if (kind==='title'){
-    eyeEl.textContent = best ? ('Best reach \u00b7 level ' + best + ' / 100') : '100 yards';
+    eyeEl.textContent = best ? ('Best reach \u00b7 level ' + best + ' / 10') : '10 yards';
     titleEl.textContent = 'TIC';
-    copyEl.textContent = 'You are the cat. The others are tics. Cross one hundred yards. Reach your human \u2014 they will run a circle and fling every tic off you before the lamp burns out.';
+    copyEl.textContent = 'You are the cat. The others are tics. Beat ten yards. Each yard adds one more tic. Reach your human \u2014 they will run a circle and fling every tic off you before the lamp burns out. Clear all ten to submit your wallet.';
     goBtn.textContent = 'Find them';
   } else if (kind==='win'){
-    eyeEl.textContent = LEVELS[level].name + ' \u00b7 ' + (level+1) + ' / 100';
+    eyeEl.textContent = LEVELS[level].name + ' \u00b7 ' + (level+1) + ' / 10';
     titleEl.textContent = 'Safe';
     copyEl.textContent = rescue && rescue.count
-      ? 'They run a circle around you. '+rescue.count+' tic'+(rescue.count===1?'':'s')+' spin off into the dark. The lamp still holds.'
-      : 'You reach them clean. They still run a small circle, just to be sure. The yard goes quiet.';
-    goBtn.textContent = 'Claim wallet';
+      ? 'They run a circle around you. '+rescue.count+' tic'+(rescue.count===1?'':'s')+' spin off into the dark. Next yard has '+(level+2)+' tic'+(level+2===1?'':'s')+'.'
+      : 'You reach them clean. Next yard has '+(level+2)+' tic'+(level+2===1?'':'s')+'.';
+    goBtn.textContent = 'Yard ' + (level+2);
   } else if (kind==='clear'){
-    eyeEl.textContent = 'Yard 100';
+    eyeEl.textContent = 'Yard 10';
     titleEl.textContent = 'Home';
-    copyEl.textContent = 'One hundred yards. Your human ran the last circle. No tic left on you. The lamp holds.';
+    copyEl.textContent = 'Ten yards. Your human ran the last circle. No tic left on you. Submit your wallet.';
     goBtn.textContent = 'Claim wallet';
   } else if (kind==='lose'){
-    eyeEl.textContent = 'Lamp out \u00b7 ' + (level+1) + ' / 100';
+    eyeEl.textContent = 'Lamp out \u00b7 ' + (level+1) + ' / 10';
     titleEl.textContent = 'Too late';
     copyEl.textContent = 'The dark thickens. Tics keep their hold. Your human is a shape you cannot reach in time.';
     goBtn.textContent = 'Try the yard again';
@@ -476,14 +477,19 @@ stick.addEventListener('pointerup', endJoy);
 stick.addEventListener('pointercancel', endJoy);
 
 goBtn.onclick = ()=>{
-  if (state==='win' || state==='clear'){
-    goToClaim(state);
+  if (state==='clear'){
+    goToClaim('clear');
+    return;
+  }
+  if (state==='win'){
+    if (level < LEVELS.length-1){ level++; startGame(); }
+    else goToClaim('clear');
     return;
   }
   startGame(state==='title' ? 'fresh' : 'retry');
 };
 howBtn.onclick = ()=>{
-  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Bushes break a tic\u2019s line. If one latches on you get slower \u2014 reach your human and they run a circle that flings every tic off. One hundred yards to win.';
+  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Bushes break a tic\u2019s line. If one latches on you get slower \u2014 reach your human and they run a circle that flings every tic off. Ten yards. Yard 1 has 1 tic, yard 10 has 10. Beat all ten to claim.';
 };
 
 resize();
