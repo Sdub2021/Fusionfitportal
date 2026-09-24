@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>TIC — FusionFit Portal</title>
 <link rel="canonical" href="https://fusionfitportal.com/tic.html">
-<meta name="description" content="You are a cat. One hundred yards. Reach your human so they can rub the tics off in a circle before the lamp burns out.">
+<meta name="description" content="You are a cat. Ten yards. Each yard adds one tic. Beat all ten, then submit your wallet.">
 <meta name="theme-color" content="#0b0a08">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -73,7 +73,7 @@ a.ghost{display:inline-block;text-decoration:none}
     <a class="brand" href="/tic.html">TIC</a>
   </div>
   <div class="hud">
-    <span>Lv <b id="lv">1</b><span style="opacity:.45">/100</span></span>
+    <span>Lv <b id="lv">1</b><span style="opacity:.45">/10</span></span>
     <span>Tics <b id="on">0</b></span>
     <span class="bar" title="time"><i id="timebar"></i></span>
     <span><b id="clock">0:36</b></span>
@@ -83,15 +83,15 @@ a.ghost{display:inline-block;text-decoration:none}
 <div class="stick" id="stick"><div class="knob" id="knob"></div></div>
 <div id="ui">
   <div class="card">
-    <div class="eyebrow" id="eye">100 yards</div>
+    <div class="eyebrow" id="eye">10 yards</div>
     <h1 id="title">TIC</h1>
-    <p id="copy">You are the cat. The others are tics. Cross one hundred yards. Reach your human — they rub a circle through your fur until every tic comes off, if you arrive before the lamp burns out.</p>
+    <p id="copy">You are the cat. The others are tics. Beat ten yards. Each yard adds one more tic. Reach your human before the lamp burns out. Clear all ten to submit your wallet.</p>
     <button class="btn" id="go" type="button">Find them</button>
     <div><button class="ghost" id="how" type="button">How to move</button></div>
     <div><a class="ghost" href="/">Back to portal</a></div>
   </div>
 </div>
-<script src="/tic-game.js?v=20260924claim"></script>
+<script src="/tic-game.js?v=20260924ten"></script>
 <script src="/tic-rescue.js?v=20260922c"></script>
 </body>
 </html>
