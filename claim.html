@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Claim · Submit your wallet — FIT</title>
+<meta name="description" content="You finished TIC. Submit your Solana wallet to join the FIT claim list.">
+<link rel="canonical" href="https://fusionfitportal.com/claim.html">
+<meta name="theme-color" content="#0b0a08">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --soil:#0b0a08;
+  --amber:#e8a54b;
+  --lamp:#f3c27a;
+  --muted:rgba(255,244,220,.5);
+  --line:rgba(255,255,255,.1);
+  --text:#fff8ea;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--soil);color:var(--text);font-family:Outfit,system-ui,sans-serif;font-weight:300}
+body{
+  min-height:100dvh;
+  background:
+    radial-gradient(ellipse at 80% 10%, rgba(232,165,75,.14), transparent 42%),
+    radial-gradient(ellipse at 10% 90%, rgba(196,90,58,.1), transparent 40%),
+    var(--soil);
+}
+a,button,input{touch-action:manipulation}
+input{font-size:16px}
+.bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 1.2rem;padding-top:max(1rem,env(safe-area-inset-top));
+}
+.bar a,.bar span{
+  color:rgba(255,244,220,.7);text-decoration:none;letter-spacing:.16em;
+  font-size:.72rem;text-transform:uppercase;
+}
+main{max-width:460px;margin:0 auto;padding:1.2rem 1.15rem 3.2rem}
+.eyebrow{color:var(--amber);letter-spacing:.28em;text-transform:uppercase;font-size:.64rem}
+h1{
+  font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;
+  font-size:clamp(2.4rem,10vw,3.5rem);letter-spacing:.12em;margin:.2rem 0 .45rem;
+}
+.lede{color:var(--muted);line-height:1.55;margin:0 0 1.3rem}
+.card{
+  border:1px solid var(--line);border-radius:1.4rem;padding:1.35rem 1.2rem 1.25rem;
+  background:linear-gradient(180deg,rgba(28,22,16,.95),rgba(12,10,8,.95));
+}
+label{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 .4rem}
+.field{margin-bottom:.85rem}
+input{
+  width:100%;padding:.95rem 1rem;border-radius:.9rem;
+  background:rgba(0,0,0,.45);border:1px solid var(--line);color:#fff;font-family:inherit;
+}
+.wallet-row{display:flex;gap:.5rem}
+.wallet-row input{flex:1}
+.btn,.ghost{
+  border:0;border-radius:999px;padding:.95rem 1.25rem;cursor:pointer;
+  font:500 .75rem Outfit,sans-serif;letter-spacing:.16em;text-transform:uppercase;
+}
+.btn{background:linear-gradient(135deg,#e8a54b,#c98436);color:#1a1208;width:100%}
+.btn:disabled{opacity:.55;cursor:wait}
+.connect{
+  background:rgba(139,124,246,.16);border:1px solid rgba(139,124,246,.4);
+  color:#c4b5fd;border-radius:.9rem;padding:0 1rem;white-space:nowrap;cursor:pointer;
+  font:500 .68rem Outfit,sans-serif;letter-spacing:.1em;text-transform:uppercase;
+}
+.ghost{
+  margin-top:.55rem;background:transparent;border:1px solid rgba(232,165,75,.4);
+  color:var(--lamp);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:100%;
+}
+.msg{min-height:1.25rem;margin:.75rem 0 0;font-size:.88rem;text-align:center}
+.ok{color:#86efac}.err{color:#fca5a5}.warn{color:var(--lamp)}
+.mono{font-family:ui-monospace,monospace;font-size:.78rem;word-break:break-all;color:#c4b5fd;margin:.35rem 0 0}
+.hint{color:rgba(255,244,220,.38);font-size:.78rem;line-height:1.55;margin:1.1rem 0 0}
+@media(max-width:640px){.wallet-row{flex-direction:column}.connect{min-height:48px}}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <a href="/tic.html">← TIC</a>
+    <span>Wallet claim</span>
+  </div>
+  <main>
+    <p class="eyebrow" id="eye">Yard complete</p>
+    <h1>Claim</h1>
+    <p class="lede" id="lede">You reached your human. Submit a public Solana address so FIT can find you on the claim list. Never enter a seed phrase.</p>
+    <section class="card">
+      <form id="claim-form">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@email.com">
+        </div>
+        <div class="field">
+          <label for="wallet">Solana wallet</label>
+          <div class="wallet-row">
+            <input type="text" id="wallet" name="wallet" required autocomplete="off" spellcheck="false" placeholder="Paste address or connect Phantom">
+            <button type="button" class="connect" id="connect-btn">Connect</button>
+          </div>
+          <p class="mono" id="wallet-short"></p>
+        </div>
+        <button class="btn" type="submit" id="submit-btn">Submit wallet</button>
+        <p class="msg" id="form-msg"></p>
+      </form>
+      <a class="ghost" id="next" href="/tic.html">Keep walking the yard</a>
+    </section>
+    <p class="hint">Public address only. Same list as Movement Studio. One signup per wallet.</p>
+  </main>
+  <script src="/solana.js?v=20260924claim"></script>
+  <script>
+  (function () {
+    var SUPABASE_URL = "https://kytvzrkretucgkairzny.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg";
+    var S = window.FITSolana;
+    var q = new URLSearchParams(location.search);
+    var level = Number(q.get("level") || localStorage.getItem("fit_tic_level") || 0);
+    var cleared = q.get("clear") === "1";
+    var fromTic = q.get("from") === "tic" || Number(localStorage.getItem("tic-best-level") || 0) > 0;
+
+    try { localStorage.setItem("fit_tic_done", "1"); } catch (e) {}
+
+    var eye = document.getElementById("eye");
+    var lede = document.getElementById("lede");
+    var next = document.getElementById("next");
+    if (cleared) {
+      eye.textContent = "Yard 100 · Home";
+      lede.textContent = "One hundred yards. The lamp still holds. Leave your public Solana wallet so the claim can find you.";
+      next.textContent = "Walk the night again";
+      next.href = "/tic.html";
+    } else if (level > 0) {
+      eye.textContent = "Yard " + level + " · Safe";
+      next.textContent = level < 100 ? ("Yard " + (level + 1)) : "Walk the night again";
+      next.href = "/tic.html?play=1&level=" + Math.min(100, level + 1);
+    } else if (!fromTic) {
+      eye.textContent = "Claim list";
+    }
+
+    var walletEl = document.getElementById("wallet");
+    var shortEl = document.getElementById("wallet-short");
+    var msg = document.getElementById("form-msg");
+    var submitBtn = document.getElementById("submit-btn");
+
+    function showKey(key) {
+      walletEl.value = key;
+      shortEl.textContent = S ? S.shortKey(key) : key;
+    }
+    try {
+      var cached = localStorage.getItem("fit_wallet");
+      if (S && S.isValidSolana(cached)) showKey(cached);
+    } catch (e) {}
+
+    document.getElementById("connect-btn").onclick = async function () {
+      msg.className = "msg";
+      try {
+        var linked = await S.connectWallet();
+        showKey(linked.address);
+        msg.textContent = "Connected · " + S.shortKey(linked.address);
+        msg.className = "msg ok";
+      } catch (e) {
+        if (e && e.code === "NO_WALLET") {
+          msg.textContent = "No injected wallet. On iPhone open this page in Phantom.";
+          msg.className = "msg warn";
+          if (S.mobileWalletUrl) location.href = S.mobileWalletUrl(location.href);
+          return;
+        }
+        msg.textContent = "Could not connect.";
+        msg.className = "msg err";
+      }
+    };
+
+    document.getElementById("claim-form").onsubmit = async function (e) {
+      e.preventDefault();
+      var email = document.getElementById("email").value.trim().toLowerCase();
+      var wallet = walletEl.value.trim();
+      msg.className = "msg";
+      if (!email.includes("@")) {
+        msg.textContent = "Enter a valid email.";
+        msg.className = "msg err";
+        return;
+      }
+      if (!S.isValidSolana(wallet)) {
+        msg.textContent = "Enter a valid Solana wallet address.";
+        msg.className = "msg err";
+        return;
+      }
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
+      try {
+        var res = await fetch(SUPABASE_URL + "/rest/v1/signups", {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal"
+          },
+          body: JSON.stringify({
+            email: email,
+            wallet_address: wallet,
+            verified: false,
+            rewarded: true,
+            device: "tic-web"
+          })
+        });
+        if (res.status === 409) {
+          msg.textContent = "Already registered.";
+          msg.className = "msg warn";
+        } else if (!res.ok) {
+          var text = await res.text().catch(function () { return ""; });
+          if (text.indexOf("23505") >= 0) {
+            msg.textContent = "Already registered.";
+            msg.className = "msg warn";
+          } else {
+            msg.textContent = "Could not save. Try again.";
+            msg.className = "msg err";
+          }
+        } else {
+          try { localStorage.setItem("fit_wallet", wallet); } catch (err) {}
+          msg.textContent = "Wallet submitted. You are on the claim list.";
+          msg.className = "msg ok";
+          submitBtn.textContent = "Submitted";
+          return;
+        }
+      } catch (err) {
+        msg.textContent = "Network error. Try again.";
+        msg.className = "msg err";
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit wallet";
+    };
+  })();
+  </script>
+</body>
+</html>
