@@ -86,7 +86,7 @@ input{
   <main>
     <p class="eyebrow" id="eye">Yard complete</p>
     <h1>Claim</h1>
-    <p class="lede" id="lede">You reached your human. Submit a public Solana address so FIT can find you on the claim list. Never enter a seed phrase.</p>
+    <p class="lede" id="lede">You beat ten yards. Submit a public Solana address so FIT can find you on the claim list. Never enter a seed phrase.</p>
     <section class="card">
       <form id="claim-form">
         <div class="field">
@@ -118,30 +118,27 @@ input{
     var level = Number(q.get("level") || localStorage.getItem("fit_tic_level") || 0);
     var cleared = q.get("clear") === "1";
     var fromTic = q.get("from") === "tic" || Number(localStorage.getItem("tic-best-level") || 0) > 0;
-
     try { localStorage.setItem("fit_tic_done", "1"); } catch (e) {}
-
     var eye = document.getElementById("eye");
     var lede = document.getElementById("lede");
     var next = document.getElementById("next");
-    if (cleared) {
-      eye.textContent = "Yard 100 · Home";
-      lede.textContent = "One hundred yards. The lamp still holds. Leave your public Solana wallet so the claim can find you.";
+    if (cleared || level >= 10) {
+      eye.textContent = "Yard 10 · Home";
+      lede.textContent = "Ten yards. The lamp still holds. Leave your public Solana wallet so the claim can find you.";
       next.textContent = "Walk the night again";
       next.href = "/tic.html";
     } else if (level > 0) {
-      eye.textContent = "Yard " + level + " · Safe";
-      next.textContent = level < 100 ? ("Yard " + (level + 1)) : "Walk the night again";
-      next.href = "/tic.html?play=1&level=" + Math.min(100, level + 1);
+      eye.textContent = "Yard " + level + " · keep going";
+      lede.textContent = "Finish all ten yards before the claim counts. Yard " + Math.min(10, level + 1) + " is next.";
+      next.textContent = "Yard " + Math.min(10, level + 1);
+      next.href = "/tic.html?play=1&level=" + Math.min(10, level + 1);
     } else if (!fromTic) {
       eye.textContent = "Claim list";
     }
-
     var walletEl = document.getElementById("wallet");
     var shortEl = document.getElementById("wallet-short");
     var msg = document.getElementById("form-msg");
     var submitBtn = document.getElementById("submit-btn");
-
     function showKey(key) {
       walletEl.value = key;
       shortEl.textContent = S ? S.shortKey(key) : key;
@@ -150,7 +147,6 @@ input{
       var cached = localStorage.getItem("fit_wallet");
       if (S && S.isValidSolana(cached)) showKey(cached);
     } catch (e) {}
-
     document.getElementById("connect-btn").onclick = async function () {
       msg.className = "msg";
       try {
@@ -169,7 +165,6 @@ input{
         msg.className = "msg err";
       }
     };
-
     document.getElementById("claim-form").onsubmit = async function (e) {
       e.preventDefault();
       var email = document.getElementById("email").value.trim().toLowerCase();
