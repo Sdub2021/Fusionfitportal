@@ -102,56 +102,37 @@ function drawHands(){
   if (state!=='rescue' || !rescue || !rescue.h1) return;
   const pairs = [rescue.h1, rescue.h2];
   ctx.save();
-  ctx.strokeStyle = 'rgba(232,165,75,.7)';
-  ctx.lineWidth = 2.5;
-  ctx.setLineDash([4,5]);
+  ctx.strokeStyle = 'rgba(232,165,75,.55)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4,6]);
   ctx.beginPath();
   ctx.ellipse(cat.x, cat.y-2, 16, 12, 0, 0, Math.PI*2);
   ctx.stroke();
   ctx.setLineDash([]);
   pairs.forEach((h, i) => {
-    ctx.strokeStyle = 'rgba(217,196,160,.95)';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#c9a36a';
+    ctx.lineWidth = 3.6;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(human.x - 6, human.y - 8);
-    ctx.quadraticCurveTo((human.x + h.x)/2, Math.min(human.y, h.y) - 22, h.x, h.y);
+    ctx.moveTo(human.x + (i?6:-6), human.y - 10);
+    ctx.quadraticCurveTo((human.x + h.x)/2, Math.min(human.y, h.y) - 20, h.x, h.y);
     ctx.stroke();
-    ctx.fillStyle = 'rgba(243,194,122,.35)';
-    ctx.beginPath(); ctx.arc(h.x, h.y, 12, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = i ? '#e8a54b' : '#f6d48a';
-    ctx.beginPath(); ctx.arc(h.x, h.y, 7, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#d7c4a0';
-    ctx.beginPath(); ctx.arc(h.x, h.y, 4.4, 0, Math.PI*2); ctx.fill();
+    ctx.save();
+    ctx.translate(h.x, h.y);
+    ctx.rotate(Math.atan2(h.y - cat.y, h.x - cat.x) + Math.PI/2);
+    ctx.fillStyle = '#e2c39a';
+    ctx.beginPath(); ctx.ellipse(0, 0, 5.2, 6.4, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#d4b08a';
+    for (let f=0; f<4; f++){
+      ctx.beginPath();
+      ctx.roundRect(-4.2 + f*2.2, -9.5, 1.7, 6.5, 0.8);
+      ctx.fill();
+    }
+    ctx.beginPath(); ctx.roundRect(3.4, -2.2, 2.8, 4.2, 1); ctx.fill();
+    ctx.restore();
   });
   ctx.restore();
 }
-
-drawHuman = function(){
-  const x=human.x, y=human.y;
-  ctx.save();
-  ctx.translate(x,y);
-  ctx.fillStyle = 'rgba(243,194,122,.18)';
-  ctx.beginPath(); ctx.ellipse(0,18,34,10,0,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#d7c4a0';
-  ctx.beginPath(); ctx.arc(0,-22,8,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#c9a36a';
-  ctx.fillRect(-7,-14,14,22);
-  ctx.fillStyle = '#8a6a3e';
-  ctx.fillRect(-8,8,7,16);
-  ctx.fillRect(1,8,7,16);
-  if (state!=='rescue'){
-    ctx.fillStyle = '#d7c4a0';
-    ctx.fillRect(-12, -8, 6, 12);
-    ctx.fillRect(6, -8, 6, 12);
-  }
-  ctx.fillStyle = '#e8a54b';
-  ctx.beginPath(); ctx.arc(10,-6,3.2,0,Math.PI*2); ctx.fill();
-  ctx.restore();
-  ctx.fillStyle = 'rgba(232,165,75,.95)';
-  ctx.font = '500 13px Outfit,sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(state==='rescue' ? 'rubbing them off' : 'your human', x, y-44);
-};
 
 draw = function(){
   ctx.save();
