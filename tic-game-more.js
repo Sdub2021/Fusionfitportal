@@ -56,13 +56,13 @@ function show(kind){
   if (kind==='title'){
     eyeEl.textContent = best ? ('Best reach \u00b7 ' + parkName(best-1) + ' / 10') : '10 dog parks';
     titleEl.textContent = 'TIC';
-    copyEl.textContent = 'You are the cat. Each yard is a dog park. Beat ten parks. Start with eight tics, then one more each level. A park dog sheds two fleas every level \u2014 they hop for you after they fall. Reach your human before the lamp burns out. Clear all ten to submit your wallet.';
+    copyEl.textContent = 'You are the cat. Each yard is a dog park. Beat ten parks. Start with eight tics, then one more each level. A park dog sheds two fleas every level \u2014 they hop for you after they fall. The dog runs a little faster toward you on each playground. Reach your human before the lamp burns out. Clear all ten to submit your wallet.';
     goBtn.textContent = 'Find them';
   } else if (kind==='win'){
     eyeEl.textContent = parkName(level) + ' \u00b7 ' + (level+1) + ' / 10';
     titleEl.textContent = 'Safe';
     copyEl.textContent = rescue && rescue.count
-      ? 'They run a circle around you. '+rescue.count+' pest'+(rescue.count===1?'':'s')+' spin off into the dark. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+' with '+(9+level)+' tics and two more falling fleas.'
+      ? 'They run a circle around you. '+rescue.count+' pest'+(rescue.count===1?'':'s')+' spin off into the dark. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+' \u2014 the dog runs harder at you, plus '+(9+level)+' tics and two more falling fleas.'
       : 'You reach them clean. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+'.';
     goBtn.textContent = parkName(level+1);
   } else if (kind==='clear'){
@@ -162,17 +162,15 @@ function update(dt){
       dropFleaFromDog();
       dog.nextDrop = dog.dropLeft ? rand(1.1, 2.2) : 99;
     }
-    const wander = 38;
+    const wander = Math.max(16, 34 - level * 2);
+    const chase = 22 + level * 10;
     dog.vx = Math.cos(dog.phase * 0.55) * wander;
     dog.vy = Math.sin(dog.phase * 0.37) * wander * 0.7;
     if (cat){
-      const away = Math.hypot(dog.x - cat.x, dog.y - cat.y);
-      if (away < 54){
-        const nx = (dog.x - cat.x) / (away || 1);
-        const ny = (dog.y - cat.y) / (away || 1);
-        dog.vx += nx * 70;
-        dog.vy += ny * 70;
-      }
+      const gap = Math.hypot(cat.x - dog.x, cat.y - dog.y) || 1;
+      const pull = gap < 26 ? chase * 0.15 : chase;
+      dog.vx += ((cat.x - dog.x) / gap) * pull;
+      dog.vy += ((cat.y - dog.y) / gap) * pull;
     }
     dog.x += dog.vx * dt;
     dog.y += dog.vy * dt;
