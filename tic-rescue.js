@@ -139,6 +139,7 @@ draw = function(){
   if (shake>0.4) ctx.translate(rand(-shake,shake), rand(-shake,shake));
   drawGrass();
   bushes.forEach(drawBush);
+  if (typeof drawDog === 'function' && dog) drawDog();
   if (human) drawHuman();
   ticks.filter(t=>t.stuck).forEach(drawTick);
   if (cat) drawCat();
@@ -156,6 +157,7 @@ draw = function(){
   }
   ctx.restore();
   onEl.textContent = cat ? cat.attached : 0;
+  if (typeof fleasEl !== 'undefined' && fleasEl) fleasEl.textContent = fleasDropped;
   clockEl.textContent = fmtTime(timeLeft);
   const pct = timeMax ? timeLeft/timeMax : 0;
   timebar.style.transform = 'scaleX(' + clamp(pct,0,1) + ')';
