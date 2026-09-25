@@ -62,7 +62,7 @@
     let hit = false;
     if (step === 0) { setPrompt('Show both hands close to the camera', n + ' / 2 hands · fill the frame with your palms'); hit = read.see; }
     else if (step === 1) { setPrompt('Press the palms together', read.pray ? 'Prayer shape found' : 'Fingers point up. Palms kiss.'); hit = read.pray; }
-    else if (step === 2) { setPrompt('Bring the prayer to your heart', read.heart ? 'At the heart' : 'Slide the joined hands to center chest'); hit = read.heart; }
+    else if (step === 2) { setPrompt('Bring the prayer to the heart', read.heart ? 'At the heart' : 'Slide the joined hands to center chest'); hit = read.heart; }
     else { setPrompt('Hold and breathe', 'Stay in prayer · ' + hold + ' / ' + HOLD_NEED); hit = read.heart; }
     if (hit) { hold += 1; if (hold >= (step === 3 ? HOLD_NEED : 3)) advance(); } else { hold = Math.max(0, hold - 1); }
     raf = requestAnimationFrame(tick);
@@ -99,46 +99,4 @@
     }
   };
 })();
-(function(){var s=document.createElement("script");s.src="/waitlist-gate.js?v=20260903vest2";document.body.appendChild(s);var t=document.createElement("script");t.src="/portal-tic.js?v=20260922";document.body.appendChild(t);})();
-(function () {
-  var studio = {
-    yoga: "/practice.html?mode=yoga",
-    taichi: "/practice.html?mode=taichi",
-    meditation: "/practice.html?mode=meditation",
-    vestibular: "/practice.html?mode=vestibular"
-  };
-  var prev = window.startPractice;
-  window.startPractice = function (key) {
-    if (studio[key]) { window.location.href = studio[key]; return; }
-    if (typeof prev === "function") return prev(key);
-  };
-  function ready(fn) {
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
-    else fn();
-  }
-  ready(function () {
-    var grid = document.querySelector("#services .grid");
-    if (!grid) return;
-    var taichiCardLink = grid.querySelector("a[data-studio-link='taichi']");
-    if (!taichiCardLink) taichiCardLink = grid.querySelector("a[href='/taichi.html']");
-    if (taichiCardLink && taichiCardLink.getAttribute("href") !== studio.taichi) {
-      taichiCardLink.setAttribute("href", studio.taichi);
-      taichiCardLink.textContent = "Open Tai Chi studio";
-    }
-    if (!grid.querySelector("[data-fit-meditation]")) {
-      var card = document.createElement("div");
-      card.className = "service-card";
-      card.setAttribute("data-fit-meditation", "1");
-      card.innerHTML = '<div class="text-4xl mb-6">🕯️</div><h3 class="text-3xl font-bold mb-4 text-white">Meditation</h3><p class="text-zinc-400 leading-relaxed mb-6">Hold the face still for ten seconds. Camera stays on this device.</p><a href="/practice.html?mode=meditation" class="block w-full py-3 rounded-xl bg-white/10 hover:bg-orange-500 transition text-center">Open Meditation studio</a>';
-      var vest = null;
-      grid.querySelectorAll("h3").forEach(function (h) {
-        if (/vestibular/i.test(h.textContent)) vest = h.closest(".service-card");
-      });
-      if (vest && vest.parentNode) vest.parentNode.insertBefore(card, vest);
-      else grid.appendChild(card);
-    }
-    if (grid.className.indexOf("lg:grid-cols-4") < 0) {
-      grid.className = grid.className.replace("md:grid-cols-3", "md:grid-cols-2 lg:grid-cols-4");
-    }
-  });
-})();
+(function(){function add(src){var s=document.createElement("script");s.src=src;document.body.appendChild(s);}add("/waitlist-gate.js?v=20260903vest2");add("/portal-tic.js?v=20260922");add("/yin-timer.js?v=20260925b");})();
