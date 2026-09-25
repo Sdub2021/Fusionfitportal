@@ -99,7 +99,7 @@
     }
   };
 })();
-(function(){function add(src){var s=document.createElement("script");s.src=src;document.body.appendChild(s);}add("/waitlist-gate.js?v=20260903vest2");add("/portal-tic.js?v=20260922");add("/yin-timer.js?v=20260925b");})();
+(function(){function add(src){var s=document.createElement("script");s.src=src;document.body.appendChild(s);}add("/waitlist-gate.js?v=20260925yin");add("/portal-tic.js?v=20260922");add("/yin-timer.js?v=20260925c");})();
 (function () {
   var studio = {
     yoga: "/practice.html?mode=yoga",
