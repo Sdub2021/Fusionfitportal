@@ -34,10 +34,14 @@
   }
   function rewrite() {
     document.querySelectorAll('a[href="#signup"], a[href="/#signup"]').forEach(function (a) {
+      if (a.closest("#level1-experience")) return;
       a.setAttribute("href", STUDIO);
     });
     document.querySelectorAll("a, button").forEach(function (el) {
+      if (el.closest("#level1-experience")) return;
+      if (el.hasAttribute("data-yin-start")) return;
       var t = (el.textContent || "").replace(/\s+/g, " ").trim().toUpperCase();
+      t = t.replace(/[^A-Z0-9 ]/g, "").trim();
       if (t === "JOIN THE LIST" || t === "JOIN THE FIT LIST" || t === "JOIN WAITLIST") {
         if (el.tagName === "A") el.setAttribute("href", STUDIO);
         else el.onclick = function (e) { e.preventDefault(); goStudio(); };
@@ -55,7 +59,6 @@
     if (key === "vestibular") { goStudio(); return; }
     if (typeof prevStart === "function") return prevStart(key);
   };
-  window.goToList = goStudio;
 
   var origFetch = window.fetch;
   if (origFetch && !window.__fitVestibularFetchGate) {
