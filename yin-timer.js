@@ -89,7 +89,26 @@
     }, 250);
   }
 
+  function ensureBar() {
+    if (document.getElementById('yin-timer')) return;
+    const wrap = document.createElement('div');
+    wrap.id = 'yin-timer';
+    wrap.className = 'yin-timer';
+    wrap.hidden = true;
+    wrap.innerHTML = '<div class="yin-timer-inner">' +
+      '<span class="yin-timer-kicker">Level 1 \u00b7 Yin Awakening</span>' +
+      '<b id="yin-timer-clock">5:00</b>' +
+      '<span class="yin-timer-track" aria-hidden="true"><i id="yin-timer-fill"></i></span>' +
+      '<button type="button" id="yin-timer-pause">Pause</button>' +
+      '<button type="button" id="yin-timer-dismiss" aria-label="Hide timer">\u00d7</button>' +
+      '</div>';
+    const nav = document.querySelector('nav');
+    if (nav && nav.parentNode) nav.parentNode.insertBefore(wrap, nav.nextSibling);
+    else document.body.insertBefore(wrap, document.body.firstChild);
+  }
+
   function showBar() {
+    ensureBar();
     const wrap = bar();
     if (!wrap) return;
     wrap.hidden = false;
@@ -107,8 +126,18 @@
     runTick();
   };
 
+  function wrapJoin() {
+    const orig = window.goToList;
+    window.goToList = function () {
+      if (typeof orig === 'function') orig();
+      window.startYinHomeTimer(true);
+    };
+  }
+
   function bind() {
     injectStyle();
+    ensureBar();
+    wrapJoin();
     const pause = pauseBtn();
     const hide = document.getElementById('yin-timer-dismiss');
     if (pause) pause.addEventListener('click', function () {
