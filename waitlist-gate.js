@@ -39,7 +39,11 @@
     });
     document.querySelectorAll("a, button").forEach(function (el) {
       if (el.closest("#level1-experience")) return;
+      if (el.closest(".modes")) return;
       if (el.hasAttribute("data-yin-start")) return;
+      if ((el.dataset && el.dataset.mode) === "taichi") return;
+      var href = (el.getAttribute("href") || "").toLowerCase();
+      if (href.indexOf("taichi") !== -1 || href.indexOf("youtube.com") !== -1 || href.indexOf("youtu.be") !== -1) return;
       var t = (el.textContent || "").replace(/\s+/g, " ").trim().toUpperCase();
       t = t.replace(/[^A-Z0-9 ]/g, "").trim();
       if (t === "JOIN THE LIST" || t === "JOIN THE FIT LIST" || t === "JOIN WAITLIST") {
