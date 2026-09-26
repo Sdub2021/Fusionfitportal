@@ -46,6 +46,9 @@
     .modes { display:flex; gap:.45rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.15rem; }
     .mode { border:1px solid var(--line); background:rgba(255,255,255,.03); color:rgba(255,255,255,.72); border-radius:999px; padding:.55rem 1rem; min-height:44px; font:inherit; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
     .mode.on { border-color:rgba(232,165,75,.55); color:var(--amber-soft); background:rgba(232,165,75,.1); }
+    a.mode { text-decoration:none; display:inline-flex; align-items:center; }
+    .yt-link { color:#f0c27a; text-decoration:none; border-bottom:1px solid rgba(232,165,75,.35); }
+    .yt-link:hover { color:#fff; }
     .frame { position:relative; width:min(100%,720px); aspect-ratio:3/4; max-height:min(58vh,640px); border-radius:1.4rem; overflow:hidden; border:1px solid var(--line); background:#000; }
     video, canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
     canvas { pointer-events:none; }
@@ -91,14 +94,15 @@
   <main class="stage">
     <p class="eyebrow">On-device · MediaPipe Face + Pose</p>
     <h1>Movement Studio</h1>
-    <p class="lede">Yoga, Tai Chi, Vestibular, and Meditation live here. Camera stays on this device. Vestibular gaze unlocks the waitlist.</p>
+    <p class="lede">Yoga, Vestibular, and Meditation live here. Tai Chi opens a side-by-side room: Professor Cheng’s form on the left, your full-body MediaPipe pose on the right. Camera stays on this device.</p>
     <div class="chips" id="chips"></div>
     <div class="modes">
       <button class="mode" data-mode="yoga" type="button">Yoga</button>
-      <button class="mode" data-mode="taichi" type="button">Tai Chi</button>
+      <a class="mode" data-mode="taichi" href="/taichi.html">Tai Chi</a>
       <button class="mode on" data-mode="vestibular" type="button">Vestibular</button>
       <button class="mode" data-mode="meditation" type="button">Meditation</button>
     </div>
+    <p class="lede" style="margin-top:-.35rem"><a class="yt-link" href="https://www.youtube.com/watch?v=sy5_d5QUbf8" target="_blank" rel="noopener">Cheng Man Ching - 37 Movement Tai Chi superb quality (in COLOUR) - YouTube</a></p>
     <div class="frame">
       <video id="cam" playsinline muted></video>
       <canvas id="overlay"></canvas>
@@ -153,5 +157,17 @@
   <script type="module" src="/studio.js?v=20260903opt"></script>
   <script src="/studio-gate.js?v=20260903vest2"></script>
   <script src="/field-audio.js?v=20260830a"></script>
+  <script>
+    (function () {
+      var q = new URLSearchParams(location.search).get('mode');
+      if (q === 'taichi') location.replace('/taichi.html');
+      document.querySelectorAll('[data-mode="taichi"]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          location.href = '/taichi.html';
+        }, true);
+      });
+    })();
+  </script>
 </body>
 </html>
