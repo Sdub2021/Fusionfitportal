@@ -1,25 +1,44 @@
-/* Studio core + Tai Chi leaves for side-by-side CMC37 */
+/* Studio core. Each mode bubble is a separate link. Camera starts only on Open camera. */
 import "https://cdn.jsdelivr.net/gh/Sdub2021/Fusionfitportal@950c351b67b35b81f56897e751d472d5653c4d8a/studio.js";
 
-const TAICHI = "/taichi.html";
-function goTaiChi(e) {
+const ROOMS = {
+  yoga: "/practice.html?mode=yoga",
+  taichi: "/taichi.html",
+  vestibular: "/practice.html?mode=vestibular",
+  meditation: "/practice.html?mode=meditation"
+};
+
+function currentMode() {
+  const q = new URLSearchParams(location.search).get("mode");
+  return q && ROOMS[q] ? q : "vestibular";
+}
+
+function goRoom(mode, e) {
+  if (!ROOMS[mode]) return;
   if (e) {
     e.preventDefault();
     e.stopPropagation();
     if (e.stopImmediatePropagation) e.stopImmediatePropagation();
   }
-  window.location.href = TAICHI;
+  if (mode === "taichi") {
+    window.location.href = ROOMS.taichi;
+    return;
+  }
+  if (currentMode() === mode) return;
+  window.location.href = ROOMS[mode];
 }
-function bindTaiChi() {
-  document.querySelectorAll(".mode, [data-mode], a[href*='taichi']").forEach(function (el) {
-    var mode = (el.dataset && el.dataset.mode) || "";
-    var href = el.getAttribute("href") || "";
-    if (mode === "taichi" || href.indexOf("taichi") !== -1) {
-      el.onclick = goTaiChi;
-      el.addEventListener("click", goTaiChi, true);
-    }
+
+function bindRooms() {
+  document.querySelectorAll(".mode, [data-mode]").forEach(function (el) {
+    const mode = (el.dataset && el.dataset.mode) || "";
+    if (!ROOMS[mode]) return;
+    el.setAttribute("href", ROOMS[mode]);
+    el.onclick = function (e) { goRoom(mode, e); };
+    el.addEventListener("click", function (e) { goRoom(mode, e); }, true);
+    el.classList.toggle("on", mode === currentMode());
   });
 }
-bindTaiChi();
-setTimeout(bindTaiChi, 0);
-setTimeout(bindTaiChi, 400);
+
+bindRooms();
+setTimeout(bindRooms, 0);
+setTimeout(bindRooms, 400);
