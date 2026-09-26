@@ -30,6 +30,9 @@
     .tc-btn { padding: .85rem 1.1rem; border-radius: .9rem; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #f97316, #fbbf24); color: #111; }
     .tc-btn.ghost { background: transparent; color: #e4e4e7; border: 1px solid rgba(255,255,255,.2); }
     .tc-note { color: #71717a; font-size: .8rem; line-height: 1.5; }
+    .modes { display:flex; gap:.45rem; flex-wrap:wrap; margin:0 0 1.2rem; }
+    .mode { border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.03); color:rgba(255,255,255,.72); border-radius:999px; padding:.55rem 1rem; min-height:44px; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; text-decoration:none; display:inline-flex; align-items:center; }
+    .mode.on { border-color:rgba(249,115,22,.55); color:#fdba74; background:rgba(249,115,22,.12); }
   </style>
 </head>
 <body class="bg-black text-white">
@@ -47,16 +50,22 @@
   </nav>
   <main class="tc-wrap">
     <p class="text-orange-400 tracking-[0.25em] text-sm uppercase mb-3">Sacred Practices · Tai Chi</p>
+    <div class="modes">
+      <a class="mode" data-mode="yoga" href="/practice.html?mode=yoga">Yoga</a>
+      <a class="mode on" data-mode="taichi" href="/taichi.html">Tai Chi</a>
+      <a class="mode" data-mode="vestibular" href="/practice.html?mode=vestibular">Vestibular</a>
+      <a class="mode" data-mode="meditation" href="/practice.html?mode=meditation">Meditation</a>
+    </div>
     <h1 class="text-4xl md:text-5xl font-bold mb-3">CMC37 form check</h1>
-    <p class="text-zinc-400 max-w-2xl mb-6">Side by side: Professor Cheng on the left, your camera on the right with MediaPipe Pose Landmarker (full body) plus hands. Open-hand moves look for a <strong class="text-white">beautiful lady’s hand</strong>: side view, wrist straight, no bend.</p>
+    <p class="text-zinc-400 max-w-2xl mb-6">Side by side: teacher on the left, your camera on the right with MediaPipe full-body pose plus hands. Open-hand moves look for a <strong class="text-white">beautiful lady’s hand</strong>: side view, wrist straight, no bend.</p>
     <div class="tc-row">
-      <button type="button" class="tc-btn ghost" data-vid="sy5_d5QUbf8" id="pick-cmc">Professor · colour</button>
+      <button type="button" class="tc-btn ghost" data-vid="sy5_d5QUbf8" id="pick-cmc">Teacher form</button>
       <button type="button" class="tc-btn ghost" data-vid="qdQNjyo1WD4" id="pick-1">Class · first third</button>
       <button type="button" class="tc-btn ghost" data-vid="L3ikwm_cuWI" id="pick-2">Class · rest</button>
       <input id="yt-url" type="url" placeholder="Or paste another YouTube link">
       <button type="button" class="tc-btn ghost" id="load-url">Load</button>
     </div>
-    <p id="video-label" class="tc-note mb-6">Reference: <a href="https://www.youtube.com/watch?v=sy5_d5QUbf8" target="_blank" rel="noopener" style="color:#fdba74">Cheng Man Ching - 37 Movement Tai Chi superb quality (in COLOUR) - YouTube</a>. Uploaded by Boz Odusanya. Left: teacher. Right: you + full-body pose.</p>
+    <p id="video-label" class="tc-note mb-6">Teacher on the left. You on the right. Tap Start camera + video when ready.</p>
     <div class="tc-score">
       <div>
         <p class="text-xs text-orange-400 tracking-widest uppercase mb-2" id="form-kicker">Waiting</p>
@@ -93,5 +102,15 @@
   </main>
   <script src="/fit-hands.js"></script>
   <script src="/taichi.js?v=20260926full"></script>
+  <script>
+    (function(){
+      function clean(){
+        var el=document.getElementById("video-label");
+        if(!el) return;
+        if(/Cheng Man|COLOUR|YouTube/i.test(el.textContent||"")) el.textContent="Teacher on the left. You on the right. Tap Start camera + video when ready.";
+      }
+      clean(); setTimeout(clean,200); setTimeout(clean,800);
+    })();
+  </script>
 </body>
 </html>
