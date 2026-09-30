@@ -4,39 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5">
   <title>Movement Studio · FIT</title>
-  <meta name="description" content="On-device pose and face tracking. Vestibular: LEFT RIGHT LEFT RIGHT, UP DOWN UP DOWN, mouth open close twice.">
+  <meta name="description" content="On-device pose and face tracking for Yoga, Tai Chi, vestibular and meditation.">
   <link rel="canonical" href="https://fusionfitportal.com/practice.html">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="FIT">
-  <meta property="og:title" content="Movement Studio · FIT">
-  <meta property="og:description" content="Yoga, Tai Chi, vestibular gaze and meditation on-device. Your camera feed never leaves your phone.">
-  <meta property="og:url" content="https://fusionfitportal.com/practice.html">
-  <meta property="og:image" content="https://fusionfitportal.com/icons/smmkn.png">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Movement Studio · FIT">
-  <meta name="twitter:description" content="On-device pose and face tracking for Yoga, Tai Chi, vestibular and meditation.">
-  <meta name="twitter:image" content="https://fusionfitportal.com/icons/smmkn.png">
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#05050a">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="/icons/smmkn.png">
-  <link rel="preconnect" href="https://unpkg.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://storage.googleapis.com" crossorigin>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/vision_bundle.mjs">
-  <link rel="preload" href="/studio.js?v=20260926rooms2" as="script" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root { --amber:#e8a54b; --amber-soft:#f0c27a; --line:rgba(255,255,255,.1); --muted:rgba(255,255,255,.48); }
     * { box-sizing:border-box; }
-    html, body { margin:0; min-height:100%; background:#05050a; color:#fff; font-family:Outfit,system-ui,sans-serif; font-weight:300; overflow-x:hidden; }
+    html, body { margin:0; min-height:100%; background:#05050a; color:#fff; font-family:Outfit,system-ui,sans-serif; font-weight:300; }
     a,button,input { touch-action:manipulation; }
     input { font-size:16px; }
     .bar { position:fixed; top:0; left:0; right:0; z-index:8; display:flex; justify-content:space-between; align-items:center; padding:1.1rem 1.4rem; padding-top:max(1.1rem,env(safe-area-inset-top)); background:linear-gradient(to bottom,rgba(5,5,10,.92),transparent); }
     .bar a, .bar span { color:rgba(255,255,255,.7); text-decoration:none; letter-spacing:.16em; font-size:.72rem; text-transform:uppercase; }
-    .stage { position:relative; min-height:100dvh; display:flex; flex-direction:column; align-items:center; padding:5.2rem 1.15rem max(2.4rem,calc(1.2rem + env(safe-area-inset-bottom))); padding-top:calc(4.4rem + env(safe-area-inset-top)); }
+    .stage { min-height:100dvh; display:flex; flex-direction:column; align-items:center; padding:5.2rem 1.15rem max(2.4rem,calc(1.2rem + env(safe-area-inset-bottom))); padding-top:calc(4.4rem + env(safe-area-inset-top)); }
     .eyebrow { letter-spacing:.32em; text-transform:uppercase; color:var(--amber); font-size:.68rem; margin:0 0 .45rem; }
     h1 { font-family:'Cormorant Garamond',Georgia,serif; font-weight:500; font-size:clamp(2rem,6vw,3.2rem); margin:.1rem 0 .35rem; text-align:center; }
     .lede { color:var(--muted); text-align:center; max-width:28rem; line-height:1.55; margin:0 0 1rem; font-size:.95rem; }
@@ -46,7 +30,6 @@
     .modes { display:flex; gap:.45rem; flex-wrap:wrap; justify-content:center; margin-bottom:1.15rem; }
     .mode { border:1px solid var(--line); background:rgba(255,255,255,.03); color:rgba(255,255,255,.72); border-radius:999px; padding:.55rem 1rem; min-height:44px; font:inherit; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; }
     .mode.on { border-color:rgba(232,165,75,.55); color:var(--amber-soft); background:rgba(232,165,75,.1); }
-    a.mode { text-decoration:none; display:inline-flex; align-items:center; }
     .frame { position:relative; width:min(100%,720px); aspect-ratio:3/4; max-height:min(58vh,640px); border-radius:1.4rem; overflow:hidden; border:1px solid var(--line); background:#000; }
     video, canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
     canvas { pointer-events:none; }
@@ -76,7 +59,7 @@
     .form-item.on { border-color:rgba(232,165,75,.5); }
     .claim { width:min(100%,720px); margin-top:1rem; display:none; padding:1.35rem 1.25rem; border-radius:1.25rem; border:1px solid rgba(232,165,75,.28); }
     .claim.open { display:block; }
-    .claim input { width:100%; padding:.9rem 1rem; border-radius:.85rem; background:rgba(0,0,0,.45); border:1px solid var(--line); color:#fff; font-size:16px; }
+    .claim input { width:100%; padding:.9rem 1rem; border-radius:.85rem; background:rgba(0,0,0,.45); border:1px solid var(--line); color:#fff; }
     .wallet-row { display:flex; gap:.5rem; }
     .wallet-row input { flex:1; }
     .field { margin-bottom:.85rem; }
@@ -92,20 +75,20 @@
   <main class="stage">
     <p class="eyebrow">On-device · MediaPipe Face + Pose</p>
     <h1>Movement Studio</h1>
-    <p class="lede">Each bubble is its own room. Tap Yoga, Tai Chi, Vestibular, or Meditation to load that MediaPipe. Then tap Open camera. Nothing is uploaded.</p>
+    <p class="lede">Yoga, Tai Chi, Vestibular, and Meditation switch on this page. Nothing reloads. Open the camera when you are ready. Nothing is uploaded.</p>
     <div class="chips" id="chips"></div>
     <div class="modes">
-      <a class="mode" data-mode="yoga" href="/practice.html?mode=yoga">Yoga</a>
-      <a class="mode" data-mode="taichi" href="/taichi.html">Tai Chi</a>
-      <a class="mode" data-mode="vestibular" href="/practice.html?mode=vestibular">Vestibular</a>
-      <a class="mode" data-mode="meditation" href="/practice.html?mode=meditation">Meditation</a>
+      <button class="mode" data-mode="yoga" type="button">Yoga</button>
+      <button class="mode" data-mode="taichi" type="button">Tai Chi</button>
+      <button class="mode" data-mode="vestibular" type="button">Vestibular</button>
+      <button class="mode" data-mode="meditation" type="button">Meditation</button>
     </div>
     <div class="frame">
       <video id="cam" playsinline muted></video>
       <canvas id="overlay"></canvas>
       <div class="progress" id="bar"><span id="barFill"></span></div>
       <div class="veil" id="veil">
-        <p id="veil-copy">Pick a practice above, then open the camera. The matching MediaPipe model loads here.</p>
+        <p id="veil-copy">Pick a practice above, then open the camera.</p>
         <button class="act" id="go">Open camera</button>
       </div>
     </div>
@@ -138,38 +121,12 @@
       <button class="act" id="skipMove" type="button">Count this move</button>
       <button class="act" id="mute" type="button">Sound on</button>
     </div>
-    <p class="hint">Waitlist signup unlocks only after the vestibular sequence. Hold each cue to advance. If a mouth cue is missed, tap Count this move. Yoga, Tai Chi, and Meditation are practice only.</p>
+    <p class="hint">The four practices stay on this page. Hold each cue to advance. If a mouth cue is missed, tap Count this move.</p>
   </main>
-  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=fit30');</script>
-  <script>
-    window.addEventListener('pointerdown', function loadSb() {
-      window.removeEventListener('pointerdown', loadSb);
-      var s = document.createElement('script');
-      s.src = 'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
-      s.defer = true;
-      document.body.appendChild(s);
-    }, { once: true });
-  </script>
+  <script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js?v=fit32');</script>
   <script src="/solana.js?v=20260830s2"></script>
-  <script type="module" src="/studio.js?v=20260926rooms2"></script>
+  <script type="module" src="/studio.js?v=20260930inplace"></script>
   <script src="/studio-gate.js?v=20260903vest2"></script>
   <script src="/field-audio.js?v=20260830a"></script>
-  <script>
-    (function () {
-      var q = new URLSearchParams(location.search).get('mode') || 'vestibular';
-      if (q === 'taichi') location.replace('/taichi.html');
-      document.querySelectorAll('.mode').forEach(function (el) {
-        el.classList.toggle('on', el.getAttribute('data-mode') === q);
-      });
-      var copy = document.getElementById('veil-copy');
-      if (copy) {
-        copy.textContent = ({
-          yoga: 'Yoga room · prayer pose. MediaPipe hands + pose load when you open the camera.',
-          vestibular: 'Vestibular room · gaze. MediaPipe face loads when you open the camera.',
-          meditation: 'Meditation room · still face. MediaPipe face loads when you open the camera.'
-        }[q] || 'Open the camera to load this practice.');
-      }
-    })();
-  </script>
 </body>
 </html>
