@@ -1,5 +1,5 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002switch";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002rooms";
 
 const TITLES = {
   yoga: "Yoga · Mountain",
@@ -40,7 +40,7 @@ const bar = document.getElementById("bar");
 const barFill = document.getElementById("barFill");
 const claimBox = document.getElementById("claim");
 
-let mode = new URLSearchParams(location.search).get("mode") || "vestibular";
+let mode = document.documentElement.getAttribute("data-room") || new URLSearchParams(location.search).get("mode") || "vestibular";
 if (!TITLES[mode]) mode = "vestibular";
 let stream = null, running = false, raf = 0, gen = 0, lastTs = 0;
 
@@ -79,60 +79,29 @@ function applyChrome() {
 
 let switchToken = 0;
 
-function setMode(next, e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-  }
+addEventListener("fit-room", (ev) => {
+  const next = ev.detail;
   if (!TITLES[next] || next === mode) return;
   const prevFace = usesFace(mode);
-  const token = ++switchToken;
-  holdInference();
-  pause();
-  resetPlay();
   mode = next;
-  applyChrome();
-  if (statusEl) statusEl.textContent = "Room ready";
-  const sameDetector = prevFace === usesFace(mode);
-  if (!sameDetector && veil) veil.classList.remove("hidden");
-  if (goBtn) { goBtn.disabled = false; goBtn.textContent = "Open camera"; }
+  resetPlay();
+  if (!stream) return;
+  const token = ++switchToken;
+  if (prevFace === usesFace(mode)) return;
+  pause();
+  if (statusEl) statusEl.textContent = "Switching room…";
   setTimeout(() => {
-    if (token !== switchToken) return;
-    if (!sameDetector) {
-      closeModels().then(() => {
-        if (token !== switchToken || !stream || !video || !video.srcObject) return;
-        if (statusEl) statusEl.textContent = "Switching room…";
-        return ensureModel(mode).then(() => {
-          if (token !== switchToken) return;
-          if (veil) veil.classList.add("hidden");
-          running = true;
-          lastTs = 0;
-          loop();
-        });
-      }).catch(() => {
-        if (statusEl) statusEl.textContent = "Room ready";
-      });
-      return;
-    }
-    releaseInference();
-    if (stream && video && video.srcObject) {
+    if (token !== switchToken || !stream) return;
+    closeModels().then(() => ensureModel(mode)).then(() => {
+      if (token !== switchToken || !stream) return;
       running = true;
       lastTs = 0;
       loop();
-    }
+    }).catch(() => {
+      if (statusEl) statusEl.textContent = "Room ready";
+    });
   }, 0);
-}
-
-function bindRooms() {
-  document.querySelectorAll(".mode").forEach(el => {
-    const next = el.cloneNode(true);
-    el.parentNode.replaceChild(next, el);
-  });
-  document.querySelectorAll(".mode").forEach(el => {
-    el.addEventListener("click", ev => setMode(el.getAttribute("data-mode"), ev), true);
-  });
-}
+});
 
 function loop() {
   if (!running) return;
@@ -202,7 +171,6 @@ function stop() {
   if (dot) dot.classList.remove("live");
 }
 
-bindRooms();
 applyChrome();
 if (goBtn) goBtn.onclick = start;
 if (stopBtn) stopBtn.onclick = stop;
@@ -210,3 +178,4 @@ addEventListener("pagehide", stop);
 addEventListener("beforeunload", stop);
 const skip = document.getElementById("skipMove");
 if (skip) skip.onclick = () => tickFrame({ mode, skip: true, scoreEl, cueEl, holdEl, barFill, claimBox });
+if (window.__fitWantCamera) start();

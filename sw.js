@@ -1,5 +1,5 @@
 /* FIT Service Worker — offline shell for Solana dApp / PWA */
-const CACHE_NAME = 'fit-v36';
+const CACHE_NAME = 'fit-v37';
 const ASSETS = [
   '/',
   '/index.html',
@@ -59,6 +59,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
   const path = url.pathname;
+  if (path === '/practice.html' || path.indexOf('/studio') === 0) return;
   const isScript = path.endsWith('.js');
   const isDoc = event.request.mode === 'navigate' || path.endsWith('.html') || path === '/';
   const isStatic = path.endsWith('.png') || path.endsWith('.svg') || path.endsWith('.jpg') || path.endsWith('.css') || path.endsWith('.webp') || path.includes('/icons/');
