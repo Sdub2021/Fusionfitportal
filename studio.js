@@ -1,11 +1,11 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay } from "/studio-play.js?v=20260930p1";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay } from "/studio-play.js?v=20261001yield";
 
 const TITLES = {
-  yoga: "Yoga \u00b7 Mountain",
-  taichi: "Tai Chi \u00b7 Prep",
-  vestibular: "Vestibular \u00b7 Gaze",
-  meditation: "Meditation \u00b7 10s still"
+  yoga: "Yoga · Mountain",
+  taichi: "Tai Chi · Prep",
+  vestibular: "Vestibular · Gaze",
+  meditation: "Meditation · 10s still"
 };
 const TAICHI = [
   "Settle the body and mind. Soft knees, crown lifted.",
@@ -114,27 +114,35 @@ function loop() {
   if (!running) return;
   const my = gen;
   const now = performance.now();
+  let heavy = false;
   if (video && video.readyState >= 2) {
     const dt = lastTs ? Math.min(80, now - lastTs) : 16;
     lastTs = now;
-    tickFrame({ mode, video, canvas, ctx, dt, now, scoreEl, cueEl, holdEl, detailEl, statusEl, dot, barFill, claimBox, modeTitle });
+    heavy = tickFrame({ mode, video, canvas, ctx, dt, now, scoreEl, cueEl, holdEl, detailEl, statusEl, dot, barFill, claimBox, modeTitle }) === true;
   }
-  if (running && my === gen) raf = requestAnimationFrame(loop);
+  if (!(running && my === gen)) return;
+  if (heavy) {
+    setTimeout(() => { if (running && my === gen) raf = requestAnimationFrame(loop); }, 0);
+  } else {
+    raf = requestAnimationFrame(loop);
+  }
 }
 
 async function start() {
   goBtn.disabled = true;
-  goBtn.textContent = "Loading model\u2026";
+  goBtn.textContent = "Loading model…";
   const my = ++gen;
   try {
     await ensureModel(mode);
     if (my !== gen) return;
     if (!stream) {
-      const mobile = window.matchMedia("(max-width:767px)").matches;
       stream = await navigator.mediaDevices.getUserMedia({
-        video: mobile
-          ? { facingMode: "user", width: { ideal: 360 }, height: { ideal: 480 }, frameRate: { ideal: 15, max: 20 } }
-          : { facingMode: "user", width: { ideal: 640 }, height: { ideal: 800 } },
+        video: {
+          facingMode: "user",
+          width: { ideal: 480, max: 640 },
+          height: { ideal: 640, max: 800 },
+          frameRate: { ideal: 15, max: 20 }
+        },
         audio: false
       });
       if (my !== gen) { stream.getTracks().forEach(t => t.stop()); stream = null; return; }

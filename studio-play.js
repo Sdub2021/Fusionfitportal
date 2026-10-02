@@ -1,4 +1,4 @@
-/* Detection helpers. Models stay idle until ensureModel(). */
+/* Detection helpers. Models stay idle until ensureModel(). Inference uses a small frame so the page can still take taps. */
 const MP = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/vision_bundle.mjs";
 const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm";
 const POSE_MODEL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
@@ -6,25 +6,26 @@ const FACE_MODEL = "https://storage.googleapis.com/mediapipe-models/face_landmar
 
 const GAZE = ["left","right","left","right","up","down","up","down","mouthOpen","mouthClose","mouthOpen","mouthClose"];
 const GAZE_CUE = {
-  left: "Look LEFT \u2014 turn the head, keep the eyes soft.",
-  right: "Look RIGHT \u2014 turn the head, keep the eyes soft.",
-  up: "Look UP \u2014 lift the chin, keep the shoulders quiet.",
-  down: "Look DOWN \u2014 drop the chin, keep the shoulders quiet.",
-  mouthOpen: "OPEN your mouth \u2014 drop the jaw and hold.",
-  mouthClose: "CLOSE your mouth \u2014 lips together, then wait."
+  left: "Look LEFT — turn the head, keep the eyes soft.",
+  right: "Look RIGHT — turn the head, keep the eyes soft.",
+  up: "Look UP — lift the chin, keep the shoulders quiet.",
+  down: "Look DOWN — drop the chin, keep the shoulders quiet.",
+  mouthOpen: "OPEN your mouth — drop the jaw and hold.",
+  mouthClose: "CLOSE your mouth — lips together, then wait."
 };
 
 let FilesetResolver, PoseLandmarker, FaceLandmarker, vision, poseLM, faceLM, modelBusy;
 let sitMs = 0, gazeStep = 0, gazeHold = 0, gazeDone = false, awarded = false;
 let calN = 0, calYaw = 0, calPitch = 0, originYaw = 0, originPitch = 0, prev = null, goodMs = 0;
-let lastDetect = 0, formIdx = 0, formHold = 0;
+let lastDetect = 0, formIdx = 0, formHold = 0, videoTs = 0, canvasW = 0, canvasH = 0;
+let scratch = null, scratchCtx = null;
 
 export function usesFace(mode) { return mode === "meditation" || mode === "vestibular"; }
 
 export function resetPlay() {
   sitMs = 0; gazeStep = 0; gazeHold = 0; gazeDone = false; awarded = false;
   calN = 0; calYaw = 0; calPitch = 0; originYaw = 0; originPitch = 0; prev = null; goodMs = 0;
-  formIdx = 0; formHold = 0; lastDetect = 0;
+  formIdx = 0; formHold = 0; lastDetect = 0; videoTs = 0;
 }
 
 export async function closeModels() {
@@ -134,36 +135,68 @@ function unlock(kind, ui) {
   }
 }
 
+function smallFrame(video) {
+  const w = video.videoWidth || 320;
+  const h = video.videoHeight || 240;
+  const scale = Math.min(1, 224 / w);
+  const tw = Math.max(2, Math.round(w * scale));
+  const th = Math.max(2, Math.round(h * scale));
+  if (!scratch) scratch = document.createElement("canvas");
+  if (scratch.width !== tw) scratch.width = tw;
+  if (scratch.height !== th) scratch.height = th;
+  if (!scratchCtx) scratchCtx = scratch.getContext("2d", { alpha: false, desynchronized: true });
+  scratchCtx.drawImage(video, 0, 0, tw, th);
+  return scratch;
+}
+
+function sizeOverlay(canvas, ctx) {
+  if (!canvas) return;
+  const r = canvas.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, 1.25);
+  const w = Math.max(1, Math.floor(r.width * dpr));
+  const h = Math.max(1, Math.floor(r.height * dpr));
+  if (w !== canvasW || h !== canvasH) {
+    canvas.width = w;
+    canvas.height = h;
+    canvasW = w;
+    canvasH = h;
+  } else if (ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+function nextTs(now) {
+  videoTs = Math.max(videoTs + 1, Math.round(now));
+  return videoTs;
+}
+
 export function tickFrame(ui) {
   if (ui.skip) {
-    if (ui.mode !== "vestibular" || gazeDone) return;
+    if (ui.mode !== "vestibular" || gazeDone) return false;
     gazeStep += 1; gazeHold = 0;
-    if (gazeStep >= GAZE.length) { gazeDone = true; unlock("vestibular", ui); return; }
+    if (gazeStep >= GAZE.length) { gazeDone = true; unlock("vestibular", ui); return false; }
     if (ui.scoreEl) ui.scoreEl.textContent = String(gazeStep);
     if (ui.cueEl) ui.cueEl.textContent = GAZE_CUE[GAZE[gazeStep]];
     if (ui.holdEl) ui.holdEl.textContent = "Step " + gazeStep + " / " + GAZE.length;
-    return;
+    return false;
   }
   const now = ui.now;
-  if (now - lastDetect < 70) return;
+  const gap = window.matchMedia("(max-width:767px)").matches ? 280 : 180;
+  if (now - lastDetect < gap) return false;
   lastDetect = now;
   const { video, canvas, ctx, dt } = ui;
-  if (!video) return;
-  if (canvas) {
-    const r = canvas.getBoundingClientRect();
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
-    canvas.width = Math.max(1, Math.floor(r.width * dpr));
-    canvas.height = Math.max(1, Math.floor(r.height * dpr));
-    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
+  if (!video) return false;
+  sizeOverlay(canvas, ctx);
+  const sample = smallFrame(video);
+  const ts = nextTs(now);
   if (usesFace(ui.mode)) {
-    if (!faceLM) return;
-    let res; try { res = faceLM.detectForVideo(video, now); } catch (e) { return; }
+    if (!faceLM) return false;
+    let res; try { res = faceLM.detectForVideo(sample, ts); } catch (e) { return true; }
     const face = res && res.faceLandmarks && res.faceLandmarks[0];
     if (!face) {
       if (ui.cueEl) ui.cueEl.textContent = "Need the face in frame.";
       if (ui.dot) ui.dot.classList.remove("live");
-      return;
+      return true;
     }
     if (ctx && canvas) {
       ctx.fillStyle = "#f0c27a";
@@ -188,12 +221,12 @@ export function tickFrame(ui) {
       if (ui.barFill) ui.barFill.style.width = Math.min(100, sitMs / 100) + "%";
     } else {
       const pose = faceYawPitch(face);
-      if (!pose) return;
+      if (!pose) return true;
       if (calN < 12) {
         calYaw += pose.yaw; calPitch += pose.pitch; calN += 1;
         if (calN === 12) { originYaw = calYaw / 12; originPitch = calPitch / 12; }
-        if (ui.cueEl) ui.cueEl.textContent = "Hold center. Calibrating\u2026";
-        return;
+        if (ui.cueEl) ui.cueEl.textContent = "Hold center. Calibrating…";
+        return true;
       }
       const a = pt(face, 13), b = pt(face, 14);
       const jaw = !!(a && b && dist(a, b) > 0.045);
@@ -215,15 +248,15 @@ export function tickFrame(ui) {
     }
     if (ui.statusEl) ui.statusEl.textContent = "Tracking face";
     if (ui.dot) ui.dot.classList.add("live");
-    return;
+    return true;
   }
-  if (!poseLM) return;
-  let res; try { res = poseLM.detectForVideo(video, now); } catch (e) { return; }
+  if (!poseLM) return false;
+  let res; try { res = poseLM.detectForVideo(sample, ts); } catch (e) { return true; }
   const body = res && res.landmarks && res.landmarks[0];
   if (!body) {
     if (ui.cueEl) ui.cueEl.textContent = "No body in frame.";
     if (ui.dot) ui.dot.classList.remove("live");
-    return;
+    return true;
   }
   if (ctx && canvas) {
     ctx.fillStyle = "#f0c27a";
@@ -247,4 +280,5 @@ export function tickFrame(ui) {
   if (ui.statusEl) ui.statusEl.textContent = "Tracking body";
   if (ui.dot) ui.dot.classList.add("live");
   if (ui.detailEl) ui.detailEl.textContent = "Pose landmarks " + body.length;
+  return true;
 }
