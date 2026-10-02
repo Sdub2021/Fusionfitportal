@@ -154,6 +154,11 @@ function unlock(kind, ui) {
     if (ui.scoreEl) ui.scoreEl.textContent = String(GAZE.length);
     if (ui.cueEl) ui.cueEl.textContent = "Sequence complete. Join the waitlist below.";
     if (ui.holdEl) ui.holdEl.textContent = "Done";
+    const claim = ui.claimBox || document.getElementById("claim");
+    if (claim) {
+      claim.classList.add("open");
+      setTimeout(() => claim.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    }
   } else {
     if (ui.scoreEl) ui.scoreEl.textContent = "10";
     if (ui.cueEl) ui.cueEl.textContent = "Stillness complete.";

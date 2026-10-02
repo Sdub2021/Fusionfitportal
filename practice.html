@@ -146,14 +146,20 @@
       var unit = document.getElementById("unit"); if (unit) unit.textContent = UNITS[mode];
       var copy = document.getElementById("veil-copy"); if (copy) copy.textContent = TITLES[mode] + ". Open the camera when you are ready.";
       var forms = document.getElementById("forms"); if (forms) forms.classList.toggle("open", mode === "taichi");
-      var status = document.getElementById("status"); if (status && status.textContent.indexOf("Tracking") !== 0) status.textContent = "Room ready";
+      var score = document.getElementById("score"); if (score) score.textContent = "0";
+      var hold = document.getElementById("hold"); if (hold) hold.textContent = "Hold 0.0s";
+      var bar = document.getElementById("barFill"); if (bar) bar.style.width = "0%";
+      var claim = document.getElementById("claim"); if (claim) claim.classList.remove("open");
+      var status = document.getElementById("status"); if (status) status.textContent = "Camera reset";
     }
     var rooms = document.getElementById("rooms");
     if (rooms) rooms.addEventListener("click", function (e) {
       var link = e.target.closest ? e.target.closest("a.mode") : null;
       if (!link) return;
       e.preventDefault();
-      paint(link.getAttribute("data-mode"));
+      var next = link.getAttribute("data-mode");
+      paint(next);
+      try { dispatchEvent(new CustomEvent("fit-room", { detail: next })); } catch (err) {}
     });
     paint(new URLSearchParams(location.search).get("mode") || "vestibular");
     var go = document.getElementById("go");
@@ -163,7 +169,7 @@
       window.__fitWantCamera = true;
       go.disabled = true;
       go.textContent = "Loading model…";
-      import("/studio.js?v=20261002lite").catch(function () {
+      import("/studio.js?v=20261002reset").catch(function () {
         window.__fitStudioLoading = false;
         go.disabled = false;
         go.textContent = "Open camera";

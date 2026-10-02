@@ -1,5 +1,5 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002rooms";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002reset";
 
 const TITLES = {
   yoga: "Yoga · Mountain",
@@ -83,22 +83,30 @@ addEventListener("fit-room", (ev) => {
   const next = ev.detail;
   if (!TITLES[next] || next === mode) return;
   const prevFace = usesFace(mode);
-  mode = next;
-  resetPlay();
-  if (!stream) return;
   const token = ++switchToken;
-  if (prevFace === usesFace(mode)) return;
   pause();
-  if (statusEl) statusEl.textContent = "Switching room…";
+  resetPlay();
+  mode = next;
+  applyChrome();
+  if (ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (dot) dot.classList.remove("live");
+  if (!stream) {
+    if (statusEl) statusEl.textContent = "Camera idle";
+    return;
+  }
+  if (statusEl) statusEl.textContent = "Resetting camera…";
   setTimeout(() => {
     if (token !== switchToken || !stream) return;
-    closeModels().then(() => ensureModel(mode)).then(() => {
+    const ready = prevFace === usesFace(mode) ? Promise.resolve() : closeModels().then(() => ensureModel(mode));
+    ready.then(() => {
       if (token !== switchToken || !stream) return;
+      if (video) { video.srcObject = stream; video.play().catch(() => {}); }
       running = true;
       lastTs = 0;
+      if (veil) veil.classList.add("hidden");
       loop();
     }).catch(() => {
-      if (statusEl) statusEl.textContent = "Room ready";
+      if (statusEl) statusEl.textContent = "Camera reset failed";
     });
   }, 0);
 });
