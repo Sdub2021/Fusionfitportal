@@ -43,6 +43,20 @@ async function loadLib() {
   FaceLandmarker = mod.FaceLandmarker;
 }
 
+let simdOn = false, delegateUsed = "CPU", lastCost = 0;
+
+async function createTask(factory, model, extra) {
+  const base = { modelAssetPath: model };
+  try {
+    const task = await factory(vision, Object.assign({ baseOptions: Object.assign({ delegate: "GPU" }, base) }, extra));
+    delegateUsed = "GPU";
+    return task;
+  } catch (e) {
+    delegateUsed = "CPU";
+    return factory(vision, Object.assign({ baseOptions: Object.assign({ delegate: "CPU" }, base) }, extra));
+  }
+}
+
 export async function ensureModel(mode) {
   if (usesFace(mode) && faceLM) return;
   if (!usesFace(mode) && poseLM) return;
@@ -50,33 +64,28 @@ export async function ensureModel(mode) {
   modelBusy = true;
   try {
     await loadLib();
-    if (!vision) vision = await FilesetResolver.forVisionTasks(WASM);
-    const mobile = window.matchMedia("(max-width:767px)").matches;
-    const delegate = mobile ? "CPU" : "GPU";
+    if (!vision) {
+      simdOn = !!(FilesetResolver.isSimdSupported && await FilesetResolver.isSimdSupported().catch(() => false));
+      vision = await FilesetResolver.forVisionTasks(WASM);
+    }
     if (usesFace(mode)) {
-      try {
-        faceLM = await FaceLandmarker.createFromOptions(vision, {
-          baseOptions: { modelAssetPath: FACE_MODEL, delegate },
-          runningMode: "VIDEO", numFaces: 1
-        });
-      } catch (e) {
-        faceLM = await FaceLandmarker.createFromOptions(vision, {
-          baseOptions: { modelAssetPath: FACE_MODEL, delegate: "CPU" },
-          runningMode: "VIDEO", numFaces: 1
-        });
-      }
+      faceLM = await createTask(FaceLandmarker.createFromOptions, FACE_MODEL, {
+        runningMode: "VIDEO",
+        numFaces: 1,
+        outputFaceBlendshapes: false,
+        outputFacialTransformationMatrixes: false,
+        minFaceDetectionConfidence: 0.5,
+        minFacePresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
     } else {
-      try {
-        poseLM = await PoseLandmarker.createFromOptions(vision, {
-          baseOptions: { modelAssetPath: POSE_MODEL, delegate },
-          runningMode: "VIDEO", numPoses: 1
-        });
-      } catch (e) {
-        poseLM = await PoseLandmarker.createFromOptions(vision, {
-          baseOptions: { modelAssetPath: POSE_MODEL, delegate: "CPU" },
-          runningMode: "VIDEO", numPoses: 1
-        });
-      }
+      poseLM = await createTask(PoseLandmarker.createFromOptions, POSE_MODEL, {
+        runningMode: "VIDEO",
+        numPoses: 1,
+        minPoseDetectionConfidence: 0.5,
+        minPosePresenceConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
     }
   } finally { modelBusy = false; }
 }
@@ -181,9 +190,10 @@ export function tickFrame(ui) {
     return false;
   }
   const now = ui.now;
-  const gap = window.matchMedia("(max-width:767px)").matches ? 280 : 180;
+  const gap = lastCost > 140 ? 320 : 160;
   if (now - lastDetect < gap) return false;
   lastDetect = now;
+  const t0 = now;
   const { video, canvas, ctx, dt } = ui;
   if (!video) return false;
   sizeOverlay(canvas, ctx);
@@ -246,7 +256,8 @@ export function tickFrame(ui) {
       if (ui.holdEl) ui.holdEl.textContent = gazeDone ? "Done" : ("Step " + shown + " / " + GAZE.length);
       if (ui.barFill) ui.barFill.style.width = Math.min(100, (shown / GAZE.length) * 100) + "%";
     }
-    if (ui.statusEl) ui.statusEl.textContent = "Tracking face";
+    lastCost = performance.now() - t0;
+    if (ui.statusEl) ui.statusEl.textContent = "Tracking face · " + delegateUsed + (simdOn ? " SIMD" : "");
     if (ui.dot) ui.dot.classList.add("live");
     return true;
   }
@@ -277,7 +288,8 @@ export function tickFrame(ui) {
     goodMs = read.ready ? goodMs + dt : Math.max(0, goodMs - dt * 0.4);
     if (ui.holdEl) ui.holdEl.textContent = "Hold " + (goodMs / 1000).toFixed(1) + "s";
   }
-  if (ui.statusEl) ui.statusEl.textContent = "Tracking body";
+  lastCost = performance.now() - t0;
+  if (ui.statusEl) ui.statusEl.textContent = "Tracking body · " + delegateUsed + (simdOn ? " SIMD" : "");
   if (ui.dot) ui.dot.classList.add("live");
   if (ui.detailEl) ui.detailEl.textContent = "Pose landmarks " + body.length;
   return true;

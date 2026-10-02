@@ -1,5 +1,5 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay } from "/studio-play.js?v=20261001yield";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay } from "/studio-play.js?v=20261001wasm";
 
 const TITLES = {
   yoga: "Yoga · Mountain",
