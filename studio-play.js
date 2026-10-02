@@ -70,13 +70,11 @@ async function createTask(factory, model, extra) {
 
 export async function ensureModel(mode) {
   await closeChain;
-  if (usesFace(mode) && faceLM) { acceptInfer = true; return; }
-  if (!usesFace(mode) && poseLM) { acceptInfer = true; return; }
   if (modelBusy) {
     while (modelBusy) await new Promise(r => setTimeout(r, 30));
-    if (usesFace(mode) && faceLM) { acceptInfer = true; return; }
-    if (!usesFace(mode) && poseLM) { acceptInfer = true; return; }
   }
+  if (usesFace(mode) && faceLM) { acceptInfer = true; return; }
+  if (!usesFace(mode) && poseLM) { acceptInfer = true; return; }
   modelBusy = true;
   try {
     await loadLib();
@@ -85,7 +83,7 @@ export async function ensureModel(mode) {
       vision = await FilesetResolver.forVisionTasks(WASM);
     }
     if (usesFace(mode)) {
-      faceLM = await createTask(FaceLandmarker.createFromOptions, FACE_MODEL, {
+      if (!faceLM) faceLM = await createTask(FaceLandmarker.createFromOptions, FACE_MODEL, {
         runningMode: "VIDEO",
         numFaces: 1,
         outputFaceBlendshapes: false,
@@ -94,7 +92,7 @@ export async function ensureModel(mode) {
         minFacePresenceConfidence: 0.5,
         minTrackingConfidence: 0.5
       });
-    } else {
+    } else if (!poseLM) {
       poseLM = await createTask(PoseLandmarker.createFromOptions, POSE_MODEL, {
         runningMode: "VIDEO",
         numPoses: 1,
@@ -234,8 +232,10 @@ export function tickFrame(ui) {
     if (!res && !acceptInfer) return false;
     const face = res && res.faceLandmarks && res.faceLandmarks[0];
     if (!face) {
-      if (ui.cueEl) ui.cueEl.textContent = "Need the face in frame.";
+      if (ui.cueEl) ui.cueEl.textContent = ui.mode === "meditation" ? "Face the camera. Stillness starts when the face is in frame." : "Need the face in frame.";
+      if (ui.holdEl && ui.mode === "meditation") ui.holdEl.textContent = "Still " + (sitMs / 1000).toFixed(1) + " / 10.0s";
       if (ui.dot) ui.dot.classList.remove("live");
+      if (ui.statusEl) ui.statusEl.textContent = ui.mode === "meditation" ? "Stillness · waiting for face" : "Tracking face";
       return true;
     }
     if (ctx && canvas) {
@@ -249,16 +249,17 @@ export function tickFrame(ui) {
       const nose = pt(face, 1);
       const motion = nose && prev ? dist(nose, prev) : 0;
       if (nose) prev = nose;
-      const still = motion < 0.007;
+      const still = motion < 0.012;
       if (!awarded) {
-        sitMs = still ? Math.min(10000, sitMs + dt) : Math.max(0, sitMs - dt * 1.6);
+        sitMs = still ? Math.min(10000, sitMs + dt) : Math.max(0, sitMs - dt);
         if (sitMs >= 10000) unlock("meditation", ui);
       }
       const shown = Math.min(10, sitMs / 1000);
-      if (ui.scoreEl) ui.scoreEl.textContent = shown.toFixed(0);
-      if (ui.cueEl) ui.cueEl.textContent = still ? "Face is quiet. Hold." : "Face moved. Settle.";
+      if (ui.scoreEl) ui.scoreEl.textContent = shown.toFixed(1);
+      if (ui.cueEl) ui.cueEl.textContent = still ? "Still. Hold the face quiet." : "Movement detected. Settle and hold.";
       if (ui.holdEl) ui.holdEl.textContent = "Still " + shown.toFixed(1) + " / 10.0s";
       if (ui.barFill) ui.barFill.style.width = Math.min(100, sitMs / 100) + "%";
+      if (ui.detailEl) ui.detailEl.textContent = "Motion " + motion.toFixed(4);
     } else {
       const pose = faceYawPitch(face);
       if (!pose) return true;
@@ -287,11 +288,14 @@ export function tickFrame(ui) {
       if (ui.barFill) ui.barFill.style.width = Math.min(100, (shown / GAZE.length) * 100) + "%";
     }
     lastCost = performance.now() - t0;
-    if (ui.statusEl) ui.statusEl.textContent = "Tracking face · " + delegateUsed + (simdOn ? " SIMD" : "");
+    if (ui.statusEl) ui.statusEl.textContent = (ui.mode === "meditation" ? "Stillness · face" : "Gaze · face") + " · " + delegateUsed;
     if (ui.dot) ui.dot.classList.add("live");
     return true;
   }
-  if (!poseLM) return false;
+  if (!poseLM) {
+    if (ui.statusEl) ui.statusEl.textContent = "Loading full body tracker…";
+    return false;
+  }
   const res = detect(poseLM, sample);
   if (!res && !acceptInfer) return false;
   const body = res && res.landmarks && res.landmarks[0];
@@ -301,8 +305,18 @@ export function tickFrame(ui) {
     return true;
   }
   if (ctx && canvas) {
+    ctx.strokeStyle = "#f0c27a";
+    ctx.lineWidth = 2;
+    [[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]].forEach(pair => {
+      const a = body[pair[0]], b = body[pair[1]];
+      if (!a || !b) return;
+      ctx.beginPath();
+      ctx.moveTo(a.x * canvas.width, a.y * canvas.height);
+      ctx.lineTo(b.x * canvas.width, b.y * canvas.height);
+      ctx.stroke();
+    });
     ctx.fillStyle = "#f0c27a";
-    [11,12,23,24,15,16,27,28].forEach(i => {
+    [11,12,13,14,15,16,23,24,25,26,27,28].forEach(i => {
       const p = body[i]; if (!p) return;
       ctx.beginPath(); ctx.arc(p.x * canvas.width, p.y * canvas.height, 4, 0, Math.PI * 2); ctx.fill();
     });
@@ -320,8 +334,8 @@ export function tickFrame(ui) {
     if (ui.holdEl) ui.holdEl.textContent = "Hold " + (goodMs / 1000).toFixed(1) + "s";
   }
   lastCost = performance.now() - t0;
-  if (ui.statusEl) ui.statusEl.textContent = "Tracking body · " + delegateUsed + (simdOn ? " SIMD" : "");
+  if (ui.statusEl) ui.statusEl.textContent = "Full body · " + delegateUsed;
   if (ui.dot) ui.dot.classList.add("live");
-  if (ui.detailEl) ui.detailEl.textContent = "Pose landmarks " + body.length;
+  if (ui.detailEl) ui.detailEl.textContent = "Full body landmarks " + body.length;
   return true;
 }

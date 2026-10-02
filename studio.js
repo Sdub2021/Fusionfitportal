@@ -1,5 +1,5 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002reset";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002body";
 
 const TITLES = {
   yoga: "Yoga · Mountain",
@@ -97,8 +97,7 @@ addEventListener("fit-room", (ev) => {
   if (statusEl) statusEl.textContent = "Resetting camera…";
   setTimeout(() => {
     if (token !== switchToken || !stream) return;
-    const ready = prevFace === usesFace(mode) ? Promise.resolve() : closeModels().then(() => ensureModel(mode));
-    ready.then(() => {
+    ensureModel(mode).then(() => {
       if (token !== switchToken || !stream) return;
       if (video) { video.srcObject = stream; video.play().catch(() => {}); }
       running = true;
@@ -113,6 +112,8 @@ addEventListener("fit-room", (ev) => {
 
 function loop() {
   if (!running) return;
+  const room = document.documentElement.getAttribute("data-room");
+  if (room && TITLES[room]) mode = room;
   const my = gen;
   const now = performance.now();
   let heavy = false;
@@ -134,6 +135,8 @@ async function start() {
   goBtn.textContent = "Loading model…";
   const my = ++gen;
   try {
+    mode = document.documentElement.getAttribute("data-room") || mode;
+    if (!TITLES[mode]) mode = "vestibular";
     await ensureModel(mode);
     if (my !== gen) return;
     if (!stream) {
