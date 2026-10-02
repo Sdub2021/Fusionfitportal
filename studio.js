@@ -1,5 +1,5 @@
 /* FIT Studio rooms. Taps never load MediaPipe. Camera starts only on Open camera. */
-import { ensureModel, tickFrame, closeModels, usesFace, resetPlay } from "/studio-play.js?v=20261001wasm";
+import { ensureModel, tickFrame, closeModels, usesFace, resetPlay, holdInference, releaseInference } from "/studio-play.js?v=20261002switch";
 
 const TITLES = {
   yoga: "Yoga · Mountain",
@@ -77,6 +77,8 @@ function applyChrome() {
   if (chips) chips.innerHTML = "";
 }
 
+let switchToken = 0;
+
 function setMode(next, e) {
   if (e) {
     e.preventDefault();
@@ -85,19 +87,41 @@ function setMode(next, e) {
   }
   if (!TITLES[next] || next === mode) return;
   const prevFace = usesFace(mode);
+  const token = ++switchToken;
+  holdInference();
   pause();
   resetPlay();
   mode = next;
   applyChrome();
-  if (prevFace !== usesFace(mode)) {
-    closeModels();
-    if (veil) veil.classList.remove("hidden");
-    if (goBtn) { goBtn.disabled = false; goBtn.textContent = "Open camera"; }
-    if (statusEl) statusEl.textContent = "Room ready";
-  } else if (stream && video && video.srcObject) {
-    running = true;
-    loop();
-  }
+  if (statusEl) statusEl.textContent = "Room ready";
+  const sameDetector = prevFace === usesFace(mode);
+  if (!sameDetector && veil) veil.classList.remove("hidden");
+  if (goBtn) { goBtn.disabled = false; goBtn.textContent = "Open camera"; }
+  setTimeout(() => {
+    if (token !== switchToken) return;
+    if (!sameDetector) {
+      closeModels().then(() => {
+        if (token !== switchToken || !stream || !video || !video.srcObject) return;
+        if (statusEl) statusEl.textContent = "Switching room…";
+        return ensureModel(mode).then(() => {
+          if (token !== switchToken) return;
+          if (veil) veil.classList.add("hidden");
+          running = true;
+          lastTs = 0;
+          loop();
+        });
+      }).catch(() => {
+        if (statusEl) statusEl.textContent = "Room ready";
+      });
+      return;
+    }
+    releaseInference();
+    if (stream && video && video.srcObject) {
+      running = true;
+      lastTs = 0;
+      loop();
+    }
+  }, 0);
 }
 
 function bindRooms() {

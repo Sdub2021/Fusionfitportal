@@ -1,5 +1,5 @@
 /* FIT Service Worker — offline shell for Solana dApp / PWA */
-const CACHE_NAME = 'fit-v35';
+const CACHE_NAME = 'fit-v36';
 const ASSETS = [
   '/',
   '/index.html',

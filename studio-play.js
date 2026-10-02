@@ -19,20 +19,31 @@ let sitMs = 0, gazeStep = 0, gazeHold = 0, gazeDone = false, awarded = false;
 let calN = 0, calYaw = 0, calPitch = 0, originYaw = 0, originPitch = 0, prev = null, goodMs = 0;
 let lastDetect = 0, formIdx = 0, formHold = 0, videoTs = 0, canvasW = 0, canvasH = 0;
 let scratch = null, scratchCtx = null;
+let acceptInfer = true;
+let closeChain = Promise.resolve();
 
 export function usesFace(mode) { return mode === "meditation" || mode === "vestibular"; }
 
 export function resetPlay() {
   sitMs = 0; gazeStep = 0; gazeHold = 0; gazeDone = false; awarded = false;
   calN = 0; calYaw = 0; calPitch = 0; originYaw = 0; originPitch = 0; prev = null; goodMs = 0;
-  formIdx = 0; formHold = 0; lastDetect = 0; videoTs = 0;
+  formIdx = 0; formHold = 0; lastDetect = 0;
+  // videoTs must stay monotonic. Resetting it makes detectForVideo hang the tab.
 }
 
-export async function closeModels() {
-  try { if (faceLM && faceLM.close) await faceLM.close(); } catch (e) {}
-  try { if (poseLM && poseLM.close) await poseLM.close(); } catch (e) {}
+export function holdInference() { acceptInfer = false; }
+export function releaseInference() { acceptInfer = true; }
+
+export function closeModels() {
+  acceptInfer = false;
+  const face = faceLM, pose = poseLM;
   faceLM = null; poseLM = null;
   resetPlay();
+  closeChain = closeChain.then(async () => {
+    try { if (face && face.close) await face.close(); } catch (e) {}
+    try { if (pose && pose.close) await pose.close(); } catch (e) {}
+  });
+  return closeChain;
 }
 
 async function loadLib() {
@@ -58,9 +69,14 @@ async function createTask(factory, model, extra) {
 }
 
 export async function ensureModel(mode) {
-  if (usesFace(mode) && faceLM) return;
-  if (!usesFace(mode) && poseLM) return;
-  if (modelBusy) { while (modelBusy) await new Promise(r => setTimeout(r, 30)); return; }
+  await closeChain;
+  if (usesFace(mode) && faceLM) { acceptInfer = true; return; }
+  if (!usesFace(mode) && poseLM) { acceptInfer = true; return; }
+  if (modelBusy) {
+    while (modelBusy) await new Promise(r => setTimeout(r, 30));
+    if (usesFace(mode) && faceLM) { acceptInfer = true; return; }
+    if (!usesFace(mode) && poseLM) { acceptInfer = true; return; }
+  }
   modelBusy = true;
   try {
     await loadLib();
@@ -87,7 +103,7 @@ export async function ensureModel(mode) {
         minTrackingConfidence: 0.5
       });
     }
-  } finally { modelBusy = false; }
+  } finally { modelBusy = false; acceptInfer = true; }
 }
 
 function pt(f, i) { return f && f[i] ? f[i] : null; }
@@ -175,11 +191,19 @@ function sizeOverlay(canvas, ctx) {
 }
 
 function nextTs(now) {
-  videoTs = Math.max(videoTs + 1, Math.round(now));
+  videoTs = Math.max(videoTs + 33, Math.round(now));
   return videoTs;
 }
 
+function detect(lm, sample) {
+  if (!lm || !acceptInfer) return null;
+  const ts = nextTs(performance.now());
+  try { return lm.detectForVideo(sample, ts); }
+  catch (e) { videoTs += 1000; return null; }
+}
+
 export function tickFrame(ui) {
+  if (!acceptInfer && !ui.skip) return false;
   if (ui.skip) {
     if (ui.mode !== "vestibular" || gazeDone) return false;
     gazeStep += 1; gazeHold = 0;
@@ -190,7 +214,7 @@ export function tickFrame(ui) {
     return false;
   }
   const now = ui.now;
-  const gap = lastCost > 140 ? 320 : 160;
+  const gap = lastCost > 90 ? 420 : 280;
   if (now - lastDetect < gap) return false;
   lastDetect = now;
   const t0 = now;
@@ -201,7 +225,8 @@ export function tickFrame(ui) {
   const ts = nextTs(now);
   if (usesFace(ui.mode)) {
     if (!faceLM) return false;
-    let res; try { res = faceLM.detectForVideo(sample, ts); } catch (e) { return true; }
+    const res = detect(faceLM, sample);
+    if (!res && !acceptInfer) return false;
     const face = res && res.faceLandmarks && res.faceLandmarks[0];
     if (!face) {
       if (ui.cueEl) ui.cueEl.textContent = "Need the face in frame.";
@@ -262,7 +287,8 @@ export function tickFrame(ui) {
     return true;
   }
   if (!poseLM) return false;
-  let res; try { res = poseLM.detectForVideo(sample, ts); } catch (e) { return true; }
+  const res = detect(poseLM, sample);
+  if (!res && !acceptInfer) return false;
   const body = res && res.landmarks && res.landmarks[0];
   if (!body) {
     if (ui.cueEl) ui.cueEl.textContent = "No body in frame.";
