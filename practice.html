@@ -169,7 +169,7 @@
       window.__fitWantCamera = true;
       go.disabled = true;
       go.textContent = "Loading model…";
-      import("/studio.js?v=20261005still").catch(function () {
+      import("/studio.js?v=20261005still2").catch(function () {
         window.__fitStudioLoading = false;
         go.disabled = false;
         go.textContent = "Open camera";
@@ -180,6 +180,39 @@
   })();
   </script>
 
+
+  <script>
+  (function () {
+    var scrolled = false;
+    function room() { return document.documentElement.getAttribute("data-room") || ""; }
+    function go() {
+      if (room() !== "meditation") { scrolled = false; return; }
+      var fill = document.getElementById("barFill");
+      var score = document.getElementById("score");
+      var w = fill ? parseFloat(fill.style.width) || 0 : 0;
+      var n = score ? parseFloat(score.textContent) : 0;
+      if (w < 99 && n < 9.9) return;
+      var claim = document.getElementById("claim");
+      if (!claim) return;
+      claim.classList.add("open");
+      var h = claim.querySelector("h2");
+      var lead = claim.querySelector("p");
+      if (h) h.textContent = "Stillness complete · Join the list";
+      if (lead) lead.textContent = "Ten seconds still. Leave your email and Solana wallet to join the waitlist. One signup per person.";
+      var cue = document.getElementById("cue");
+      if (cue) cue.textContent = "Stillness complete. Join the list below.";
+      if (scrolled) return;
+      scrolled = true;
+      function scrollToForm() {
+        claim.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      setTimeout(scrollToForm, 40);
+      setTimeout(scrollToForm, 280);
+    }
+    setInterval(go, 180);
+    document.addEventListener("fit-room", function () { scrolled = false; });
+  })();
+  </script>
   <script src="/solana.js?v=20261005still"></script>
   <script>
   (function () {

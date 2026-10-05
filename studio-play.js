@@ -162,9 +162,9 @@ function revealSignup(ui) {
   const claim = ui.claimBox || document.getElementById("claim");
   if (!claim) return;
   claim.classList.add("open");
-  setTimeout(() => {
-    claim.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 90);
+  const scroll = () => claim.scrollIntoView({ behavior: "smooth", block: "start" });
+  setTimeout(scroll, 40);
+  setTimeout(scroll, 320);
 }
 
 function unlock(kind, ui) {
@@ -240,6 +240,7 @@ export function tickFrame(ui) {
   const now = ui.now;
   const gap = lastCost > 90 ? 420 : 280;
   if (now - lastDetect < gap) return false;
+  const sinceDetect = lastDetect ? Math.min(520, now - lastDetect) : 16;
   lastDetect = now;
   const t0 = now;
   const { video, canvas, ctx, dt } = ui;
@@ -272,7 +273,8 @@ export function tickFrame(ui) {
       if (nose) prev = nose;
       const still = motion < 0.012;
       if (!awarded) {
-        sitMs = still ? Math.min(10000, sitMs + dt) : Math.max(0, sitMs - dt);
+        const step = sinceDetect || Math.min(520, Math.max(dt || 16, 16));
+        sitMs = still ? Math.min(10000, sitMs + step) : Math.max(0, sitMs - step * 0.45);
         if (sitMs >= 10000) unlock("meditation", ui);
       }
       if (awarded) {
