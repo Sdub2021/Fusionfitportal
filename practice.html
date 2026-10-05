@@ -179,3 +179,82 @@
     });
   })();
   </script>
+
+  <script src="/solana.js?v=20261005still"></script>
+  <script>
+  (function () {
+    var SUPABASE_URL = "https://kytvzrkretucgkairzny.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5dHZ6cmtyZXR1Y2drYWlyem55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYzMzUyNzIsImV4cCI6MjEwMTkxMTI3Mn0.4TwXyF81TWzAuC4eWc7q2Oso3DGMtuAPZFPBvYyOVQg";
+    var form = document.getElementById("claim-form");
+    var msg = document.getElementById("form-msg");
+    var walletEl = document.getElementById("wallet");
+    var connect = document.getElementById("connect-btn");
+    var submitBtn = document.getElementById("submit-btn");
+    var S = window.FITSolana;
+    if (!form || !walletEl) return;
+    try {
+      var cached = localStorage.getItem("fit_wallet");
+      if (S && S.isValidSolana(cached)) walletEl.value = cached;
+    } catch (e) {}
+    if (connect) connect.onclick = async function () {
+      if (!S) return;
+      msg.className = "form-msg";
+      try {
+        var linked = await S.connectWallet();
+        walletEl.value = linked.address;
+        msg.textContent = "Connected.";
+        msg.className = "form-msg ok";
+      } catch (e) {
+        if (e && e.code === "NO_WALLET") {
+          msg.textContent = "No wallet here. Open this page in Phantom, or paste the address.";
+          msg.className = "form-msg warn";
+          if (S.mobileWalletUrl) location.href = S.mobileWalletUrl(location.href);
+          return;
+        }
+        msg.textContent = "Could not connect.";
+        msg.className = "form-msg err";
+      }
+    };
+    form.onsubmit = async function (e) {
+      e.preventDefault();
+      var email = document.getElementById("email").value.trim().toLowerCase();
+      var wallet = walletEl.value.trim();
+      msg.className = "form-msg";
+      if (!email.includes("@")) { msg.textContent = "Enter a valid email."; msg.className = "form-msg err"; return; }
+      if (!S || !S.isValidSolana(wallet)) { msg.textContent = "Enter a valid Solana wallet address."; msg.className = "form-msg err"; return; }
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending…";
+      try {
+        var res = await fetch(SUPABASE_URL + "/rest/v1/signups", {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: "Bearer " + SUPABASE_ANON_KEY,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal"
+          },
+          body: JSON.stringify({ email: email, wallet_address: wallet, verified: false, rewarded: true, device: "meditation-studio" })
+        });
+        var text = await res.text().catch(function () { return ""; });
+        if (res.status === 409 || text.indexOf("23505") >= 0) {
+          msg.textContent = "Already registered.";
+          msg.className = "form-msg warn";
+        } else if (!res.ok) {
+          msg.textContent = "Could not save. Try again.";
+          msg.className = "form-msg err";
+        } else {
+          try { localStorage.setItem("fit_wallet", wallet); } catch (err) {}
+          msg.textContent = "You are on the list.";
+          msg.className = "form-msg ok";
+          submitBtn.textContent = "Joined";
+          return;
+        }
+      } catch (err) {
+        msg.textContent = "Network error. Try again.";
+        msg.className = "form-msg err";
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Join the waitlist";
+    };
+  })();
+  </script>
