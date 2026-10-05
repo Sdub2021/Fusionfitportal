@@ -55,7 +55,7 @@
     .forms.open { display:block; }
     .form-item { border:1px solid var(--line); border-radius:.85rem; padding:.65rem .8rem; cursor:pointer; margin:.4rem 0; }
     .form-item.on { border-color:rgba(232,165,75,.5); }
-    .claim { width:min(100%,720px); margin-top:1rem; display:none; padding:1.35rem 1.25rem; border-radius:1.25rem; border:1px solid rgba(232,165,75,.28); }
+    .claim { width:min(100%,720px); margin-top:1rem; display:none; padding:1.35rem 1.25rem; border-radius:1.25rem; border:1px solid rgba(232,165,75,.28); scroll-margin-top:5.2rem; }
     .claim.open { display:block; }
     .claim input { width:100%; padding:.9rem 1rem; border-radius:.85rem; background:rgba(0,0,0,.45); border:1px solid var(--line); color:#fff; }
     .wallet-row { display:flex; gap:.5rem; }
@@ -169,7 +169,7 @@
       window.__fitWantCamera = true;
       go.disabled = true;
       go.textContent = "Loading model…";
-      import("/studio.js?v=20261002body").catch(function () {
+      import("/studio.js?v=20261005still").catch(function () {
         window.__fitStudioLoading = false;
         go.disabled = false;
         go.textContent = "Open camera";

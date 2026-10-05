@@ -144,23 +144,44 @@ function poseScore(lm, mode) {
   return { score, cue: "Soft knees. Hands follow the waist.", ready: score >= 55 };
 }
 
+function paintClaim(kind) {
+  const claim = document.getElementById("claim");
+  if (!claim) return;
+  const h = claim.querySelector("h2");
+  const lead = claim.querySelector("p");
+  if (kind === "meditation") {
+    if (h) h.textContent = "Stillness complete · Join the list";
+    if (lead) lead.textContent = "Ten seconds still. Leave your email and Solana wallet to join the waitlist. One signup per person.";
+  } else {
+    if (h) h.textContent = "Gaze complete · Join the list";
+    if (lead) lead.textContent = "Vestibular sequence finished. Leave your email and Solana wallet to join the waitlist. One signup per person.";
+  }
+}
+
+function revealSignup(ui) {
+  const claim = ui.claimBox || document.getElementById("claim");
+  if (!claim) return;
+  claim.classList.add("open");
+  setTimeout(() => {
+    claim.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 90);
+}
+
 function unlock(kind, ui) {
   awarded = true;
-  if (ui.claimBox) ui.claimBox.classList.add("open");
   if (ui.barFill) ui.barFill.style.width = "100%";
+  paintClaim(kind);
   if (kind === "vestibular") {
     if (ui.scoreEl) ui.scoreEl.textContent = String(GAZE.length);
     if (ui.cueEl) ui.cueEl.textContent = "Sequence complete. Join the waitlist below.";
     if (ui.holdEl) ui.holdEl.textContent = "Done";
-    const claim = ui.claimBox || document.getElementById("claim");
-    if (claim) {
-      claim.classList.add("open");
-      setTimeout(() => claim.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-    }
   } else {
     if (ui.scoreEl) ui.scoreEl.textContent = "10";
-    if (ui.cueEl) ui.cueEl.textContent = "Stillness complete.";
+    if (ui.cueEl) ui.cueEl.textContent = "Stillness complete. Join the list below.";
+    if (ui.holdEl) ui.holdEl.textContent = "Done";
+    try { sessionStorage.setItem("fit_meditation_done", "1"); } catch (e) {}
   }
+  revealSignup(ui);
 }
 
 function smallFrame(video) {
@@ -254,11 +275,18 @@ export function tickFrame(ui) {
         sitMs = still ? Math.min(10000, sitMs + dt) : Math.max(0, sitMs - dt);
         if (sitMs >= 10000) unlock("meditation", ui);
       }
-      const shown = Math.min(10, sitMs / 1000);
-      if (ui.scoreEl) ui.scoreEl.textContent = shown.toFixed(1);
-      if (ui.cueEl) ui.cueEl.textContent = still ? "Still. Hold the face quiet." : "Movement detected. Settle and hold.";
-      if (ui.holdEl) ui.holdEl.textContent = "Still " + shown.toFixed(1) + " / 10.0s";
-      if (ui.barFill) ui.barFill.style.width = Math.min(100, sitMs / 100) + "%";
+      if (awarded) {
+        if (ui.scoreEl) ui.scoreEl.textContent = "10";
+        if (ui.holdEl) ui.holdEl.textContent = "Done";
+        if (ui.barFill) ui.barFill.style.width = "100%";
+        if (ui.cueEl && ui.cueEl.textContent.indexOf("Join the list") < 0) ui.cueEl.textContent = "Stillness complete. Join the list below.";
+      } else {
+        const shown = Math.min(10, sitMs / 1000);
+        if (ui.scoreEl) ui.scoreEl.textContent = shown.toFixed(1);
+        if (ui.cueEl) ui.cueEl.textContent = still ? "Still. Hold the face quiet." : "Movement detected. Settle and hold.";
+        if (ui.holdEl) ui.holdEl.textContent = "Still " + shown.toFixed(1) + " / 10.0s";
+        if (ui.barFill) ui.barFill.style.width = Math.min(100, sitMs / 100) + "%";
+      }
       if (ui.detailEl) ui.detailEl.textContent = "Motion " + motion.toFixed(4);
     } else {
       const pose = faceYawPitch(face);
