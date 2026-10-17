@@ -1,4 +1,5 @@
 function drawGrass(){
+  const lampPct = timeMax ? Math.max(0.15, timeLeft / timeMax) : 1;
   ctx.fillStyle = '#14110c';
   ctx.fillRect(0,0,W,H);
   ctx.fillStyle = '#1b1711';
@@ -9,11 +10,30 @@ function drawGrass(){
     ctx.beginPath(); ctx.ellipse(x,y,40,16,0.2,0,Math.PI*2); ctx.fill();
   }
   ctx.globalAlpha = 1;
-  const g = ctx.createRadialGradient(human?human.x:W-70, human?human.y:H*0.48, 10, human?human.x:W-70, human?human.y:H*0.48, 220);
-  g.addColorStop(0,'rgba(232,165,75,.16)');
-  g.addColorStop(1,'rgba(0,0,0,0)');
+  const lampX = human ? human.x : W-70;
+  const lampY = human ? human.y : H*0.48;
+  const g = ctx.createRadialGradient(lampX, lampY, 10, lampX, lampY, 180 + lampPct*80);
+  g.addColorStop(0, 'rgba(232,165,75,' + (0.22 * lampPct) + ')');
+  g.addColorStop(0.5, 'rgba(232,165,75,' + (0.08 * lampPct) + ')');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
+  // Ambient dust/leaves
+  if (!window._amb) window._amb = [];
+  if (window._amb.length < 18 && Math.random() < 0.04){
+    window._amb.push({x:rand(0,W), y:rand(0,H), vx:rand(-12,12), vy:rand(-6,4), life:rand(4,9), c: Math.random()>0.6 ? '#c9a06a' : '#6a4a32'});
+  }
+  window._amb = window._amb.filter(p=>{
+    p.life -= 0.016; p.x += p.vx*0.016; p.y += p.vy*0.016;
+    if (p.life>0 && p.x>0 && p.x<W && p.y>0 && p.y<H){
+      ctx.globalAlpha = Math.min(0.45, p.life*0.08);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, 3, 1.4, p.life, 0, Math.PI*2); ctx.fill();
+      return true;
+    }
+    return false;
+  });
+  ctx.globalAlpha = 1;
   if (state==='rescue' && cat){
     ctx.strokeStyle = 'rgba(232,165,75,.28)';
     ctx.lineWidth = 2;
@@ -226,6 +246,15 @@ function drawCat(){
   ctx.fillStyle = black;
   ctx.beginPath(); ctx.ellipse(5.8, -10.2, 1, 1.6, 0, 0, Math.PI*2); ctx.fill();
   ctx.beginPath(); ctx.ellipse(15.8, -10.4, 1, 1.6, 0, 0, Math.PI*2); ctx.fill();
+  // Annoyed brows if pests attached
+  if (cat.attached > 0){
+    ctx.strokeStyle = black;
+    ctx.lineWidth = 2.4;
+    ctx.beginPath();
+    ctx.moveTo(2, -13.5); ctx.lineTo(8, -14.8);
+    ctx.moveTo(12, -13.6); ctx.lineTo(18, -14.9);
+    ctx.stroke();
+  }
 
   ctx.fillStyle = muzzle;
   ctx.strokeStyle = ink; ctx.lineWidth = 1.6;

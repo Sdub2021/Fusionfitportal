@@ -126,6 +126,15 @@ function draw(){
   const pct = timeMax ? timeLeft/timeMax : 0;
   timebar.style.transform = 'scaleX(' + clamp(pct,0,1) + ')';
   timebar.style.background = pct<0.25 ? 'linear-gradient(90deg,#c45a3a,#7a2018)' : 'linear-gradient(90deg,#e8a54b,#c45a3a)';
+  // Dash cooldown indicator
+  if (cat && cat.dashCd !== undefined){
+    ctx.save();
+    ctx.fillStyle = cat.dashCd <= 0 ? 'rgba(232,165,75,.9)' : 'rgba(255,255,255,.25)';
+    ctx.font = '500 12px Outfit,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(cat.dashCd <= 0 ? 'DASH READY (space)' : 'DASH ' + cat.dashCd.toFixed(1)+'s', 16, H - 18);
+    ctx.restore();
+  }
 }
 
 function loop(t){
@@ -155,7 +164,8 @@ function setJoyFrom(clientX, clientY){
   let dx = (clientX-cx)/(r.width*0.38);
   let dy = (clientY-cy)/(r.height*0.38);
   const m = Math.hypot(dx,dy);
-  if (m>1){ dx/=m; dy/=m; }
+  if (m < 0.18){ dx=0; dy=0; } // deadzone
+  else if (m>1){ dx/=m; dy/=m; }
   joy.x = dx; joy.y = dy;
   knob.style.transform = 'translate(' + (dx*28) + 'px,' + (dy*28) + 'px)';
 }
@@ -181,7 +191,7 @@ goBtn.onclick = ()=>{
   startGame(state==='title' ? 'fresh' : 'retry');
 };
 howBtn.onclick = ()=>{
-  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Each level is Dog Park 1, then 2, then 3. A park dog sheds two fleas every level \u2014 they hop after they fall. Bushes break a line. If a tic or flea latches on you get slower. Reach your human and they fling every pest off. Ten parks. Beat all ten to claim.';
+  copyEl.textContent = 'Move with WASD or arrows, or click / tap where you want to run. On a phone, drag the disc in the corner. Press SPACE to dash (cooldown). Hide in bushes to slow the pests. Each level is Dog Park 1, then 2, then 3. A park dog sheds two fleas every level. Bushes break a line. If a tic or flea latches on you get slower. Reach Jon and they fling every pest off. Ten parks. Beat all ten to claim.';
 };
 
 resize();

@@ -54,26 +54,27 @@ function show(kind){
   state = kind;
   ui.classList.remove('hidden');
   if (kind==='title'){
-    eyeEl.textContent = best ? ('Best reach \u00b7 ' + parkName(best-1) + ' / 10') : '10 dog parks';
+    eyeEl.textContent = best ? ('Best reach · ' + parkName(best-1) + ' / 10') : '10 dog parks';
     titleEl.textContent = 'TIC';
-    copyEl.textContent = 'You are the cat. Each yard is a dog park. Beat ten parks. Start with eight tics, then one more each level. A park dog sheds two fleas every level \u2014 they hop for you after they fall. The dog runs a little faster toward you on each playground. Reach your human before the lamp burns out. Clear all ten to submit your wallet.';
+    copyEl.textContent = 'You are Garfield. I hate Mondays, and I hate tics even more. Beat ten dog parks. Start with eight tics, then one more each level. The park dog sheds two fleas and chases harder every playground. Reach Jon before the lamp burns out. Clear all ten to claim.';
     goBtn.textContent = 'Find them';
   } else if (kind==='win'){
-    eyeEl.textContent = parkName(level) + ' \u00b7 ' + (level+1) + ' / 10';
+    eyeEl.textContent = parkName(level) + ' · ' + (level+1) + ' / 10';
     titleEl.textContent = 'Safe';
-    copyEl.textContent = rescue && rescue.count
-      ? 'They run a circle around you. '+rescue.count+' pest'+(rescue.count===1?'':'s')+' spin off into the dark. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+' \u2014 the dog runs harder at you, plus '+(9+level)+' tics and two more falling fleas.'
-      : 'You reach them clean. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+'.';
+    const clean = (rescue && rescue.count === 0);
+    copyEl.textContent = clean
+      ? 'Clean run. Jon grounds the stuck energy off you. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+' — harder chase, more tics.'
+      : 'Jon runs a circle and flings '+(rescue?rescue.count:0)+' pest'+((rescue?rescue.count:0)===1?'':'s')+' into the dark. The dog dropped '+fleasDropped+' flea'+(fleasDropped===1?'':'s')+'. Next: '+parkName(level+1)+'.';
     goBtn.textContent = parkName(level+1);
   } else if (kind==='clear'){
     eyeEl.textContent = 'Dog Park 10';
     titleEl.textContent = 'Home';
-    copyEl.textContent = 'Ten dog parks. Your human ran the last circle. No tic or flea left on you. Submit your wallet.';
+    copyEl.textContent = 'Ten parks clear. Jon grounded every last tic and flea. The lamp held. Head to Studio for more practice, then claim your wallet.';
     goBtn.textContent = 'Claim wallet';
   } else if (kind==='lose'){
-    eyeEl.textContent = 'Lamp out \u00b7 ' + parkName(level);
+    eyeEl.textContent = 'Lamp out · ' + parkName(level);
     titleEl.textContent = 'Too late';
-    copyEl.textContent = 'The park goes dark. Tics and fleas keep their hold. Your human is a shape you cannot reach in time.';
+    copyEl.textContent = 'The park goes dark. Tics keep their hold. Jon is just a shape in the night. I hate when that happens.';
     goBtn.textContent = 'Try ' + parkName(level) + ' again';
   }
 }
@@ -149,12 +150,38 @@ function update(dt){
   }
   const mag = Math.hypot(ax,ay);
   if (mag>1){ ax/=mag; ay/=mag; }
-  const slow = 1 / (1 + cat.attached*0.22);
-  const spd = 168 * slow;
-  cat.vx = ax*spd; cat.vy = ay*spd;
+  // Dash
+  if (!cat.dashCd) cat.dashCd = 0;
+  if (!cat.dashTime) cat.dashTime = 0;
+  cat.dashCd = Math.max(0, cat.dashCd - dt);
+  if (keys[' '] && cat.dashCd <= 0 && state==='play'){
+    cat.dashTime = 0.22;
+    cat.dashCd = 2.8;
+    keys[' '] = false;
+    shake = Math.max(shake, 6);
+    burst(cat.x, cat.y, '#e8a54b');
+  }
+  if (cat.dashTime > 0){
+    cat.dashTime -= dt;
+    const dashSpd = 420;
+    cat.vx = ax * dashSpd;
+    cat.vy = ay * dashSpd;
+  } else {
+    const slow = 1 / (1 + cat.attached*0.22);
+    const spd = 168 * slow;
+    cat.vx = ax*spd; cat.vy = ay*spd;
+  }
   cat.x += cat.vx*dt; cat.y += cat.vy*dt;
   cat.inv = Math.max(0, cat.inv-dt);
   resolveBush(cat);
+  // Bush hide: if overlapping bush and slow, briefly harder to target
+  cat.hidden = false;
+  for (const b of bushes){
+    if (circleHitsRect(cat, b) && Math.hypot(cat.vx, cat.vy) < 40){
+      cat.hidden = true;
+      break;
+    }
+  }
   if (dog){
     dog.phase += dt;
     dog.nextDrop -= dt;
@@ -168,7 +195,12 @@ function update(dt){
     dog.vy = Math.sin(dog.phase * 0.37) * wander * 0.7;
     if (cat){
       const gap = Math.hypot(cat.x - dog.x, cat.y - dog.y) || 1;
-      const pull = gap < 26 ? chase * 0.15 : chase;
+      let pull = gap < 26 ? chase * 0.15 : chase;
+      // Smarter lunge on higher levels
+      if (level >= 4 && Math.random() < 0.008 && gap > 40 && gap < 180){
+        pull *= 2.4;
+        dog.phase += 1.2;
+      }
       dog.vx += ((cat.x - dog.x) / gap) * pull;
       dog.vy += ((cat.y - dog.y) / gap) * pull;
     }
@@ -200,8 +232,10 @@ function update(dt){
     const d = Math.hypot(dx,dy)||1;
     const jitter = Math.sin(t.phase*0.7)*0.35;
     const hop = t.kind === 'flea' ? 1.18 : 1;
-    t.vx = (dx/d)*t.speed*hop + Math.cos(t.phase)*28 + jitter*40;
-    t.vy = (dy/d)*t.speed*hop + Math.sin(t.phase*1.3)*28;
+    let spdMult = hop;
+    if (cat.hidden) spdMult *= 0.35;
+    t.vx = (dx/d)*t.speed*spdMult + Math.cos(t.phase)*28 + jitter*40;
+    t.vy = (dy/d)*t.speed*spdMult + Math.sin(t.phase*1.3)*28;
     t.x += t.vx*dt; t.y += t.vy*dt;
     resolveBush(t);
     if (dist(t, cat) < cat.r + t.r - 2) attachTick(t);
