@@ -178,6 +178,7 @@ function drawCat(){
     ctx.stroke();
   }
 
+  // Tail with solid black tip
   ctx.strokeStyle = orange;
   ctx.lineWidth = 11;
   ctx.beginPath();
@@ -189,22 +190,40 @@ function drawCat(){
   ctx.lineWidth = 4.5;
   ctx.stroke();
   ctx.fillStyle = black;
-  ctx.beginPath(); ctx.moveTo(-40, -2); ctx.lineTo(-48, -8); ctx.lineTo(-36, -4); ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(-38, 0);
+  ctx.quadraticCurveTo(-50, -4, -46, -12);
+  ctx.quadraticCurveTo(-40, -8, -36, -2);
+  ctx.closePath();
+  ctx.fill();
 
   blob(function(){ ctx.ellipse(-13, 18+step*0.05, 8, 4.5, -0.1, 0, Math.PI*2); }, orange);
   blob(function(){ ctx.ellipse(11, 18.5-step*0.05, 8, 4.5, 0.08, 0, Math.PI*2); }, orange);
 
   blob(function(){ ctx.ellipse(0, 6, 26, 17, 0, 0, Math.PI*2); }, orange);
 
+  // Classic thick curved body stripes
   ctx.fillStyle = black;
+  // Left stripe
   ctx.beginPath();
-  ctx.moveTo(-16, 2); ctx.quadraticCurveTo(-8, 10, -15, 14); ctx.quadraticCurveTo(-10, 6, -16, 2);
+  ctx.moveTo(-18, 4);
+  ctx.quadraticCurveTo(-12, 12, -16, 16);
+  ctx.quadraticCurveTo(-8, 10, -14, 4);
+  ctx.quadraticCurveTo(-16, 6, -18, 4);
   ctx.fill();
+  // Middle stripe
   ctx.beginPath();
-  ctx.moveTo(-4, -1); ctx.quadraticCurveTo(9, 9, 3, 16); ctx.quadraticCurveTo(6, 5, -4, -1);
+  ctx.moveTo(-6, 0);
+  ctx.quadraticCurveTo(4, 10, 0, 18);
+  ctx.quadraticCurveTo(8, 8, -2, 0);
+  ctx.quadraticCurveTo(-4, 4, -6, 0);
   ctx.fill();
+  // Right stripe
   ctx.beginPath();
-  ctx.moveTo(11, 1); ctx.quadraticCurveTo(19, 9, 13, 15); ctx.quadraticCurveTo(16, 6, 11, 1);
+  ctx.moveTo(10, 2);
+  ctx.quadraticCurveTo(18, 12, 14, 17);
+  ctx.quadraticCurveTo(22, 8, 12, 2);
+  ctx.quadraticCurveTo(11, 6, 10, 2);
   ctx.fill();
 
   ctx.fillStyle = muzzle;
@@ -212,15 +231,25 @@ function drawCat(){
 
   blob(function(){ ctx.ellipse(12, -6, 18, 17, 0, 0, Math.PI*2); }, orange);
 
+  // Classic head stripes – thicker and more curved
   ctx.fillStyle = black;
+  // Left head stripe
   ctx.beginPath();
-  ctx.moveTo(6, -12); ctx.quadraticCurveTo(10, -4, 7, 2); ctx.quadraticCurveTo(11, -8, 6, -12);
+  ctx.moveTo(5, -14);
+  ctx.quadraticCurveTo(10, -4, 6, 4);
+  ctx.quadraticCurveTo(12, -6, 5, -14);
   ctx.fill();
+  // Center head stripe
   ctx.beginPath();
-  ctx.moveTo(14, -14); ctx.quadraticCurveTo(17, -4, 14, 2); ctx.quadraticCurveTo(18, -9, 14, -14);
+  ctx.moveTo(13, -16);
+  ctx.quadraticCurveTo(17, -4, 13, 4);
+  ctx.quadraticCurveTo(19, -8, 13, -16);
   ctx.fill();
+  // Right head stripe
   ctx.beginPath();
-  ctx.moveTo(20, -12); ctx.quadraticCurveTo(22, -4, 19, 1); ctx.quadraticCurveTo(23, -8, 20, -12);
+  ctx.moveTo(19, -14);
+  ctx.quadraticCurveTo(22, -4, 18, 2);
+  ctx.quadraticCurveTo(24, -8, 19, -14);
   ctx.fill();
 
   blob(function(){ ctx.moveTo(5, -12); ctx.lineTo(7, -30); ctx.lineTo(13, -10); ctx.closePath(); }, orange);
