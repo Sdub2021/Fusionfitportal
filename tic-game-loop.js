@@ -3,7 +3,7 @@ function drawDog(){
   const x = dog.x, y = dog.y;
   const bob = Math.sin(dog.phase * 7) * 1.4;
   const flip = dog.facing < 0 ? -1 : 1;
-  const tongueWag = Math.sin(performance.now()/180) * 4;
+  const tongueWag = Math.sin(performance.now()/160) * 5;
   ctx.save();
   ctx.translate(x, y + bob);
   ctx.scale(flip, 1);
@@ -19,48 +19,51 @@ function drawDog(){
     fn();
     ctx.fillStyle = fill;
     ctx.strokeStyle = ink;
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 3.8;
     ctx.fill();
     ctx.stroke();
   }
 
-  blob(function(){ ctx.ellipse(0, 4, 20, 12, 0, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(-10, 14, 4, 5.2, 0.1, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(8, 14.2, 3.8, 5, -0.08, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(0, 5, 22, 13, 0, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(-11, 15, 4.2, 5.5, 0.1, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(9, 15.2, 4, 5.3, -0.08, 0, Math.PI*2); }, yellow);
 
   ctx.strokeStyle = yellow;
-  ctx.lineWidth = 7;
+  ctx.lineWidth = 8;
   ctx.beginPath();
-  ctx.moveTo(-18, 2);
-  ctx.quadraticCurveTo(-30, -4 + Math.sin(dog.phase*5)*4, -24, 10);
+  ctx.moveTo(-20, 3);
+  ctx.quadraticCurveTo(-34, -6 + Math.sin(dog.phase*5)*4, -26, 12);
   ctx.stroke();
   ctx.strokeStyle = ink;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3.2;
   ctx.stroke();
 
-  blob(function(){ ctx.ellipse(16, -1, 10, 9, 0.15, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(11, -8, 4.8, 8, 0.5, 0, Math.PI*2); }, yellowDark);
-  blob(function(){ ctx.ellipse(20, -6, 4, 7, 0.7, 0, Math.PI*2); }, yellowDark);
+  blob(function(){ ctx.ellipse(18, 0, 11, 10, 0.1, 0, Math.PI*2); }, yellow);
+  // Longer floppy ears
+  blob(function(){ ctx.ellipse(12, -10, 5.5, 9, 0.4, 0, Math.PI*2); }, yellowDark);
+  blob(function(){ ctx.ellipse(22, -8, 4.8, 8.5, 0.6, 0, Math.PI*2); }, yellowDark);
 
+  // Bigger eyes
   ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.ellipse(18, -1, 2.8, 3.2, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(22.5, -0.5, 2.6, 3, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(20, -1, 3.2, 3.8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(25, -0.5, 3, 3.6, 0, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = ink;
-  ctx.beginPath(); ctx.ellipse(18.5, -0.5, 1.1, 1.4, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(23, 0, 1, 1.3, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(20.6, -0.5, 1.2, 1.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(25.6, 0, 1.1, 1.4, 0, 0, Math.PI*2); ctx.fill();
 
   ctx.fillStyle = '#1a120c';
-  ctx.beginPath(); ctx.ellipse(25, 2.5, 2, 1.6, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(28, 3, 2.2, 1.8, 0, 0, Math.PI*2); ctx.fill();
 
+  // Longer tongue
   ctx.fillStyle = '#e07090';
   ctx.beginPath();
-  ctx.moveTo(23.5, 4);
-  ctx.quadraticCurveTo(27 + tongueWag*0.4, 12, 24.5, 16);
-  ctx.quadraticCurveTo(21, 14, 22.5, 4);
+  ctx.moveTo(26, 5);
+  ctx.quadraticCurveTo(30 + tongueWag*0.5, 14, 27, 18);
+  ctx.quadraticCurveTo(23, 16, 25, 5);
   ctx.closePath();
   ctx.fill();
   ctx.strokeStyle = ink;
-  ctx.lineWidth = 1.6;
+  ctx.lineWidth = 1.8;
   ctx.stroke();
 
   ctx.restore();
@@ -68,8 +71,8 @@ function drawDog(){
   const riding = Math.max(0, dog.onboard);
   for (let i=0;i<riding;i++){
     const a = dog.phase * 2.2 + i * 0.9;
-    const fx = dog.x + Math.cos(a) * (12 + (i%3));
-    const fy = dog.y + Math.sin(a * 1.3) * 6 - 6;
+    const fx = dog.x + Math.cos(a) * (13 + (i%3));
+    const fy = dog.y + Math.sin(a * 1.3) * 6 - 7;
     ctx.fillStyle = i % 2 ? '#4a2814' : '#2a1810';
     ctx.beginPath(); ctx.ellipse(fx, fy, 2.2, 1.5, a, 0, Math.PI*2); ctx.fill();
   }
@@ -110,7 +113,6 @@ function drawBubbles(){
     ctx.roundRect(bx, by, w, h, 12);
     ctx.fill();
     ctx.stroke();
-    // Tail
     ctx.beginPath();
     ctx.moveTo(bx + w*0.42, by + h);
     ctx.lineTo(bx + w*0.58, by + h + 10);
