@@ -3,17 +3,15 @@ function drawDog(){
   const x = dog.x, y = dog.y;
   const bob = Math.sin(dog.phase * 7) * 1.4;
   const flip = dog.facing < 0 ? -1 : 1;
-  const tongueWag = Math.sin(performance.now()/180) * 3;
+  const tongueWag = Math.sin(performance.now()/180) * 4;
   ctx.save();
   ctx.translate(x, y + bob);
   ctx.scale(flip, 1);
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  ctx.fillStyle = 'rgba(0,0,0,.28)';
-  ctx.beginPath(); ctx.ellipse(2, 18, 18, 5, 0, 0, Math.PI*2); ctx.fill();
 
-  const yellow = '#f5d76e';
-  const yellowDark = '#e6c45a';
+  const yellow = '#f5d050';
+  const yellowDark = '#e6b830';
   const ink = '#000';
 
   function blob(fn, fill){
@@ -21,48 +19,48 @@ function drawDog(){
     fn();
     ctx.fillStyle = fill;
     ctx.strokeStyle = ink;
-    ctx.lineWidth = 2.8;
+    ctx.lineWidth = 3.5;
     ctx.fill();
     ctx.stroke();
   }
 
-  blob(function(){ ctx.ellipse(0, 3, 18, 11, 0, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(-9, 12, 3.6, 4.8, 0.1, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(7, 12.2, 3.5, 4.6, -0.08, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(0, 4, 20, 12, 0, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(-10, 14, 4, 5.2, 0.1, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(8, 14.2, 3.8, 5, -0.08, 0, Math.PI*2); }, yellow);
 
   ctx.strokeStyle = yellow;
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 7;
   ctx.beginPath();
-  ctx.moveTo(-16, 2);
-  ctx.quadraticCurveTo(-26, -2 + Math.sin(dog.phase*5)*3, -22, 8);
+  ctx.moveTo(-18, 2);
+  ctx.quadraticCurveTo(-30, -4 + Math.sin(dog.phase*5)*4, -24, 10);
   ctx.stroke();
   ctx.strokeStyle = ink;
-  ctx.lineWidth = 2.4;
+  ctx.lineWidth = 3;
   ctx.stroke();
 
-  blob(function(){ ctx.ellipse(14, -2, 9, 8, 0.15, 0, Math.PI*2); }, yellow);
-  blob(function(){ ctx.ellipse(10, -8, 4.2, 7, 0.5, 0, Math.PI*2); }, yellowDark);
-  blob(function(){ ctx.ellipse(18, -6, 3.5, 6.2, 0.7, 0, Math.PI*2); }, yellowDark);
+  blob(function(){ ctx.ellipse(16, -1, 10, 9, 0.15, 0, Math.PI*2); }, yellow);
+  blob(function(){ ctx.ellipse(11, -8, 4.8, 8, 0.5, 0, Math.PI*2); }, yellowDark);
+  blob(function(){ ctx.ellipse(20, -6, 4, 7, 0.7, 0, Math.PI*2); }, yellowDark);
 
   ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.ellipse(16, -2, 2.4, 2.8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(20, -1.5, 2.2, 2.6, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18, -1, 2.8, 3.2, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(22.5, -0.5, 2.6, 3, 0, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = ink;
-  ctx.beginPath(); ctx.ellipse(16.4, -1.6, 1, 1.2, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(20.4, -1.1, 0.9, 1.1, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18.5, -0.5, 1.1, 1.4, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(23, 0, 1, 1.3, 0, 0, Math.PI*2); ctx.fill();
 
   ctx.fillStyle = '#1a120c';
-  ctx.beginPath(); ctx.ellipse(22.5, 1.2, 1.8, 1.4, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(25, 2.5, 2, 1.6, 0, 0, Math.PI*2); ctx.fill();
 
   ctx.fillStyle = '#e07090';
   ctx.beginPath();
-  ctx.moveTo(21, 3);
-  ctx.quadraticCurveTo(24 + tongueWag*0.3, 10, 22, 14);
-  ctx.quadraticCurveTo(19, 12, 20, 3);
+  ctx.moveTo(23.5, 4);
+  ctx.quadraticCurveTo(27 + tongueWag*0.4, 12, 24.5, 16);
+  ctx.quadraticCurveTo(21, 14, 22.5, 4);
   ctx.closePath();
   ctx.fill();
   ctx.strokeStyle = ink;
-  ctx.lineWidth = 1.4;
+  ctx.lineWidth = 1.6;
   ctx.stroke();
 
   ctx.restore();
@@ -70,22 +68,22 @@ function drawDog(){
   const riding = Math.max(0, dog.onboard);
   for (let i=0;i<riding;i++){
     const a = dog.phase * 2.2 + i * 0.9;
-    const fx = dog.x + Math.cos(a) * (11 + (i%3));
-    const fy = dog.y + Math.sin(a * 1.3) * 6 - 5;
+    const fx = dog.x + Math.cos(a) * (12 + (i%3));
+    const fy = dog.y + Math.sin(a * 1.3) * 6 - 6;
     ctx.fillStyle = i % 2 ? '#4a2814' : '#2a1810';
-    ctx.beginPath(); ctx.ellipse(fx, fy, 2.1, 1.4, a, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(fx, fy, 2.2, 1.5, a, 0, Math.PI*2); ctx.fill();
   }
 }
 
 let bubbles = [];
 
 function say(who, text, dur){
-  dur = dur || 2.2;
+  dur = dur || 2.4;
   let x = 80, y = 80;
-  if (who === 'cat' && cat){ x = cat.x; y = cat.y - 28; }
-  else if (who === 'jon' && human){ x = human.x; y = human.y - 32; }
-  else if (who === 'odie' && dog){ x = dog.x; y = dog.y - 26; }
-  else if (who === 'system'){ x = W*0.5; y = 40; }
+  if (who === 'cat' && cat){ x = cat.x; y = cat.y - 32; }
+  else if (who === 'jon' && human){ x = human.x; y = human.y - 36; }
+  else if (who === 'odie' && dog){ x = dog.x; y = dog.y - 30; }
+  else if (who === 'system'){ x = W*0.5; y = 50; }
   bubbles.push({x, y, text, life: dur, max: dur});
 }
 
@@ -98,29 +96,30 @@ function updateBubbles(dt){
 
 function drawBubbles(){
   for (const b of bubbles){
-    const alpha = Math.min(1, b.life * 2.5);
-    const w = Math.max(70, b.text.length * 7.2);
-    const h = 28;
-    const bx = clamp(b.x - w/2, 8, W - w - 8);
-    const by = clamp(b.y - h - 6, 8, H - h - 20);
+    const alpha = Math.min(1, b.life * 2.2);
+    const w = Math.max(80, b.text.length * 8);
+    const h = 32;
+    const bx = clamp(b.x - w/2, 10, W - w - 10);
+    const by = clamp(b.y - h - 8, 12, H - h - 24);
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.fillStyle = '#fff';
     ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2.4;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.roundRect(bx, by, w, h, 10);
+    ctx.roundRect(bx, by, w, h, 12);
     ctx.fill();
     ctx.stroke();
+    // Tail
     ctx.beginPath();
-    ctx.moveTo(bx + w*0.45, by + h);
-    ctx.lineTo(bx + w*0.55, by + h + 8);
-    ctx.lineTo(bx + w*0.35, by + h);
+    ctx.moveTo(bx + w*0.42, by + h);
+    ctx.lineTo(bx + w*0.58, by + h + 10);
+    ctx.lineTo(bx + w*0.32, by + h);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = '#000';
-    ctx.font = '600 13px Outfit, sans-serif';
+    ctx.font = '700 14px Outfit, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(b.text, bx + w/2, by + h/2 + 1);
@@ -137,7 +136,7 @@ function drawTick(t){
   ctx.rotate(Math.atan2(t.vy||0.01, t.vx||0.01));
   const wriggle = Math.sin(t.phase)*1.2;
   ctx.strokeStyle = limp ? '#2a1812' : '#1a100c';
-  ctx.lineWidth = 1.15; ctx.lineCap = 'round';
+  ctx.lineWidth = 1.4; ctx.lineCap = 'round';
   const legs = [-1.15, -0.55, 0.55, 1.15];
   legs.forEach((ang, i) => {
     const kick = Math.sin(t.phase*2 + i)* (limp?0.2:1.6);
