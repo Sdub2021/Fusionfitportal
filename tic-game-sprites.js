@@ -2,7 +2,6 @@ function drawGrass(){
   const lampPct = timeMax ? Math.max(0.15, timeLeft / timeMax) : 1;
   ctx.fillStyle = '#1a1612';
   ctx.fillRect(0,0,W,H);
-  // Subtle comic paper texture
   ctx.fillStyle = 'rgba(255,248,220,.03)';
   for (let i=0;i<40;i++){
     const x = (i*73 + 20) % W;
@@ -79,8 +78,8 @@ function drawHuman(){
 
   const skin = '#ffd8b0';
   const hair = '#c87830';
-  const shirt = '#5ab0e8';
-  const pants = '#304890';
+  const shirt = '#4a9ee0';
+  const pants = '#2a4080';
   const ink = '#000';
 
   function inked(fn, fill){
@@ -88,7 +87,7 @@ function drawHuman(){
     fn();
     ctx.fillStyle = fill;
     ctx.strokeStyle = ink;
-    ctx.lineWidth = 3.2;
+    ctx.lineWidth = 3.4;
     ctx.fill();
     ctx.stroke();
   }
@@ -98,57 +97,56 @@ function drawHuman(){
   inked(function(){ ctx.ellipse(-5, 34+L*0.04, 5.2, 2.6, -0.1, 0, Math.PI*2); }, '#5a3010');
   inked(function(){ ctx.ellipse(5, 34+R*0.04, 5.2, 2.6, 0.1, 0, Math.PI*2); }, '#5a3010');
 
-  inked(function(){ ctx.roundRect(-13, -10, 26, 26, 3); }, shirt);
+  inked(function(){ ctx.roundRect(-13, -8, 26, 24, 3); }, shirt);
 
   const drop = state==='rescue' ? 5 : 0;
   ctx.strokeStyle = shirt;
-  ctx.lineWidth = 6;
-  ctx.beginPath(); ctx.moveTo(-11,0); ctx.lineTo(-20, 8+L+drop); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(11,0); ctx.lineTo(20, 7+R+drop); ctx.stroke();
-  ctx.strokeStyle = ink; ctx.lineWidth = 2.4;
-  ctx.beginPath(); ctx.moveTo(-11,0); ctx.lineTo(-20, 8+L+drop); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(11,0); ctx.lineTo(20, 7+R+drop); ctx.stroke();
-  inked(function(){ ctx.arc(-20.5, 9+L+drop, 3.4, 0, Math.PI*2); }, skin);
-  inked(function(){ ctx.arc(20.5, 8+R+drop, 3.4, 0, Math.PI*2); }, skin);
+  ctx.lineWidth = 6.5;
+  ctx.beginPath(); ctx.moveTo(-11,2); ctx.lineTo(-21, 10+L+drop); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(11,2); ctx.lineTo(21, 9+R+drop); ctx.stroke();
+  ctx.strokeStyle = ink; ctx.lineWidth = 2.6;
+  ctx.beginPath(); ctx.moveTo(-11,2); ctx.lineTo(-21, 10+L+drop); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(11,2); ctx.lineTo(21, 9+R+drop); ctx.stroke();
+  inked(function(){ ctx.arc(-21.5, 11+L+drop, 3.5, 0, Math.PI*2); }, skin);
+  inked(function(){ ctx.arc(21.5, 10+R+drop, 3.5, 0, Math.PI*2); }, skin);
 
-  inked(function(){ ctx.roundRect(-3.5, -18, 7, 9, 1); }, skin);
+  inked(function(){ ctx.roundRect(-4, -16, 8, 9, 1); }, skin);
 
-  inked(function(){ ctx.ellipse(0, -28, 11, 13, 0, 0, Math.PI*2); }, skin);
+  inked(function(){ ctx.ellipse(0, -26, 12, 14, 0, 0, Math.PI*2); }, skin);
 
-  // Hair
   inked(function(){
-    ctx.moveTo(-9, -30);
-    ctx.quadraticCurveTo(-16, -46, -1, -46);
-    ctx.quadraticCurveTo(4, -52, 9, -45);
-    ctx.quadraticCurveTo(16, -43, 12, -28);
-    ctx.quadraticCurveTo(8, -26, 3, -30);
-    ctx.quadraticCurveTo(-6, -34, -8, -28);
+    ctx.moveTo(-10, -28);
+    ctx.quadraticCurveTo(-18, -48, -2, -48);
+    ctx.quadraticCurveTo(5, -54, 10, -47);
+    ctx.quadraticCurveTo(18, -45, 13, -26);
+    ctx.quadraticCurveTo(9, -24, 4, -28);
+    ctx.quadraticCurveTo(-7, -32, -9, -26);
     ctx.closePath();
   }, hair);
   ctx.fillStyle = hair;
-  ctx.beginPath(); ctx.ellipse(-7.5, -26, 3.5, 5, -0.4, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(7.8, -25.5, 3.2, 4.5, 0.35, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(-1, -46, 4.5, 3.2, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(5, -47, 3.6, 2.8, 0.2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-8, -24, 3.8, 5.5, -0.4, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(8.2, -23.5, 3.5, 5, 0.35, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-1, -48, 5, 3.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(5.5, -49, 4, 3, 0.2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(1, -52, 2.8, 2.2, 0, 0, Math.PI*2); ctx.fill();
 
-  // Eyes
   ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.ellipse(-4.2, -29.5, 3.2, 1.8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(4.2, -29.5, 3.2, 1.8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(-4.5, -27.5, 3.5, 2, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(4.5, -27.5, 3.5, 2, 0, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = ink;
-  ctx.beginPath(); ctx.ellipse(-4, -29.2, 1.1, 1.4, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(4.4, -29.2, 1.1, 1.4, 0, 0, Math.PI*2); ctx.fill();
-  ctx.strokeStyle = ink; ctx.lineWidth = 2.8;
+  ctx.beginPath(); ctx.ellipse(-4.2, -27.2, 1.2, 1.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(4.8, -27.2, 1.2, 1.5, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = ink; ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(-7.2, -30.5); ctx.quadraticCurveTo(-4.2, -32.5, -1.2, -30);
-  ctx.moveTo(1.5, -30.5); ctx.quadraticCurveTo(4.5, -32.5, 7.5, -30);
+  ctx.moveTo(-8, -28.5); ctx.quadraticCurveTo(-4.5, -30.5, -1, -28);
+  ctx.moveTo(1.5, -28.5); ctx.quadraticCurveTo(4.5, -30.5, 8, -28);
   ctx.stroke();
 
   ctx.fillStyle = '#e8b898';
-  ctx.beginPath(); ctx.ellipse(0.5, -24.5, 2.8, 3, 0, 0, Math.PI*2); ctx.fill();
-  ctx.strokeStyle = ink; ctx.lineWidth = 1.6;
-  ctx.beginPath(); ctx.arc(0.6, -23, 2.5, 0.2, Math.PI-0.1); ctx.stroke();
-  ctx.beginPath(); ctx.arc(0, -21, 3.2, 0.2, Math.PI-0.2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0.5, -22.5, 3, 3.2, 0, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = ink; ctx.lineWidth = 1.7;
+  ctx.beginPath(); ctx.arc(0.6, -21, 2.7, 0.2, Math.PI-0.1); ctx.stroke();
+  ctx.beginPath(); ctx.arc(0, -19, 3.4, 0.2, Math.PI-0.2); ctx.stroke();
 
   ctx.restore();
 }
@@ -165,8 +163,8 @@ function drawCat(){
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
-  const orange = '#ff7a00';
-  const muzzle = '#ffe4b0';
+  const orange = '#ff7f00';
+  const muzzle = '#ffe8c8';
   const ink = '#000';
   const black = '#111';
 
@@ -175,105 +173,102 @@ function drawCat(){
     fn();
     ctx.fillStyle = fill;
     ctx.strokeStyle = ink;
-    ctx.lineWidth = 3.8;
+    ctx.lineWidth = 4.2;
     ctx.fill();
     ctx.stroke();
   }
 
-  // Tail
   ctx.strokeStyle = orange;
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 11;
   ctx.beginPath();
-  ctx.moveTo(-18, 6);
-  ctx.quadraticCurveTo(-42, 14, -38, -4);
-  ctx.quadraticCurveTo(-34, -20, -18, -14);
+  ctx.moveTo(-20, 8);
+  ctx.quadraticCurveTo(-46, 16, -42, -6);
+  ctx.quadraticCurveTo(-38, -22, -20, -16);
   ctx.stroke();
   ctx.strokeStyle = black;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 4.5;
   ctx.stroke();
   ctx.fillStyle = black;
-  ctx.beginPath(); ctx.moveTo(-36, 0); ctx.lineTo(-42, -6); ctx.lineTo(-32, -2); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-40, -2); ctx.lineTo(-48, -8); ctx.lineTo(-36, -4); ctx.closePath(); ctx.fill();
 
-  blob(function(){ ctx.ellipse(-12, 17+step*0.06, 7.5, 4.2, -0.08, 0, Math.PI*2); }, orange);
-  blob(function(){ ctx.ellipse(10, 17.5-step*0.06, 7.5, 4.2, 0.06, 0, Math.PI*2); }, orange);
+  blob(function(){ ctx.ellipse(-13, 18+step*0.05, 8, 4.5, -0.1, 0, Math.PI*2); }, orange);
+  blob(function(){ ctx.ellipse(11, 18.5-step*0.05, 8, 4.5, 0.08, 0, Math.PI*2); }, orange);
 
-  blob(function(){ ctx.ellipse(0, 5, 24, 16, 0, 0, Math.PI*2); }, orange);
+  blob(function(){ ctx.ellipse(0, 6, 26, 17, 0, 0, Math.PI*2); }, orange);
 
-  // Stronger stripes
   ctx.fillStyle = black;
   ctx.beginPath();
-  ctx.moveTo(-15, 1); ctx.quadraticCurveTo(-7, 9, -14, 13); ctx.quadraticCurveTo(-9, 5, -15, 1);
+  ctx.moveTo(-16, 2); ctx.quadraticCurveTo(-8, 10, -15, 14); ctx.quadraticCurveTo(-10, 6, -16, 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(-4, -2); ctx.quadraticCurveTo(8, 8, 2, 15); ctx.quadraticCurveTo(5, 4, -4, -2);
+  ctx.moveTo(-4, -1); ctx.quadraticCurveTo(9, 9, 3, 16); ctx.quadraticCurveTo(6, 5, -4, -1);
   ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(10, 0); ctx.quadraticCurveTo(18, 8, 12, 14); ctx.quadraticCurveTo(15, 5, 10, 0);
+  ctx.moveTo(11, 1); ctx.quadraticCurveTo(19, 9, 13, 15); ctx.quadraticCurveTo(16, 6, 11, 1);
   ctx.fill();
 
   ctx.fillStyle = muzzle;
-  ctx.beginPath(); ctx.ellipse(3, 8, 11, 9, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(4, 9, 12, 10, 0, 0, Math.PI*2); ctx.fill();
 
-  blob(function(){ ctx.ellipse(10, -8, 16, 15.5, 0, 0, Math.PI*2); }, orange);
+  blob(function(){ ctx.ellipse(12, -6, 18, 17, 0, 0, Math.PI*2); }, orange);
 
   ctx.fillStyle = black;
   ctx.beginPath();
-  ctx.moveTo(5, -14); ctx.quadraticCurveTo(9, -6, 6, 0); ctx.quadraticCurveTo(10, -10, 5, -14);
+  ctx.moveTo(6, -12); ctx.quadraticCurveTo(10, -4, 7, 2); ctx.quadraticCurveTo(11, -8, 6, -12);
   ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(13, -16); ctx.quadraticCurveTo(16, -6, 13, 0); ctx.quadraticCurveTo(17, -11, 13, -16);
+  ctx.moveTo(14, -14); ctx.quadraticCurveTo(17, -4, 14, 2); ctx.quadraticCurveTo(18, -9, 14, -14);
   ctx.fill();
   ctx.beginPath();
-  ctx.moveTo(19, -14); ctx.quadraticCurveTo(21, -6, 18, -1); ctx.quadraticCurveTo(22, -10, 19, -14);
+  ctx.moveTo(20, -12); ctx.quadraticCurveTo(22, -4, 19, 1); ctx.quadraticCurveTo(23, -8, 20, -12);
   ctx.fill();
 
-  blob(function(){ ctx.moveTo(4, -14); ctx.lineTo(6, -28); ctx.lineTo(12, -12); ctx.closePath(); }, orange);
-  blob(function(){ ctx.moveTo(15, -15); ctx.lineTo(18, -29); ctx.lineTo(23, -12); ctx.closePath(); }, orange);
+  blob(function(){ ctx.moveTo(5, -12); ctx.lineTo(7, -30); ctx.lineTo(13, -10); ctx.closePath(); }, orange);
+  blob(function(){ ctx.moveTo(16, -13); ctx.lineTo(19, -31); ctx.lineTo(24, -10); ctx.closePath(); }, orange);
   ctx.fillStyle = '#f5a0b0';
-  ctx.beginPath(); ctx.moveTo(5.5, -14); ctx.lineTo(6.5, -24); ctx.lineTo(10, -12.5); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(16.5, -14.5); ctx.lineTo(18, -25); ctx.lineTo(20.5, -12.5); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(6.5, -12); ctx.lineTo(7.5, -26); ctx.lineTo(11, -10.5); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(17.5, -12.5); ctx.lineTo(19, -27); ctx.lineTo(21.5, -10.5); ctx.closePath(); ctx.fill();
 
-  // Eyes
   ctx.fillStyle = '#fff';
-  ctx.strokeStyle = ink; ctx.lineWidth = 2.6;
-  ctx.beginPath(); ctx.ellipse(7, -7, 5.5, 3.2, -0.04, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(17, -7.2, 5.5, 3.2, 0.04, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = ink; ctx.lineWidth = 2.8;
+  ctx.beginPath(); ctx.ellipse(8, -5, 6, 3.4, -0.05, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(18, -5.2, 6, 3.4, 0.05, 0, Math.PI*2); ctx.fill(); ctx.stroke();
   ctx.fillStyle = orange;
-  ctx.beginPath(); ctx.ellipse(7, -8.5, 5.6, 1.9, -0.04, Math.PI, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(17, -8.7, 5.6, 1.9, 0.04, Math.PI, Math.PI*2); ctx.fill();
-  ctx.strokeStyle = ink; ctx.lineWidth = 3.2;
+  ctx.beginPath(); ctx.ellipse(8, -6.8, 6.2, 2.1, -0.05, Math.PI, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(18, -7, 6.2, 2.1, 0.05, Math.PI, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = ink; ctx.lineWidth = 3.5;
   ctx.beginPath();
-  ctx.moveTo(2.5, -8); ctx.quadraticCurveTo(7, -12.5, 11.5, -7);
-  ctx.moveTo(12.5, -8); ctx.quadraticCurveTo(17, -12.8, 21.5, -7);
+  ctx.moveTo(3, -6); ctx.quadraticCurveTo(8, -11, 13, -5);
+  ctx.moveTo(13, -6); ctx.quadraticCurveTo(18, -11.2, 23, -5);
   ctx.stroke();
   ctx.fillStyle = black;
-  ctx.beginPath(); ctx.ellipse(7.8, -6.2, 1.2, 1.8, 0, 0, Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(17.8, -6.4, 1.2, 1.8, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(9, -4.2, 1.3, 2, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(19, -4.4, 1.3, 2, 0, 0, Math.PI*2); ctx.fill();
   if (cat.attached > 0){
     ctx.strokeStyle = black;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.2;
     ctx.beginPath();
-    ctx.moveTo(3.5, -9.5); ctx.lineTo(10, -11);
-    ctx.moveTo(14, -9.6); ctx.lineTo(20.5, -11.1);
+    ctx.moveTo(4, -7.5); ctx.lineTo(11, -9);
+    ctx.moveTo(15, -7.6); ctx.lineTo(22, -9.1);
     ctx.stroke();
   }
 
   ctx.fillStyle = muzzle;
-  ctx.strokeStyle = ink; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.ellipse(17, 1, 8, 5.5, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle = ink; ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.ellipse(19, 3, 9, 6, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
   ctx.fillStyle = '#e07090';
-  ctx.beginPath(); ctx.moveTo(19, -0.5); ctx.lineTo(21.5, 1.5); ctx.lineTo(16.5, 1.5); ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = ink; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(21, 1); ctx.lineTo(23.5, 3); ctx.lineTo(18.5, 3); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = ink; ctx.lineWidth = 1.6;
   ctx.beginPath();
-  ctx.moveTo(19, 1.5); ctx.lineTo(19, 3);
-  ctx.moveTo(19, 3); ctx.quadraticCurveTo(22, 4.5, 23.5, 2.5);
+  ctx.moveTo(21, 3); ctx.lineTo(21, 4.5);
+  ctx.moveTo(21, 4.5); ctx.quadraticCurveTo(24, 6, 25.5, 4);
   ctx.stroke();
-  ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1.2;
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1.3;
   ctx.beginPath();
-  ctx.moveTo(14, 1.5); ctx.lineTo(-1, -1);
-  ctx.moveTo(14.2, 3.5); ctx.lineTo(-0.5, 4.5);
-  ctx.moveTo(23, 2); ctx.lineTo(34, -0.5);
-  ctx.moveTo(22.8, 3.2); ctx.lineTo(34, 3.5);
+  ctx.moveTo(15, 3.5); ctx.lineTo(-2, 1);
+  ctx.moveTo(15.2, 5.5); ctx.lineTo(-1.5, 6.5);
+  ctx.moveTo(25, 4); ctx.lineTo(36, 1.5);
+  ctx.moveTo(24.8, 5.2); ctx.lineTo(36, 5.5);
   ctx.stroke();
 
   ctx.restore();
