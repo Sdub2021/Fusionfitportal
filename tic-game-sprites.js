@@ -1,57 +1,67 @@
 function drawGrass(){
   const lampPct = timeMax ? Math.max(0.15, timeLeft / timeMax) : 1;
-  // Classic comic panel background
-  ctx.fillStyle = '#c8e0b0';
+  ctx.fillStyle = '#1a1612';
   ctx.fillRect(0,0,W,H);
-  // Ground
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 5;
-  ctx.beginPath();
-  ctx.moveTo(0, H - 26);
-  ctx.lineTo(W, H - 26);
-  ctx.stroke();
-  // Simple grass
-  ctx.fillStyle = '#a0c078';
-  for (let i = 0; i < 14; i++){
-    const x = (i * 58 + 20) % W;
-    ctx.beginPath();
-    ctx.moveTo(x, H-26);
-    ctx.lineTo(x-5, H-40);
-    ctx.lineTo(x+5, H-26);
-    ctx.fill();
-  }
-  // Thick comic panel border
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 10;
-  ctx.strokeRect(5, 5, W-10, H-10);
-  // Light paper grain
-  ctx.fillStyle = 'rgba(0,0,0,.02)';
-  for (let i=0;i<50;i++){
-    const x = (i*61 + 13) % W;
-    const y = (i*43 + 9) % H;
+  // Subtle comic paper texture
+  ctx.fillStyle = 'rgba(255,248,220,.03)';
+  for (let i=0;i<40;i++){
+    const x = (i*73 + 20) % W;
+    const y = (i*41 + 15) % H;
     ctx.fillRect(x, y, 2, 2);
   }
-  // Soft lamp still
+  ctx.fillStyle = '#221c14';
+  for (let i=0;i<28;i++){
+    const x = (i*97 + 40) % W;
+    const y = (i*53 + 20) % H;
+    ctx.globalAlpha = 0.28;
+    ctx.beginPath(); ctx.ellipse(x,y,40,16,0.2,0,Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
   const lampX = human ? human.x : W-70;
   const lampY = human ? human.y : H*0.48;
-  const g = ctx.createRadialGradient(lampX, lampY, 6, lampX, lampY, 120);
-  g.addColorStop(0, 'rgba(255,220,100,' + (0.1 * lampPct) + ')');
+  const g = ctx.createRadialGradient(lampX, lampY, 10, lampX, lampY, 180 + lampPct*80);
+  g.addColorStop(0, 'rgba(255,200,80,' + (0.18 * lampPct) + ')');
+  g.addColorStop(0.5, 'rgba(255,180,60,' + (0.06 * lampPct) + ')');
   g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
+  if (!window._amb) window._amb = [];
+  if (window._amb.length < 18 && Math.random() < 0.04){
+    window._amb.push({x:rand(0,W), y:rand(0,H), vx:rand(-12,12), vy:rand(-6,4), life:rand(4,9), c: Math.random()>0.6 ? '#c9a06a' : '#6a4a32'});
+  }
+  window._amb = window._amb.filter(p=>{
+    p.life -= 0.016; p.x += p.vx*0.016; p.y += p.vy*0.016;
+    if (p.life>0 && p.x>0 && p.x<W && p.y>0 && p.y<H){
+      ctx.globalAlpha = Math.min(0.45, p.life*0.08);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, 3, 1.4, p.life, 0, Math.PI*2); ctx.fill();
+      return true;
+    }
+    return false;
+  });
+  ctx.globalAlpha = 1;
+  if (state==='rescue' && cat){
+    ctx.strokeStyle = 'rgba(255,200,80,.28)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,8]);
+    ctx.beginPath();
+    ctx.ellipse(cat.x, cat.y, 36, 36*0.74, 0, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
 }
 
 function drawBush(b){
-  ctx.fillStyle = '#70a048';
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 4;
+  ctx.fillStyle = '#2d3a22';
   ctx.beginPath();
-  ctx.roundRect(b.x, b.y, b.w, b.h, 10);
+  ctx.roundRect(b.x, b.y, b.w, b.h, 16);
   ctx.fill();
+  ctx.strokeStyle = '#1a2010';
+  ctx.lineWidth = 2.5;
   ctx.stroke();
-  ctx.fillStyle = '#90c060';
+  ctx.fillStyle = '#3d4e2c';
   ctx.beginPath();
-  ctx.ellipse(b.x + b.w*0.38, b.y + 7, b.w*0.36, 11, 0, 0, Math.PI*2);
+  ctx.ellipse(b.x+b.w*0.35, b.y+8, b.w*0.38, 12, 0, 0, Math.PI*2);
   ctx.fill();
   ctx.stroke();
 }
