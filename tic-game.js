@@ -106,7 +106,7 @@ function spawnLevel(i){
     r: 18, vx: 0, vy: 0,
     facing: 1,
     phase: rand(0, Math.PI*2),
-    coat: rand(0,1) > 0.45 ? 'tan' : 'brindle',
+    coat: 'odie',
     onboard: 6 + i,
     dropLeft: L.fleasDrop,
     nextDrop: 0.55
@@ -125,6 +125,10 @@ function spawnLevel(i){
   flash=0; shake=0; rescue=null;
   lvEl.textContent = i+1;
   setParkLabel(i);
+  if (typeof say === 'function'){
+    const lines = ['I hate Mondays.', 'More tics? Great.', 'Not again.', 'Here we go.'];
+    say('cat', lines[i % lines.length], 2.4);
+  }
 }
 
 function setParkLabel(i){
@@ -166,4 +170,5 @@ function dropFleaFromDog(){
   ticks.push(flea);
   burst(flea.x, flea.y, '#6a3a18');
   shake = Math.max(shake, 4);
+  if (typeof say === 'function') say('odie', 'AARF!', 1.6);
 }
